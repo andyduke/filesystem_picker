@@ -6,7 +6,6 @@ import 'common.dart';
 import 'filesystem_list_tile.dart';
 
 class FilesystemList extends StatelessWidget {
-
   final bool isRoot;
   final Directory rootDirectory;
   final FilesystemType fsType;
@@ -28,10 +27,12 @@ class FilesystemList extends StatelessWidget {
     var files = <FileSystemEntity>[];
     var completer = new Completer<List<FileSystemEntity>>();
     var lister = this.rootDirectory.list(recursive: false);
-    lister.listen ( 
+    lister.listen(
       (file) {
         if ((fsType != FilesystemType.folder) || (file is Directory)) {
-          if ((file is File) && (allowedExtensions != null) && (allowedExtensions.length > 0)) {
+          if ((file is File) &&
+              (allowedExtensions != null) &&
+              (allowedExtensions.length > 0)) {
             if (!allowedExtensions.contains(Path.extension(file.path))) return;
           }
           files.add(file);
@@ -52,7 +53,8 @@ class FilesystemList extends StatelessWidget {
         title: Text("..", textScaleFactor: 1.5),
       ),
       onTap: () {
-        final li = this.rootDirectory.path.split(Platform.pathSeparator)..removeLast();
+        final li = this.rootDirectory.path.split(Platform.pathSeparator)
+          ..removeLast();
         onChange(Directory(li.join(Platform.pathSeparator)));
       },
     );
@@ -62,7 +64,8 @@ class FilesystemList extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: _dirContents(),
-      builder: (BuildContext context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+      builder: (BuildContext context,
+          AsyncSnapshot<List<FileSystemEntity>> snapshot) {
         if (snapshot.hasData) {
           return ListView.builder(
             shrinkWrap: true,
@@ -89,5 +92,4 @@ class FilesystemList extends StatelessWidget {
       },
     );
   }
-
 }

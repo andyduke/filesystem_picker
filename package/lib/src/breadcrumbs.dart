@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'listview_extensions.dart';
 
 class BreadcrumbItem<T> {
-
   final String text;
   final T data;
   final ValueChanged<T> onSelect;
@@ -12,11 +11,9 @@ class BreadcrumbItem<T> {
     this.data,
     this.onSelect,
   });
-
 }
 
 class Breadcrumbs<T> extends StatelessWidget {
-
   final List<BreadcrumbItem<T>> items;
   final double height;
   final Color textColor;
@@ -51,7 +48,6 @@ class Breadcrumbs<T> extends StatelessWidget {
         ).createShader(bounds);
       },
       blendMode: BlendMode.dstIn,
-
       child: Container(
         alignment: Alignment.topLeft,
         height: height,
@@ -63,11 +59,13 @@ class Breadcrumbs<T> extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             return ButtonTheme(
               minWidth: 48,
-              padding: EdgeInsets.symmetric(vertical: ButtonTheme.of(context).padding.vertical) + const EdgeInsets.symmetric(horizontal: 8),
+              padding: EdgeInsets.symmetric(
+                      vertical: ButtonTheme.of(context).padding.vertical) +
+                  const EdgeInsets.symmetric(horizontal: 8),
               child: FlatButton(
                 textColor: (index == (items.length - 1))
-                  ? (textColor ?? defaultTextColor)
-                  : (textColor ?? defaultTextColor).withOpacity(0.75),
+                    ? (textColor ?? defaultTextColor)
+                    : (textColor ?? defaultTextColor).withOpacity(0.75),
                 child: Text(items[index].text),
                 onPressed: () {
                   if (items[index].onSelect != null) {
@@ -87,12 +85,11 @@ class Breadcrumbs<T> extends StatelessWidget {
               color: (textColor ?? defaultTextColor).withOpacity(0.45),
             ),
           ),
-          headerBuilder: (_) => SizedBox(width: ButtonTheme.of(context).padding.horizontal - 8),
+          headerBuilder: (_) =>
+              SizedBox(width: ButtonTheme.of(context).padding.horizontal - 8),
           footerBuilder: (_) => const SizedBox(width: 70),
         ),
       ),
-
     );
   }
-
 }

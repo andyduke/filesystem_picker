@@ -8,7 +8,6 @@ import 'package:path/path.dart' as Path;
 import 'breadcrumbs.dart';
 
 class PathItem {
-
   final String text;
   final String path;
 
@@ -21,13 +20,11 @@ class PathItem {
   String toString() {
     return '$text: $path';
   }
-
 }
 
 class FilesystemPicker extends StatefulWidget {
-
   /// Open FileSystemPicker dialog
-  /// 
+  ///
   /// * [rootDirectory] specifies the root of the filesystem view.
   /// * [rootName] specifies the name of the filesystem view root in breadcrumbs, by default "Storage".
   /// * [fsType] specifies the type of filesystem view (folder and files, folder only or files only), by default `FilesystemType.all`.
@@ -48,23 +45,21 @@ class FilesystemPicker extends StatefulWidget {
     final Completer<String> _completer = new Completer<String>();
 
     Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (BuildContext context) {
-          return FilesystemPicker(
-            rootDirectory: rootDirectory,
-            rootName: rootName,
-            fsType: fsType,
-            pickText: pickText,
-            permissionText: permissionText,
-            title: title,
-            allowedExtensions: allowedExtensions,
-            onSelect: (String value) {
-              _completer.complete(value);
-              Navigator.of(context).pop();
-            },
-          );
-        }
-      ),
+      MaterialPageRoute(builder: (BuildContext context) {
+        return FilesystemPicker(
+          rootDirectory: rootDirectory,
+          rootName: rootName,
+          fsType: fsType,
+          pickText: pickText,
+          permissionText: permissionText,
+          title: title,
+          allowedExtensions: allowedExtensions,
+          onSelect: (String value) {
+            _completer.complete(value);
+            Navigator.of(context).pop();
+          },
+        );
+      }),
     );
 
     return _completer.future;
@@ -95,11 +90,9 @@ class FilesystemPicker extends StatefulWidget {
 
   @override
   _FilesystemPickerState createState() => _FilesystemPickerState();
-
 }
 
 class _FilesystemPickerState extends State<FilesystemPicker> {
-  
   bool permissionRequesting = true;
   bool permissionAllowed = false;
 
@@ -115,8 +108,10 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   }
 
   Future<void> _requestPermission() async {
-    Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-    if (!permissions.containsKey(PermissionGroup.storage) || permissions[PermissionGroup.storage] != PermissionStatus.granted) {
+    Map<PermissionGroup, PermissionStatus> permissions =
+        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    if (!permissions.containsKey(PermissionGroup.storage) ||
+        permissions[PermissionGroup.storage] != PermissionStatus.granted) {
       // print('File permission is denied');
     } else {
       permissionAllowed = true;
@@ -129,13 +124,16 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   void _setDirectory(Directory value) {
     directory = value;
-    
-    String dirPath = Path.relative(directory.path, from: Path.dirname(widget.rootDirectory.path));
+
+    String dirPath = Path.relative(directory.path,
+        from: Path.dirname(widget.rootDirectory.path));
     final List<String> items = dirPath.split(Platform.pathSeparator);
     pathItems = [];
 
     String rootItem = items.first;
-    String rootPath = Path.dirname(widget.rootDirectory.path) + Platform.pathSeparator + rootItem;
+    String rootPath = Path.dirname(widget.rootDirectory.path) +
+        Platform.pathSeparator +
+        rootItem;
     pathItems.add(PathItem(path: rootPath, text: widget.rootName ?? rootItem));
     items.removeAt(0);
 
@@ -146,9 +144,10 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       pathItems.add(PathItem(path: path, text: item));
     }
 
-    directoryName = ((directory.path == widget.rootDirectory.path) && (widget.rootName != null))
-      ? widget.rootName
-      : Path.basename(directory.path);
+    directoryName = ((directory.path == widget.rootDirectory.path) &&
+            (widget.rootName != null))
+        ? widget.rootName
+        : Path.basename(directory.path);
   }
 
   void _changeDirectory(Directory value) {
@@ -173,14 +172,17 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
             data: ThemeData(
               textTheme: TextTheme(
                 button: TextStyle(
-                  color: AppBarTheme.of(context).textTheme?.title?.color ?? Theme.of(context).primaryTextTheme?.title?.color
-                ),
+                    color: AppBarTheme.of(context).textTheme?.title?.color ??
+                        Theme.of(context).primaryTextTheme?.title?.color),
               ),
             ),
             child: Breadcrumbs<String>(
               items: (!permissionRequesting && permissionAllowed)
-                ? pathItems.map((path) => BreadcrumbItem<String>(text: path.text, data: path.path)).toList(growable: false)
-                : [],
+                  ? pathItems
+                      .map((path) => BreadcrumbItem<String>(
+                          text: path.text, data: path.path))
+                      .toList(growable: false)
+                  : [],
               onSelect: (String value) {
                 _changeDirectory(Directory(value));
               },
@@ -189,45 +191,54 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
           preferredSize: const Size.fromHeight(50),
         ),
       ),
-      body: 
-        permissionRequesting
+      body: permissionRequesting
           ? Center(child: CircularProgressIndicator())
-          : (
-              permissionAllowed
-                ? FilesystemList(
-                    isRoot: (directory.absolute.path == widget.rootDirectory.absolute.path),
-                    rootDirectory: directory,
-                    fsType: widget.fsType,
-                    allowedExtensions: widget.allowedExtensions,
-                    onChange: _changeDirectory,
-                    onSelect: widget.onSelect,
-                  )
-                : Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.all(20),
-                    child: Text(widget.permissionText ?? 'Access to the storage was not granted.', textScaleFactor: 1.2),
-                  )
-            ),
+          : (permissionAllowed
+              ? FilesystemList(
+                  isRoot: (directory.absolute.path ==
+                      widget.rootDirectory.absolute.path),
+                  rootDirectory: directory,
+                  fsType: widget.fsType,
+                  allowedExtensions: widget.allowedExtensions,
+                  onChange: _changeDirectory,
+                  onSelect: widget.onSelect,
+                )
+              : Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(20),
+                  child: Text(
+                      widget.permissionText ??
+                          'Access to the storage was not granted.',
+                      textScaleFactor: 1.2),
+                )),
       bottomNavigationBar: (widget.fsType == FilesystemType.folder)
-        ? Container(
-            height: 50,
-            child: BottomAppBar(
-              color: Theme.of(context).primaryColor,
-              child: Center(
-                child: FlatButton.icon(
-                  textColor: AppBarTheme.of(context).textTheme?.title?.color ?? Theme.of(context).primaryTextTheme?.title?.color,
-                  disabledTextColor: (AppBarTheme.of(context).textTheme?.title?.color ?? Theme.of(context).primaryTextTheme?.title?.color).withOpacity(0.5),
-                  icon: Icon(Icons.check_circle),
-                  label: (widget.pickText != null) ? Text(widget.pickText) : const SizedBox(),
-                  onPressed: (!permissionRequesting && permissionAllowed)
-                    ? () => widget.onSelect(directory.absolute.path)
-                    : null,
+          ? Container(
+              height: 50,
+              child: BottomAppBar(
+                color: Theme.of(context).primaryColor,
+                child: Center(
+                  child: FlatButton.icon(
+                    textColor:
+                        AppBarTheme.of(context).textTheme?.title?.color ??
+                            Theme.of(context).primaryTextTheme?.title?.color,
+                    disabledTextColor: (AppBarTheme.of(context)
+                                .textTheme
+                                ?.title
+                                ?.color ??
+                            Theme.of(context).primaryTextTheme?.title?.color)
+                        .withOpacity(0.5),
+                    icon: Icon(Icons.check_circle),
+                    label: (widget.pickText != null)
+                        ? Text(widget.pickText)
+                        : const SizedBox(),
+                    onPressed: (!permissionRequesting && permissionAllowed)
+                        ? () => widget.onSelect(directory.absolute.path)
+                        : null,
+                  ),
                 ),
               ),
-            ),
-          )
-        : null,
+            )
+          : null,
     );
   }
-
 }

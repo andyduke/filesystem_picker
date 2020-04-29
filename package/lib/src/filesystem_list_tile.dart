@@ -4,7 +4,6 @@ import 'common.dart';
 import 'package:path/path.dart' as Path;
 
 class FilesystemListTile extends StatelessWidget {
-
   static double iconSize = 32;
 
   final FilesystemType fsType;
@@ -25,8 +24,8 @@ class FilesystemListTile extends StatelessWidget {
       return Icon(
         Icons.folder,
         color: (Theme.of(context).brightness == Brightness.dark)
-          ? Theme.of(context).primaryIconTheme.color
-          : Theme.of(context).primaryColor,
+            ? Theme.of(context).primaryIconTheme.color
+            : Theme.of(context).primaryColor,
         size: iconSize,
       );
     } else {
@@ -39,7 +38,9 @@ class FilesystemListTile extends StatelessWidget {
     IconData icon = Icons.description;
 
     final _extension = filename.split(".").last;
-    if (_extension == "db" || _extension == "sqlite" || _extension == "sqlite3") {
+    if (_extension == "db" ||
+        _extension == "sqlite" ||
+        _extension == "sqlite3") {
       icon = Icons.dns;
     } else if (_extension == "jpg" ||
         _extension == "jpeg" ||
@@ -83,5 +84,4 @@ class FilesystemListTile extends StatelessWidget {
       },
     );
   }
-
 }

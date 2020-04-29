@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
 extension ListViewExtended on ListView {
-
   /// Creates a fixed-length scrollable linear array of list "items" separated
   /// by list item "separators".
   ///
@@ -72,7 +71,8 @@ extension ListViewExtended on ListView {
     assert(itemBuilder != null);
     assert(separatorBuilder != null);
     assert(itemCount != null && itemCount >= 0);
-    final int childCount = _computeSemanticChildCount(itemCount, headerBuilder, footerBuilder);
+    final int childCount =
+        _computeSemanticChildCount(itemCount, headerBuilder, footerBuilder);
 
     SliverChildBuilderDelegate childrenDelegate = SliverChildBuilderDelegate(
       (BuildContext context, int index) {
@@ -103,8 +103,8 @@ extension ListViewExtended on ListView {
       addSemanticIndexes: addSemanticIndexes,
       semanticIndexCallback: (Widget _, int index) {
         return index.isEven
-          ? ((( (headerBuilder != null) ? 1 : 0 ) + index) ~/ 2)
-          : null;
+            ? ((((headerBuilder != null) ? 1 : 0) + index) ~/ 2)
+            : null;
       },
     );
     return ListView.custom(
@@ -123,10 +123,10 @@ extension ListViewExtended on ListView {
   }
 
   // Helper method to compute the semantic child count for the separated constructor.
-  static int _computeSemanticChildCount(int itemCount, WidgetBuilder headerBuilder, WidgetBuilder footerBuilder) {
+  static int _computeSemanticChildCount(
+      int itemCount, WidgetBuilder headerBuilder, WidgetBuilder footerBuilder) {
     return math.max(0, itemCount * 2 - 1) +
-      ( (headerBuilder != null) ? 1 : 0 ) +
-      ( (footerBuilder != null) ? 1 : 0 );
+        ((headerBuilder != null) ? 1 : 0) +
+        ((footerBuilder != null) ? 1 : 0);
   }
-
 }

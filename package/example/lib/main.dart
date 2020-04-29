@@ -6,18 +6,15 @@ import 'package:path_provider/path_provider.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
-
   @override
   _MyAppState createState() => _MyAppState();
 
   static _MyAppState of(BuildContext context) {
     return context.findAncestorStateOfType<_MyAppState>();
   }
-
 }
 
 class _MyAppState extends State<MyApp> {
-
   Brightness _brightness = Brightness.light;
 
   Brightness get brightness => _brightness;
@@ -39,7 +36,6 @@ class _MyAppState extends State<MyApp> {
           buttonColor: Colors.teal,
           textTheme: ButtonTextTheme.accent,
         ),
-
         brightness: _brightness,
       ),
       home: DemoPage(),
@@ -53,7 +49,6 @@ class DemoPage extends StatefulWidget {
 }
 
 class _DemoPageState extends State<DemoPage> {
-
   Directory rootPath;
 
   String filePath;
@@ -96,9 +91,7 @@ class _DemoPageState extends State<DemoPage> {
     File file = File('$path');
     String contents = await file.readAsString();
 
-    Scaffold.of(context).showSnackBar(
-      SnackBar(content: Text(contents))
-    );
+    Scaffold.of(context).showSnackBar(SnackBar(content: Text(contents)));
 
     setState(() {
       filePath = path;
@@ -113,7 +106,7 @@ class _DemoPageState extends State<DemoPage> {
       fsType: FilesystemType.folder,
       pickText: 'Save file to this folder',
     );
-    
+
     setState(() {
       dirPath = path;
     });
@@ -131,20 +124,16 @@ class _DemoPageState extends State<DemoPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-
                 // Theme Brightness Switch Button
                 RaisedButton(
-                  child: Text(
-                    (appState.brightness == Brightness.light)
+                  child: Text((appState.brightness == Brightness.light)
                       ? 'Switch to Dark theme'
-                      : 'Switch to Light theme'
-                  ),
+                      : 'Switch to Light theme'),
                   onPressed: () {
                     appState.setThemeBrightness(
-                      appState.brightness == Brightness.light
-                        ? Brightness.dark
-                        : Brightness.light
-                    );
+                        appState.brightness == Brightness.light
+                            ? Brightness.dark
+                            : Brightness.light);
                   },
                 ),
 
@@ -168,9 +157,8 @@ class _DemoPageState extends State<DemoPage> {
 
                 RaisedButton(
                   child: Text('Save File'),
-                  onPressed: (rootPath != null)
-                    ? () => _pickDir(context)
-                    : null,
+                  onPressed:
+                      (rootPath != null) ? () => _pickDir(context) : null,
                 ),
 
                 Divider(height: 60),
@@ -193,11 +181,9 @@ class _DemoPageState extends State<DemoPage> {
 
                 RaisedButton(
                   child: Text('Open File'),
-                  onPressed: (rootPath != null)
-                    ? () => _openFile(context)
-                    : null,
+                  onPressed:
+                      (rootPath != null) ? () => _openFile(context) : null,
                 ),
-
               ],
             ),
           ),
@@ -205,5 +191,4 @@ class _DemoPageState extends State<DemoPage> {
       ),
     );
   }
-
 }
