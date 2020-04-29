@@ -43,6 +43,7 @@ String path = await FilesystemPicker.open(
   pickText: 'Save file to this folder',
 );
 ```
+![](https://github.com/andyduke/filesystem_picker/blob/master/screenshots/folder_pick.png)
 
 ## File pick example
 
@@ -55,3 +56,4 @@ String path = await FilesystemPicker.open(
   allowedExtensions: ['.txt'],
 );
 ```
+![](https://github.com/andyduke/filesystem_picker/blob/master/screenshots/file_pick.png)
