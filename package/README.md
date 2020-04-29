@@ -32,6 +32,15 @@ The method takes the following parameters:
 * **title** - specifies the text of the dialog title;
 * **allowedExtensions** - specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`.
 
+### Android permissions
+
+To access the filesystem in Android, you must specify access permissions in the `AndroidManifest.xml` file, for example:
+```xml
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+```
+
 ## Folder pick example
 
 ```dart
