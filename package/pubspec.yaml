@@ -12,7 +12,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  permission_handler: 3.0.0
+  path: ^1.6.4
+  permission_handler: ^3.0.0
 
 dev_dependencies:
   flutter_test:
