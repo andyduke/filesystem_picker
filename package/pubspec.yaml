@@ -1,0 +1,21 @@
+name: filesystem_picker
+description: FileSystem Picker Dialog.
+version: 1.0.0
+author: Andy Chentsov <chentsov@gmail.com>
+homepage: https://github.com/andyduke/filesystem_picker/tree/master/package
+repository: https://github.com/andyduke/filesystem_picker
+issue_tracker: https://github.com/andyduke/filesystem_picker/issues
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  permission_handler: 3.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:

@@ -1,0 +1,21 @@
+name: filesystem_picker_example
+description: Demonstrates how to use 'FileSystemPicker'.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.3.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  path_provider: ^1.1.0
+  filesystem_picker:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
