@@ -108,13 +108,10 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   }
 
   Future<void> _requestPermission() async {
-    Map<PermissionGroup, PermissionStatus> permissions =
-        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-    if (!permissions.containsKey(PermissionGroup.storage) ||
-        permissions[PermissionGroup.storage] != PermissionStatus.granted) {
-      // print('File permission is denied');
-    } else {
+    if (await Permission.storage.request().isGranted) {
       permissionAllowed = true;
+    } else {
+      // print('File permission is denied');
     }
 
     setState(() {
