@@ -86,6 +86,7 @@ class _DemoPageState extends State<DemoPage> {
       rootDirectory: rootPath,
       fsType: FilesystemType.file,
       allowedExtensions: ['.txt'],
+      folderColor: Colors.teal,
     );
 
     File file = File('$path');
@@ -105,6 +106,7 @@ class _DemoPageState extends State<DemoPage> {
       rootDirectory: rootPath,
       fsType: FilesystemType.folder,
       pickText: 'Save file to this folder',
+      folderColor: Colors.teal,
     );
 
     setState(() {
