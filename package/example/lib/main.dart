@@ -85,8 +85,8 @@ class _DemoPageState extends State<DemoPage> {
       context: context,
       rootDirectory: rootPath,
       fsType: FilesystemType.file,
-      allowedExtensions: ['.txt'],
       folderColor: Colors.teal,
+      allowedExtensions: ['.txt'],
     );
 
     File file = File('$path');
