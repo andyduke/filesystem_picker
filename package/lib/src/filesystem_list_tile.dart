@@ -8,6 +8,7 @@ class FilesystemListTile extends StatelessWidget {
 
   final FilesystemType fsType;
   final FileSystemEntity item;
+  final Color folderColor;
   final ValueChanged<Directory> onChange;
   final ValueSelected onSelect;
 
@@ -15,6 +16,7 @@ class FilesystemListTile extends StatelessWidget {
     Key key,
     this.fsType = FilesystemType.all,
     @required this.item,
+    this.folderColor,
     @required this.onChange,
     @required this.onSelect,
   }) : super(key: key);
@@ -23,9 +25,7 @@ class FilesystemListTile extends StatelessWidget {
     if (item is Directory) {
       return Icon(
         Icons.folder,
-        color: (Theme.of(context).brightness == Brightness.dark)
-            ? Theme.of(context).primaryIconTheme.color
-            : Theme.of(context).primaryColor,
+        color: folderColor ?? Theme.of(context).unselectedWidgetColor,
         size: iconSize,
       );
     } else {
