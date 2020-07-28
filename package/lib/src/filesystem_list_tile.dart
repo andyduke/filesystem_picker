@@ -77,11 +77,9 @@ class FilesystemListTile extends StatelessWidget {
       leading: _leading(context),
       trailing: _trailing(context),
       title: Text(Path.basename(item.path), textScaleFactor: 1.2),
-      onTap: () {
-        if (item is Directory) {
-          onChange(item);
-        }
-      },
+      onTap: (item is Directory)
+          ? () => onChange(item)
+          : null
     );
   }
 }
