@@ -40,6 +40,7 @@ class FilesystemPicker extends StatefulWidget {
     String pickText,
     String permissionText,
     String title,
+    Color folderColor,
     List<String> allowedExtensions,
   }) async {
     final Completer<String> _completer = new Completer<String>();
@@ -53,6 +54,7 @@ class FilesystemPicker extends StatefulWidget {
           pickText: pickText,
           permissionText: permissionText,
           title: title,
+          folderColor: folderColor,
           allowedExtensions: allowedExtensions,
           onSelect: (String value) {
             _completer.complete(value);
@@ -74,6 +76,7 @@ class FilesystemPicker extends StatefulWidget {
   final String pickText;
   final String permissionText;
   final String title;
+  final Color folderColor;
   final List<String> allowedExtensions;
 
   FilesystemPicker({
@@ -84,6 +87,7 @@ class FilesystemPicker extends StatefulWidget {
     this.pickText,
     this.permissionText,
     this.title,
+    this.folderColor,
     this.allowedExtensions,
     @required this.onSelect,
   }) : super(key: key);
@@ -196,6 +200,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                       widget.rootDirectory.absolute.path),
                   rootDirectory: directory,
                   fsType: widget.fsType,
+                  folderColor: widget.folderColor,
                   allowedExtensions: widget.allowedExtensions,
                   onChange: _changeDirectory,
                   onSelect: widget.onSelect,

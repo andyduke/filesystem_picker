@@ -1,6 +1,7 @@
 ## 1.0.1
 
 * Remove ripple effect on file selection tile
+* Added optional folder icon color
 
 ## 1.0.0+2
 
