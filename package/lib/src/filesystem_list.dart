@@ -9,7 +9,7 @@ class FilesystemList extends StatelessWidget {
   final bool isRoot;
   final Directory rootDirectory;
   final FilesystemType fsType;
-  final Color folderColor;
+  final Color folderIconColor;
   final List<String> allowedExtensions;
   final ValueChanged<Directory> onChange;
   final ValueSelected onSelect;
@@ -19,7 +19,7 @@ class FilesystemList extends StatelessWidget {
     this.isRoot = false,
     @required this.rootDirectory,
     this.fsType = FilesystemType.all,
-    this.folderColor,
+    this.folderIconColor,
     this.allowedExtensions,
     @required this.onChange,
     @required this.onSelect,
@@ -81,7 +81,7 @@ class FilesystemList extends StatelessWidget {
               return FilesystemListTile(
                 fsType: fsType,
                 item: item,
-                folderColor: folderColor,
+                folderIconColor: folderIconColor,
                 onChange: onChange,
                 onSelect: onSelect,
               );

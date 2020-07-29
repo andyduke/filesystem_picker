@@ -30,7 +30,7 @@ The method takes the following parameters:
 * **pickText** - specifies the text for the folder selection button (only for `fsType` = `FilesystemType.folder`);
 * **permissionText** - specifies the text of the message that there is no permission to access the storage, by default: "Access to the storage was not granted.";
 * **title** - specifies the text of the dialog title;
-* **folderColor** - specifies the folder icon color;
+* **folderIconColor** - specifies the folder icon color;
 * **allowedExtensions** - specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`.
 
 ### Android permissions
@@ -51,7 +51,7 @@ String path = await FilesystemPicker.open(
   rootDirectory: rootPath,
   fsType: FilesystemType.folder,
   pickText: 'Save file to this folder',
-  folderColor: Colors.teal,
+  folderIconColor: Colors.teal,
 );
 ```
 ![](https://github.com/andyduke/filesystem_picker/blob/master/screenshots/folder_pick.png)
@@ -64,7 +64,7 @@ String path = await FilesystemPicker.open(
   context: context,
   rootDirectory: rootPath,
   fsType: FilesystemType.file,
-  folderColor: Colors.teal,
+  folderIconColor: Colors.teal,
   allowedExtensions: ['.txt'],
 );
 ```
