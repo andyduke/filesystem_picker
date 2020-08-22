@@ -13,6 +13,7 @@ class FilesystemList extends StatelessWidget {
   final List<String> allowedExtensions;
   final ValueChanged<Directory> onChange;
   final ValueSelected onSelect;
+  final FileTileSelectMode fileTileSelectMode;
 
   FilesystemList({
     Key key,
@@ -23,7 +24,9 @@ class FilesystemList extends StatelessWidget {
     this.allowedExtensions,
     @required this.onChange,
     @required this.onSelect,
-  }) : super(key: key);
+    @required this.fileTileSelectMode,
+  })  : assert(fileTileSelectMode != null),
+        super(key: key);
 
   Future<List<FileSystemEntity>> _dirContents() {
     var files = <FileSystemEntity>[];
@@ -84,6 +87,7 @@ class FilesystemList extends StatelessWidget {
                 folderIconColor: folderIconColor,
                 onChange: onChange,
                 onSelect: onSelect,
+                fileTileSelectMode: fileTileSelectMode,
               );
             },
           );
