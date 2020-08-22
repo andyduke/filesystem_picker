@@ -73,13 +73,14 @@ class FilesystemListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      key: Key(item.absolute.path),
-      leading: _leading(context),
-      trailing: _trailing(context),
-      title: Text(Path.basename(item.path), textScaleFactor: 1.2),
-      onTap: (item is Directory)
-          ? () => onChange(item)
-          : null
-    );
+        key: Key(item.absolute.path),
+        leading: _leading(context),
+        trailing: _trailing(context),
+        title: Text(Path.basename(item.path), textScaleFactor: 1.2),
+        onTap: (item is Directory)
+            ? () => onChange(item)
+            : fsType == FilesystemType.file
+                ? () => onSelect(item.absolute.path)
+                : null);
   }
 }
