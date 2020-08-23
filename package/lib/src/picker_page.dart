@@ -32,6 +32,7 @@ class FilesystemPicker extends StatefulWidget {
   /// * [permissionText] specifies the text of the message that there is no permission to access the storage, by default: "Access to the storage was not granted.".
   /// * [title] specifies the text of the dialog title.
   /// * [allowedExtensions] specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`
+  /// * [fileTileSelectMode] specifies how to files can be selected (either tapping on the whole tile or only on trailing button). (default depends on [fsType])
   static Future<String> open({
     @required BuildContext context,
     @required Directory rootDirectory,
@@ -42,6 +43,7 @@ class FilesystemPicker extends StatefulWidget {
     String title,
     Color folderIconColor,
     List<String> allowedExtensions,
+    FileTileSelectMode fileTileSelectMode,
   }) async {
     final Completer<String> _completer = new Completer<String>();
 
@@ -60,6 +62,10 @@ class FilesystemPicker extends StatefulWidget {
             _completer.complete(value);
             Navigator.of(context).pop();
           },
+          fileTileSelectMode: fileTileSelectMode ??
+              (fsType == FilesystemType.file
+                  ? FileTileSelectMode.wholeTile
+                  : FileTileSelectMode.checkButton),
         );
       }),
     );
@@ -78,6 +84,7 @@ class FilesystemPicker extends StatefulWidget {
   final String title;
   final Color folderIconColor;
   final List<String> allowedExtensions;
+  final FileTileSelectMode fileTileSelectMode;
 
   FilesystemPicker({
     Key key,
@@ -90,7 +97,9 @@ class FilesystemPicker extends StatefulWidget {
     this.folderIconColor,
     this.allowedExtensions,
     @required this.onSelect,
-  }) : super(key: key);
+    @required this.fileTileSelectMode,
+  })  : assert(fileTileSelectMode != null),
+        super(key: key);
 
   @override
   _FilesystemPickerState createState() => _FilesystemPickerState();
@@ -204,6 +213,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                   allowedExtensions: widget.allowedExtensions,
                   onChange: _changeDirectory,
                   onSelect: widget.onSelect,
+                  fileTileSelectMode: widget.fileTileSelectMode,
                 )
               : Container(
                   alignment: Alignment.center,

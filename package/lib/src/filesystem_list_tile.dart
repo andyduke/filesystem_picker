@@ -11,6 +11,7 @@ class FilesystemListTile extends StatelessWidget {
   final Color folderIconColor;
   final ValueChanged<Directory> onChange;
   final ValueSelected onSelect;
+  final FileTileSelectMode fileTileSelectMode;
 
   FilesystemListTile({
     Key key,
@@ -19,7 +20,9 @@ class FilesystemListTile extends StatelessWidget {
     this.folderIconColor,
     @required this.onChange,
     @required this.onSelect,
-  }) : super(key: key);
+    @required this.fileTileSelectMode,
+  })  : assert(fileTileSelectMode != null),
+        super(key: key);
 
   Widget _leading(BuildContext context) {
     if (item is Directory) {
@@ -73,13 +76,15 @@ class FilesystemListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      key: Key(item.absolute.path),
-      leading: _leading(context),
-      trailing: _trailing(context),
-      title: Text(Path.basename(item.path), textScaleFactor: 1.2),
-      onTap: (item is Directory)
-          ? () => onChange(item)
-          : null
-    );
+        key: Key(item.absolute.path),
+        leading: _leading(context),
+        trailing: _trailing(context),
+        title: Text(Path.basename(item.path), textScaleFactor: 1.2),
+        onTap: (item is Directory)
+            ? () => onChange(item)
+            : fsType == FilesystemType.file &&
+                    fileTileSelectMode == FileTileSelectMode.wholeTile
+                ? () => onSelect(item.absolute.path)
+                : null);
   }
 }
