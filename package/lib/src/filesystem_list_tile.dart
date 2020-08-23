@@ -60,7 +60,7 @@ class FilesystemListTile extends StatelessWidget {
 
   Widget _trailing(BuildContext context) {
     if ((fsType == FilesystemType.all) ||
-        ((fsType == FilesystemType.file) && (item is File))) {
+        ((fsType == FilesystemType.file) && (item is File) && (fileTileSelectMode != FileTileSelectMode.wholeTile))) {
       return InkResponse(
         child: Icon(
           Icons.check_circle,
@@ -82,9 +82,8 @@ class FilesystemListTile extends StatelessWidget {
         title: Text(Path.basename(item.path), textScaleFactor: 1.2),
         onTap: (item is Directory)
             ? () => onChange(item)
-            : fsType == FilesystemType.file &&
-                    fileTileSelectMode == FileTileSelectMode.wholeTile
+            : ((fsType == FilesystemType.file && fileTileSelectMode == FileTileSelectMode.wholeTile)
                 ? () => onSelect(item.absolute.path)
-                : null);
+                : null));
   }
 }

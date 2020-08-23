@@ -36,6 +36,7 @@ class _MyAppState extends State<MyApp> {
           buttonColor: Colors.teal,
           textTheme: ButtonTextTheme.accent,
         ),
+        toggleableActiveColor: Colors.teal,
         brightness: _brightness,
       ),
       home: DemoPage(),
@@ -53,6 +54,8 @@ class _DemoPageState extends State<DemoPage> {
 
   String filePath;
   String dirPath;
+
+  FileTileSelectMode filePickerSelectMode = FileTileSelectMode.checkButton;
 
   @override
   void initState() {
@@ -87,6 +90,7 @@ class _DemoPageState extends State<DemoPage> {
       fsType: FilesystemType.file,
       folderIconColor: Colors.teal,
       allowedExtensions: ['.txt'],
+      fileTileSelectMode: filePickerSelectMode,
     );
 
     File file = File('$path');
@@ -186,6 +190,21 @@ class _DemoPageState extends State<DemoPage> {
                   onPressed:
                       (rootPath != null) ? () => _openFile(context) : null,
                 ),
+
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: CheckboxListTile(
+                    title: Text('Whole item selection mode'),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    value: filePickerSelectMode == FileTileSelectMode.wholeTile,
+                    onChanged: (bool newValue) => {
+                      setState(() {
+                        filePickerSelectMode = newValue ? FileTileSelectMode.wholeTile : FileTileSelectMode.checkButton;
+                      })
+                    },                    
+                  ),
+                ),
+
               ],
             ),
           ),

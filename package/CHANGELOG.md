@@ -1,3 +1,7 @@
+## 1.0.2
+
+* Added file item selection mode (checkmark or whole tile)
+
 ## 1.0.1
 
 * Remove ripple effect on file selection tile

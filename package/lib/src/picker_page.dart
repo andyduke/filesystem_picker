@@ -43,7 +43,7 @@ class FilesystemPicker extends StatefulWidget {
     String title,
     Color folderIconColor,
     List<String> allowedExtensions,
-    FileTileSelectMode fileTileSelectMode,
+    FileTileSelectMode fileTileSelectMode = FileTileSelectMode.checkButton,
   }) async {
     final Completer<String> _completer = new Completer<String>();
 
@@ -62,10 +62,7 @@ class FilesystemPicker extends StatefulWidget {
             _completer.complete(value);
             Navigator.of(context).pop();
           },
-          fileTileSelectMode: fileTileSelectMode ??
-              (fsType == FilesystemType.file
-                  ? FileTileSelectMode.wholeTile
-                  : FileTileSelectMode.checkButton),
+          fileTileSelectMode: fileTileSelectMode ?? FileTileSelectMode.checkButton,
         );
       }),
     );

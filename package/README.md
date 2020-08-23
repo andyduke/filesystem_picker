@@ -31,7 +31,8 @@ The method takes the following parameters:
 * **permissionText** - specifies the text of the message that there is no permission to access the storage, by default: "Access to the storage was not granted.";
 * **title** - specifies the text of the dialog title;
 * **folderIconColor** - specifies the folder icon color;
-* **allowedExtensions** - specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`.
+* **allowedExtensions** - specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`;
+* **fileTileSelectMode** - specifies the mode for selecting the file item (checkmark on the right or whole tile), by default: checkmark.
 
 ### Android permissions
 
@@ -66,6 +67,7 @@ String path = await FilesystemPicker.open(
   fsType: FilesystemType.file,
   folderIconColor: Colors.teal,
   allowedExtensions: ['.txt'],
+  fileTileSelectMode: FileTileSelectMode.wholeTile,
 );
 ```
 ![](https://github.com/andyduke/filesystem_picker/blob/master/screenshots/file_pick.png)
