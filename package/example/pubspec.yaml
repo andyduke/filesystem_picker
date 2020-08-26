@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   path_provider: ^1.1.0
+  permission_handler: ^5.0.1+1
   filesystem_picker:
     path: ../
 

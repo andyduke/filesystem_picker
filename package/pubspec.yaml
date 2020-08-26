@@ -13,7 +13,6 @@ dependencies:
   flutter:
     sdk: flutter
   path: ^1.6.4
-  permission_handler: ^5.0.1
 
 dev_dependencies:
   flutter_test:

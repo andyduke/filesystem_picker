@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
@@ -91,6 +92,8 @@ class _DemoPageState extends State<DemoPage> {
       folderIconColor: Colors.teal,
       allowedExtensions: ['.txt'],
       fileTileSelectMode: filePickerSelectMode,
+      requestPermission: () async =>
+          await Permission.storage.request().isGranted,
     );
 
     File file = File('$path');
@@ -111,6 +114,8 @@ class _DemoPageState extends State<DemoPage> {
       fsType: FilesystemType.folder,
       pickText: 'Save file to this folder',
       folderIconColor: Colors.teal,
+      requestPermission: () async =>
+          await Permission.storage.request().isGranted,
     );
 
     setState(() {
@@ -199,12 +204,13 @@ class _DemoPageState extends State<DemoPage> {
                     value: filePickerSelectMode == FileTileSelectMode.wholeTile,
                     onChanged: (bool newValue) => {
                       setState(() {
-                        filePickerSelectMode = newValue ? FileTileSelectMode.wholeTile : FileTileSelectMode.checkButton;
+                        filePickerSelectMode = newValue
+                            ? FileTileSelectMode.wholeTile
+                            : FileTileSelectMode.checkButton;
                       })
-                    },                    
+                    },
                   ),
                 ),
-
               ],
             ),
           ),

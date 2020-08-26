@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'common.dart';
 import 'filesystem_list.dart';
 import 'package:path/path.dart' as Path;
@@ -33,6 +32,7 @@ class FilesystemPicker extends StatefulWidget {
   /// * [title] specifies the text of the dialog title.
   /// * [allowedExtensions] specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`
   /// * [fileTileSelectMode] specifies how to files can be selected (either tapping on the whole tile or only on trailing button). (default depends on [fsType])
+  /// * [requestPermission] if specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
   static Future<String> open({
     @required BuildContext context,
     @required Directory rootDirectory,
@@ -44,6 +44,7 @@ class FilesystemPicker extends StatefulWidget {
     Color folderIconColor,
     List<String> allowedExtensions,
     FileTileSelectMode fileTileSelectMode = FileTileSelectMode.checkButton,
+    RequestPermission requestPermission,
   }) async {
     final Completer<String> _completer = new Completer<String>();
 
@@ -62,7 +63,9 @@ class FilesystemPicker extends StatefulWidget {
             _completer.complete(value);
             Navigator.of(context).pop();
           },
-          fileTileSelectMode: fileTileSelectMode ?? FileTileSelectMode.checkButton,
+          fileTileSelectMode:
+              fileTileSelectMode ?? FileTileSelectMode.checkButton,
+          requestPermission: requestPermission,
         );
       }),
     );
@@ -82,6 +85,7 @@ class FilesystemPicker extends StatefulWidget {
   final Color folderIconColor;
   final List<String> allowedExtensions;
   final FileTileSelectMode fileTileSelectMode;
+  final RequestPermission requestPermission;
 
   FilesystemPicker({
     Key key,
@@ -95,6 +99,7 @@ class FilesystemPicker extends StatefulWidget {
     this.allowedExtensions,
     @required this.onSelect,
     @required this.fileTileSelectMode,
+    this.requestPermission,
   })  : assert(fileTileSelectMode != null),
         super(key: key);
 
@@ -118,15 +123,17 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   }
 
   Future<void> _requestPermission() async {
-    if (await Permission.storage.request().isGranted) {
+    final requestPermission = widget.requestPermission;
+    if (requestPermission == null || await requestPermission()) {
       permissionAllowed = true;
     } else {
       // print('File permission is denied');
     }
 
-    setState(() {
-      permissionRequesting = false;
-    });
+    permissionRequesting = false;
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void _setDirectory(Directory value) {
