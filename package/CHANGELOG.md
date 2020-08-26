@@ -1,3 +1,10 @@
+## 1.0.3
+
+**Breaking change**
+FileSystem Picker no longer checks storage access permissions. If you need it, you must do it via a callback.
+
+* The explicit dependency on permission_handler has been removed and replaced with a callback.
+
 ## 1.0.2
 
 * Added file item selection mode (checkmark or whole tile)

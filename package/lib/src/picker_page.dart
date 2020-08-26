@@ -126,8 +126,6 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     final requestPermission = widget.requestPermission;
     if (requestPermission == null || await requestPermission()) {
       permissionAllowed = true;
-    } else {
-      // print('File permission is denied');
     }
 
     permissionRequesting = false;

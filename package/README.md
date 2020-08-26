@@ -11,7 +11,7 @@ In your flutter project add the dependency:
 ```dart
 dependencies:
   ...
-  filesystem_picker: ^1.0.1
+  filesystem_picker: ^1.0.3
 ```
 
 Import package:
@@ -32,7 +32,8 @@ The method takes the following parameters:
 * **title** - specifies the text of the dialog title;
 * **folderIconColor** - specifies the folder icon color;
 * **allowedExtensions** - specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`;
-* **fileTileSelectMode** - specifies the mode for selecting the file item (checkmark on the right or whole tile), by default: checkmark.
+* **fileTileSelectMode** - specifies the mode for selecting the file item (checkmark on the right or whole tile), by default: checkmark;
+* **requestPermission** - specifies the callback to request storage permission, callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
 
 ### Android permissions
 

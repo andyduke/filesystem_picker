@@ -1,7 +1,7 @@
 name: filesystem_picker_example
 description: Demonstrates how to use 'FileSystemPicker'.
 
-version: 1.0.0+1
+version: 1.0.3
 
 environment:
   sdk: ">=2.3.0 <3.0.0"
