@@ -1,3 +1,7 @@
+## 1.0.4
+
+Bug fix: `FilesystemPicker.open()` now returns null if nothing was selected.
+
 ## 1.0.3
 
 **Breaking change**

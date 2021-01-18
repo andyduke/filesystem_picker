@@ -96,10 +96,12 @@ class _DemoPageState extends State<DemoPage> {
           await Permission.storage.request().isGranted,
     );
 
-    File file = File('$path');
-    String contents = await file.readAsString();
+    if (path != null) {
+      File file = File('$path');
+      String contents = await file.readAsString();
 
-    Scaffold.of(context).showSnackBar(SnackBar(content: Text(contents)));
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text(contents)));
+    }
 
     setState(() {
       filePath = path;

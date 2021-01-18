@@ -23,6 +23,8 @@ class PathItem {
 
 class FilesystemPicker extends StatefulWidget {
   /// Open FileSystemPicker dialog
+  /// 
+  /// Returns null if nothing was selected.
   ///
   /// * [rootDirectory] specifies the root of the filesystem view.
   /// * [rootName] specifies the name of the filesystem view root in breadcrumbs, by default "Storage".
@@ -46,9 +48,7 @@ class FilesystemPicker extends StatefulWidget {
     FileTileSelectMode fileTileSelectMode = FileTileSelectMode.checkButton,
     RequestPermission requestPermission,
   }) async {
-    final Completer<String> _completer = new Completer<String>();
-
-    Navigator.of(context).push(
+    return Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (BuildContext context) {
         return FilesystemPicker(
           rootDirectory: rootDirectory,
@@ -60,8 +60,7 @@ class FilesystemPicker extends StatefulWidget {
           folderIconColor: folderIconColor,
           allowedExtensions: allowedExtensions,
           onSelect: (String value) {
-            _completer.complete(value);
-            Navigator.of(context).pop();
+            Navigator.of(context).pop<String>(value);
           },
           fileTileSelectMode:
               fileTileSelectMode ?? FileTileSelectMode.checkButton,
@@ -69,8 +68,6 @@ class FilesystemPicker extends StatefulWidget {
         );
       }),
     );
-
-    return _completer.future;
   }
 
   // ---
