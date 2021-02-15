@@ -1,4 +1,4 @@
-name: filesystem_picker
+name: filesystem_picker_plugin
 description: FileSystem file or folder picker dialog. Allows the user to browse the file system and pick a folder or file.
 version: 2.0.0-nullsafety.0
 author: Andy Chentsov <chentsov@gmail.com>
@@ -18,4 +18,16 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+# The following section is specific to Flutter.
 flutter:
+  # This section identifies this Flutter project as a plugin project.
+  # The 'pluginClass' and Android 'package' identifiers should not ordinarily
+  # be modified. They are used by the tooling to maintain consistency when
+  # adding or updating assets for this project.
+  plugin:
+    platforms:
+      android:
+        package: com.amazingsoftworks.filesystem_picker_plugin
+        pluginClass: FilesystemPickerPlugin
+      ios:
+        pluginClass: FilesystemPickerPlugin

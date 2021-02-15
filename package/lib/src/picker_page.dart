@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:filesystem_picker/src/platform.dart';
+import 'package:filesystem_picker_plugin/src/platform.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -111,6 +111,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   bool useRootSelector = false;
   bool loadingFSE = true;
   bool toggleSelectAll = false;
+  bool failedLoadStorageInfo = false;
 
   final FileSystemListController fileSystemListController = FileSystemListController();
   final StackList<Directory> history = StackList<Directory>();
@@ -118,10 +119,10 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       String,
       FileSystemEntityType>();
 
-  List<StorageInfo> _storageInfo;
+  final List<StorageInfo> _storageInfo = [];
   Directory directory;
   String directoryName;
-  List<PathItem> pathItems;
+  final List<PathItem> pathItems = [];
 
   Directory rootDirectory;
   String rootName = "";
@@ -133,11 +134,11 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     if (widget.fixedRootDirectory != null) {
       rootDirectory = widget.fixedRootDirectory;
       useRootSelector = false;
+      setRootName();
     } else {
       useRootSelector = true;
+      _getStoragesInfo();
     }
-    setRootName();
-    _setDirectory(rootDirectory);
   }
 
   Future<void> _requestPermission() async {
@@ -151,6 +152,21 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       setState(() {});
     }
   }
+
+  Future<void> _getStoragesInfo() async {
+    try {
+      _storageInfo.clear();
+      _storageInfo.addAll(await PlatformMethods.getStorageInfo());
+      if (rootDirectory == null) {
+        rootDirectory = Directory(_storageInfo[0].rootDir);
+        setRootName();
+        _setDirectory(rootDirectory);
+      }
+    } catch (err) {
+      failedLoadStorageInfo = true;
+    }
+  }
+
 
   void setRootName() {
     if (useRootSelector && rootDirectory != null) {
@@ -170,23 +186,12 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       loadingFSE = true;
     });
 
-    if (value == null) {
-      if (_storageInfo == null || _storageInfo.isEmpty) {
-        try {
-          _storageInfo = await PlatformMethods.getStorageInfo();
-        } on PlatformException {}
-      }
-
-      value = rootDirectory = Directory(_storageInfo[0].rootDir);
-      setRootName();
-    }
-
     directory = value;
 
     String dirPath = Path.relative(
         directory.path, from: Path.dirname(rootDirectory.path));
     final List<String> items = dirPath.split(Platform.pathSeparator);
-    pathItems = [];
+    pathItems.clear();
 
     String rootItem = items.first;
     String rootPath = Path.dirname(rootDirectory.path) +
@@ -302,187 +307,169 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
           ),
           drawerEnableOpenDragGesture: false,
           drawer: useRootSelector ? Drawer(
-            child: FutureBuilder<List<StorageInfo>>(
-              future: () async {
-                if (_storageInfo == null || _storageInfo.isEmpty) {
-                  try {
-                    _storageInfo = await PlatformMethods.getStorageInfo();
-                  } on PlatformException {}
-                }
+            child: _storageInfo.length == 0 && failedLoadStorageInfo == false ? Center(child: CircularProgressIndicator(),)
+            : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Material(
+                  child: SafeArea(
+                    child: Container(
+                      margin: EdgeInsets.only(top: 40),
+                      child: ListTile(
+                        title: Text('Select Storage',
+                            style: Theme
+                                .of(context)
+                                .primaryTextTheme
+                                .headline6),
+                        leading: Icon(Icons.storage, color: Theme
+                            .of(context)
+                            .primaryTextTheme
+                            .headline6
+                            .color),
+                      ),
+                    ),
+                  ),
+                  color: Theme
+                      .of(context)
+                      .primaryColor,
+                ),
+                Flexible(
+                    fit: FlexFit.loose,
+                    child: ListView(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      children: () {
+                        List<Widget> chs = [];
 
-                return _storageInfo;
-              }(),
-              builder: (context, AsyncSnapshot<List<StorageInfo>> snapshot) {
-                if (snapshot.hasData) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Material(
-                        child: SafeArea(
-                          child: Container(
-                            margin: EdgeInsets.only(top: 40),
-                            child: ListTile(
-                              title: Text('Select Storage',
-                                  style: Theme
-                                      .of(context)
-                                      .primaryTextTheme
-                                      .headline6),
-                              leading: Icon(Icons.storage, color: Theme
+                        bool internalFirst = true;
+                        _storageInfo.forEach((ss) {
+                          chs.add(RadioListTile<int>(
+                            secondary: selectedPaths.keys.any((ee) =>
+                                ee.startsWith(ss.rootDir)) ? Icon(
+                                Icons.library_add_check, color: Theme
+                                .of(context)
+                                .primaryColorDark) : null,
+                            title: Text(
+                                internalFirst ? "Internal Storage" : Path
+                                    .basename(ss.rootDir)),
+                            subtitle: Text(
+                                "Free Space: " +
+                                    ss.availableGB.toString() +
+                                    " GB"),
+                            value: _storageInfo.indexOf(ss),
+                            groupValue: _storageInfo.map((e) => e.rootDir)
+                                .toList()
+                                .indexOf(rootDirectory.path),
+                            onChanged: (val) {
+                              rootDirectory =
+                                  Directory(_storageInfo[val].rootDir);
+                              setRootName();
+                              _setDirectory(rootDirectory);
+                              Navigator.pop(context);
+                            },
+                          ));
+                          internalFirst = false;
+                        });
+
+                        return chs;
+                      }(),
+                    )
+                ),
+                Visibility(
+                    visible: selectedPaths.length > 0,
+                    child: Material(
+                      child: SafeArea(
+                        child: ListTile(
+                          leading: Icon(
+                              Icons.library_add_check, color: Theme
+                              .of(context)
+                              .primaryTextTheme
+                              .headline6
+                              .color),
+                          title: Text("Selected " +
+                              (widget.fsType == FilesystemType.all
+                                  ? "Items"
+                                  : widget.fsType == FilesystemType.file
+                                  ? "Files"
+                                  : "Directories"),
+                              style: Theme
                                   .of(context)
                                   .primaryTextTheme
-                                  .headline6
-                                  .color),
-                            ),
-                          ),
+                                  .headline6),
                         ),
-                        color: Theme
-                            .of(context)
-                            .primaryColor,
                       ),
-                      Flexible(
-                          fit: FlexFit.loose,
-                          child: ListView(
-                            padding: EdgeInsets.zero,
-                            shrinkWrap: true,
-                            children: () {
-                              List<Widget> chs = [];
-
-                              bool internalFirst = true;
-                              _storageInfo.forEach((ss) {
-                                chs.add(RadioListTile<int>(
-                                  secondary: selectedPaths.keys.any((ee) =>
-                                      ee.startsWith(ss.rootDir)) ? Icon(
-                                      Icons.library_add_check, color: Theme
-                                      .of(context)
-                                      .primaryColorDark) : null,
-                                  title: Text(
-                                      internalFirst ? "Internal Storage" : Path
-                                          .basename(ss.rootDir)),
-                                  subtitle: Text(
-                                      "Free Space: " +
-                                          ss.availableGB.toString() +
-                                          " GB"),
-                                  value: _storageInfo.indexOf(ss),
-                                  groupValue: _storageInfo.map((e) => e.rootDir)
-                                      .toList()
-                                      .indexOf(rootDirectory.path),
-                                  onChanged: (val) {
-                                    rootDirectory =
-                                        Directory(_storageInfo[val].rootDir);
-                                    setRootName();
-                                    _setDirectory(rootDirectory);
-                                    Navigator.pop(context);
-                                  },
-                                ));
-                                internalFirst = false;
-                              });
-
-                              return chs;
-                            }(),
-                          )
-                      ),
-                      Visibility(
-                          visible: selectedPaths.length > 0,
-                          child: Material(
-                            child: SafeArea(
-                              child: ListTile(
-                                leading: Icon(
-                                    Icons.library_add_check, color: Theme
-                                    .of(context)
-                                    .primaryTextTheme
-                                    .headline6
-                                    .color),
-                                title: Text("Selected " +
-                                    (widget.fsType == FilesystemType.all
-                                        ? "Items"
-                                        : widget.fsType == FilesystemType.file
-                                        ? "Files"
-                                        : "Directories"),
-                                    style: Theme
-                                        .of(context)
-                                        .primaryTextTheme
-                                        .headline6),
-                              ),
-                            ),
-                            color: Theme
+                      color: Theme
+                          .of(context)
+                          .primaryColor,
+                    )),
+                Flexible(
+                    fit: FlexFit.tight,
+                    child: ListView(
+                      padding: EdgeInsets.zero,
+                      children: () {
+                        var chs = <Widget>[];
+                        selectedPaths.forEach((key, value) {
+                          chs.add(ListTile(
+                            leading: value == FileSystemEntityType.file
+                                ? fileIcon(key, Theme
                                 .of(context)
-                                .primaryColor,
-                          )),
-                      Flexible(
-                          fit: FlexFit.tight,
-                          child: ListView(
-                            padding: EdgeInsets.zero,
-                            children: () {
-                              var chs = <Widget>[];
-                              selectedPaths.forEach((key, value) {
-                                chs.add(ListTile(
-                                  leading: value == FileSystemEntityType.file
-                                      ? fileIcon(key, Theme
-                                      .of(context)
-                                      .primaryColor)
-                                      : Icon(
-                                    Icons.folder,
-                                    color: Theme
-                                        .of(context)
-                                        .primaryColor,
-                                    size: iconSize,
-                                  ),
-                                  title: Text(Path.basename(key)),
-                                  onTap: () {
-                                    if (key.startsWith(
-                                        rootDirectory.absolute.path) == false) {
-                                      rootDirectory = Directory(_storageInfo
-                                          .firstWhere((ss) =>
-                                          key.startsWith(ss.rootDir))
-                                          .rootDir);
-                                      setRootName();
-                                    }
-                                    _changeDirectory(Directory(
-                                        key == rootDirectory.absolute.path
-                                            ? key
-                                            : Path.dirname(key)));
-                                    Navigator.pop(context);
-                                  },
-                                ));
-                                if (selectedPaths.length > 1) {
-                                  chs.add(fseHBorder);
-                                }
-                              });
-                              return chs;
-                            }(),
-                          )
-                      ),
-                      Visibility(
-                          visible: selectedPaths.length > 1,
-                          child: Material(
-                            child: ListTile(
-                              title: Text("Count:",
-                                  style: Theme
-                                      .of(context)
-                                      .primaryTextTheme
-                                      .headline6),
-                              trailing: Text(selectedPaths.length.toString(),
-                                  style: Theme
-                                      .of(context)
-                                      .primaryTextTheme
-                                      .headline6),
+                                .primaryColor)
+                                : Icon(
+                              Icons.folder,
+                              color: Theme
+                                  .of(context)
+                                  .primaryColor,
+                              size: iconSize,
                             ),
-                            color: Theme
+                            title: Text(Path.basename(key)),
+                            onTap: () {
+                              if (key.startsWith(
+                                  rootDirectory.absolute.path) == false) {
+                                rootDirectory = Directory(_storageInfo
+                                    .firstWhere((ss) =>
+                                    key.startsWith(ss.rootDir))
+                                    .rootDir);
+                                setRootName();
+                              }
+                              _changeDirectory(Directory(
+                                  key == rootDirectory.absolute.path
+                                      ? key
+                                      : Path.dirname(key)));
+                              Navigator.pop(context);
+                            },
+                          ));
+                          if (selectedPaths.length > 1) {
+                            chs.add(fseHBorder);
+                          }
+                        });
+                        return chs;
+                      }(),
+                    )
+                ),
+                Visibility(
+                    visible: selectedPaths.length > 1,
+                    child: Material(
+                      child: ListTile(
+                        title: Text("Count:",
+                            style: Theme
                                 .of(context)
-                                .primaryColor,
-                          )),
-                    ],
-                  );
-                }
-
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
+                                .primaryTextTheme
+                                .headline6),
+                        trailing: Text(selectedPaths.length.toString(),
+                            style: Theme
+                                .of(context)
+                                .primaryTextTheme
+                                .headline6),
+                      ),
+                      color: Theme
+                          .of(context)
+                          .primaryColor,
+                    )),
+              ],
             ),
           ) : null,
-          body: permissionRequesting || loadingFSE
+          body: permissionRequesting || loadingFSE || rootDirectory == null
               ? Center(child: CircularProgressIndicator())
               : (permissionAllowed
               ? FilesystemList(
