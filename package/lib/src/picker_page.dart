@@ -187,7 +187,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   }
 
   void _changeDirectory(Directory value) {
-    if (directory != value) {
+    if (directory.absolute.path != value.absolute.path) {
       setState(() {
         _setDirectory(value);
       });
