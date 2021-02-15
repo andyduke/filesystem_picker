@@ -72,10 +72,10 @@ extension ListViewExtended on ListView {
     assert(separatorBuilder != null);
     assert(itemCount != null && itemCount >= 0);
     final int childCount =
-        _computeSemanticChildCount(itemCount, headerBuilder, footerBuilder);
+    _computeSemanticChildCount(itemCount, headerBuilder, footerBuilder);
 
     SliverChildBuilderDelegate childrenDelegate = SliverChildBuilderDelegate(
-      (BuildContext context, int index) {
+          (BuildContext context, int index) {
         // final int itemIndex = (index ~/ 2);
         final int delta = ((headerBuilder != null) ? 1 : 0);
         final int itemIndex = (index - delta) ~/ 2;
@@ -123,8 +123,8 @@ extension ListViewExtended on ListView {
   }
 
   // Helper method to compute the semantic child count for the separated constructor.
-  static int _computeSemanticChildCount(
-      int itemCount, WidgetBuilder headerBuilder, WidgetBuilder footerBuilder) {
+  static int _computeSemanticChildCount(int itemCount,
+      WidgetBuilder headerBuilder, WidgetBuilder footerBuilder) {
     return math.max(0, itemCount * 2 - 1) +
         ((headerBuilder != null) ? 1 : 0) +
         ((footerBuilder != null) ? 1 : 0);

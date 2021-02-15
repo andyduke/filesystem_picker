@@ -1,17 +1,18 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'common.dart';
 import 'package:path/path.dart' as Path;
 
 class FilesystemListTile extends StatelessWidget {
-  static double iconSize = 32;
-
   final FilesystemType fsType;
   final FileSystemEntity item;
   final Color folderIconColor;
   final ValueChanged<Directory> onChange;
+  final bool multiSelect;
+  final bool isSelected;
+  final bool subItemsSelected;
   final ValueSelected onSelect;
-  final FileTileSelectMode fileTileSelectMode;
 
   FilesystemListTile({
     Key key,
@@ -19,57 +20,111 @@ class FilesystemListTile extends StatelessWidget {
     @required this.item,
     this.folderIconColor,
     @required this.onChange,
-    @required this.onSelect,
-    @required this.fileTileSelectMode,
-  })  : assert(fileTileSelectMode != null),
-        super(key: key);
+    @required this.multiSelect,
+    @required this.isSelected,
+    @required this.subItemsSelected,
+    @required this.onSelect
+  }) : super(key: key);
 
   Widget _leading(BuildContext context) {
+    Icon ic;
+    Color col = isSelected ? Theme
+        .of(context)
+        .primaryColorLight : (item is File ? Theme
+        .of(context)
+        .unselectedWidgetColor : (folderIconColor ?? Theme
+        .of(context)
+        .primaryColor));
     if (item is Directory) {
-      return Icon(
+      ic = Icon(
         Icons.folder,
-        color: folderIconColor ?? Theme.of(context).unselectedWidgetColor,
+        color: col,
         size: iconSize,
       );
     } else {
-      return _fileIcon(item.path, Theme.of(context).unselectedWidgetColor);
+      ic = fileIcon(item.path, col);
     }
-  }
 
-  /// Set the icon for a file
-  Icon _fileIcon(String filename, Color color) {
-    IconData icon = Icons.description;
-
-    final _extension = filename.split(".").last;
-    if (_extension == "db" ||
-        _extension == "sqlite" ||
-        _extension == "sqlite3") {
-      icon = Icons.dns;
-    } else if (_extension == "jpg" ||
-        _extension == "jpeg" ||
-        _extension == "png") {
-      icon = Icons.image;
+    if (multiSelect && item is Directory) {
+      return GestureDetector(
+          child: Container(
+            color: Colors.transparent,
+            child: ic,
+          ),
+          onTap: () => onChange(item)
+      );
+    } else {
+      return ic;
     }
-    // default
-    return Icon(
-      icon,
-      color: color,
-      size: iconSize,
-    );
   }
 
   Widget _trailing(BuildContext context) {
-    if ((fsType == FilesystemType.all) ||
-        ((fsType == FilesystemType.file) && (item is File) && (fileTileSelectMode != FileTileSelectMode.wholeTile))) {
-      return InkResponse(
+    var chs = <Widget>[];
+    if (subItemsSelected && item is Directory) {
+      chs.add(Icon(Icons.library_add_check, color: Theme
+          .of(context)
+          .primaryColorDark));
+    }
+
+    if ((item is File && fsType == FilesystemType.file && multiSelect) ||
+        (item is Directory && fsType == FilesystemType.folder)) {
+      chs.add(InkResponse(
         child: Icon(
-          Icons.check_circle,
-          color: Theme.of(context).disabledColor,
+          isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+          color: isSelected ? Theme
+              .of(context)
+              .primaryColorLight : Theme
+              .of(context)
+              .disabledColor
+              .withOpacity(0.5),
         ),
-        onTap: () => onSelect(item.absolute.path),
+        onTap: () =>
+            onSelect(item.absolute.path, isSelected,
+                item is File
+                    ? FileSystemEntityType.file
+                    : item is Directory
+                    ? FileSystemEntityType.directory
+                    : FileSystemEntityType.notFound),
+      ));
+    }
+
+    if (chs.isNotEmpty) {
+      var children = <Widget>[];
+      chs.forEach((element) {
+        children.add(element);
+        children.add(Container(width: 10));
+      });
+      children.removeLast();
+
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: children,
       );
     } else {
       return null;
+    }
+  }
+
+  Widget _main(BuildContext context) {
+    var tx = Text(Path.basename(item.path), textScaleFactor: 1.2,
+        style: isSelected && item is File ? Theme
+            .of(context)
+            .primaryTextTheme
+            .bodyText1 : Theme
+            .of(context)
+            .textTheme
+            .bodyText1);
+    if (item is Directory) {
+      return GestureDetector(
+          child: Container(
+            color: Colors.transparent,
+            child: tx,
+          ),
+          onTap: () => onChange(item)
+      );
+    } else {
+      return tx;
     }
   }
 
@@ -77,13 +132,24 @@ class FilesystemListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
         key: Key(item.absolute.path),
+        selected: isSelected,
+        selectedTileColor: Theme
+            .of(context)
+            .primaryColor,
         leading: _leading(context),
         trailing: _trailing(context),
-        title: Text(Path.basename(item.path), textScaleFactor: 1.2),
-        onTap: (item is Directory)
+        title: _main(context),
+        onTap: (item is Directory && fsType == FilesystemType.file)
             ? () => onChange(item)
-            : ((fsType == FilesystemType.file && fileTileSelectMode == FileTileSelectMode.wholeTile)
-                ? () => onSelect(item.absolute.path)
-                : null));
+            : (fsType == FilesystemType.file
+            ? () =>
+            onSelect(item.absolute.path, isSelected,
+                item is File
+                    ? FileSystemEntityType.file
+                    : item is Directory
+                    ? FileSystemEntityType.directory
+                    : FileSystemEntityType.notFound)
+            : null)
+    );
   }
 }
