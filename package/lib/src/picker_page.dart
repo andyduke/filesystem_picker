@@ -9,13 +9,13 @@ import 'filesystem_list.dart';
 import 'package:path/path.dart' as Path;
 import 'breadcrumbs.dart';
 
-class _PathItem {
+class PathItem {
   final String text;
   final String path;
 
-  _PathItem({
-    required this.path,
-    required this.text,
+  PathItem({
+    @required this.path,
+    @required this.text,
   });
 
   @override
@@ -24,16 +24,9 @@ class _PathItem {
   }
 }
 
-/// FileSystem file or folder picker dialog.
-///
-/// Allows the user to browse the file system and pick one or multiple folder or file.
-///
-/// See also:
-///
-///  * [FilesystemPicker.open]
 class FilesystemPicker extends StatefulWidget {
   /// Open FileSystemPicker dialog
-  ///
+  /// 
   /// Returns null if nothing was selected.
   ///
   /// * [rootDirectory] specifies the root of the filesystem view.
@@ -83,13 +76,6 @@ class FilesystemPicker extends StatefulWidget {
 
   final String fixedRootName;
   final Directory fixedRootDirectory;
-  /// Specifies the name of the filesystem view root in breadcrumbs.
-  final String? rootName;
-
-  /// Specifies the root of the filesystem view.
-  final Directory rootDirectory;
-
-  /// Specifies the type of filesystem view (folder and files, folder only or files only), by default `FilesystemType.all`.
   final FilesystemType fsType;
   final bool multiSelect;
   final String pickText;
@@ -132,10 +118,10 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       String,
       FileSystemEntityType>();
 
-  final List<StorageInfo> _storageInfo = [];
+  List<StorageInfo> _storageInfo;
   Directory directory;
   String directoryName;
-  final List<PathItem> pathItems = [];
+  List<PathItem> pathItems;
 
   Directory rootDirectory;
   String rootName = "";
@@ -187,7 +173,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     if (value == null) {
       if (_storageInfo == null || _storageInfo.isEmpty) {
         try {
-          _storageInfo.addAll(await PlatformMethods.getStorageInfo());
+          _storageInfo = await PlatformMethods.getStorageInfo();
         } on PlatformException {}
       }
 
@@ -200,7 +186,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     String dirPath = Path.relative(
         directory.path, from: Path.dirname(rootDirectory.path));
     final List<String> items = dirPath.split(Platform.pathSeparator);
-    pathItems.clear();
+    pathItems = [];
 
     String rootItem = items.first;
     String rootPath = Path.dirname(rootDirectory.path) +
@@ -307,7 +293,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                       .toList(growable: false)
                       : [],
                   onSelect: (String value) {
-                    if (value != null)  _changeDirectory(Directory(value));
+                    _changeDirectory(Directory(value));
                   },
                 ),
               ),
@@ -320,8 +306,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
               future: () async {
                 if (_storageInfo == null || _storageInfo.isEmpty) {
                   try {
-                    _storageInfo.clear();
-                    _storageInfo.addAll(await PlatformMethods.getStorageInfo());
+                    _storageInfo = await PlatformMethods.getStorageInfo();
                   } on PlatformException {}
                 }
 
