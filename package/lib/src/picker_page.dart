@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:filesystem_picker/src/platform.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'common.dart';
 import 'filesystem_list.dart';
 import 'package:path/path.dart' as Path;
@@ -23,7 +26,7 @@ class _PathItem {
 
 /// FileSystem file or folder picker dialog.
 ///
-/// Allows the user to browse the file system and pick a folder or file.
+/// Allows the user to browse the file system and pick one or multiple folder or file.
 ///
 /// See also:
 ///
@@ -42,34 +45,34 @@ class FilesystemPicker extends StatefulWidget {
   /// * [allowedExtensions] specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`
   /// * [fileTileSelectMode] specifies how to files can be selected (either tapping on the whole tile or only on trailing button). (default depends on [fsType])
   /// * [requestPermission] if specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
-  static Future<String?> open({
-    required BuildContext context,
-    required Directory rootDirectory,
-    String rootName = 'Storage',
+  static Future<Iterable<String>> open({
+    @required BuildContext context,
+    Directory fixedRootDirectory,
+    String fixedRootName,
     FilesystemType fsType = FilesystemType.all,
-    String? pickText,
-    String? permissionText,
-    String? title,
-    Color? folderIconColor,
-    List<String>? allowedExtensions,
-    FileTileSelectMode fileTileSelectMode = FileTileSelectMode.checkButton,
-    RequestPermission? requestPermission,
+    bool multiSelect = false,
+    String pickText = "Select",
+    String cancelText = "Cancel",
+    String permissionText,
+    String title,
+    Color folderIconColor,
+    List<String> allowedExtensions,
+    RequestPermission requestPermission,
   }) async {
-    return Navigator.of(context).push<String>(
+    return Navigator.of(context).push<Iterable<String>>(
       MaterialPageRoute(builder: (BuildContext context) {
         return FilesystemPicker(
-          rootDirectory: rootDirectory,
-          rootName: rootName,
+          fixedRootDirectory: fixedRootDirectory,
+          fixedRootName: fixedRootName,
           fsType: fsType,
+          multiSelect: multiSelect,
           pickText: pickText,
           permissionText: permissionText,
           title: title,
-          folderIconColor: folderIconColor,
+          folderIconColor: folderIconColor == null ? Theme
+              .of(context)
+              .primaryColor : folderIconColor,
           allowedExtensions: allowedExtensions,
-          onSelect: (String value) {
-            Navigator.of(context).pop<String>(value);
-          },
-          fileTileSelectMode: fileTileSelectMode,
           requestPermission: requestPermission,
         );
       }),
@@ -78,6 +81,8 @@ class FilesystemPicker extends StatefulWidget {
 
   // ---
 
+  final String fixedRootName;
+  final Directory fixedRootDirectory;
   /// Specifies the name of the filesystem view root in breadcrumbs.
   final String? rootName;
 
@@ -86,44 +91,27 @@ class FilesystemPicker extends StatefulWidget {
 
   /// Specifies the type of filesystem view (folder and files, folder only or files only), by default `FilesystemType.all`.
   final FilesystemType fsType;
+  final bool multiSelect;
+  final String pickText;
+  final String cancelText;
+  final String permissionText;
+  final String title;
+  final Color folderIconColor;
+  final List<String> allowedExtensions;
+  final RequestPermission requestPermission;
 
-  /// Called when a file system item is selected.
-  final ValueSelected onSelect;
-
-  /// Specifies the text for the folder selection button (only for [fsType] = FilesystemType.folder).
-  final String? pickText;
-
-  /// Specifies the text of the message that there is no permission to access the storage, by default: "Access to the storage was not granted.".
-  final String? permissionText;
-
-  /// Specifies the text of the dialog title.
-  final String? title;
-
-  /// Specifies the color of the icon for the folder.
-  final Color? folderIconColor;
-
-  /// Specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`
-  final List<String>? allowedExtensions;
-
-  /// Specifies how to files can be selected (either tapping on the whole tile or only on trailing button). (default depends on [fsType])
-  final FileTileSelectMode fileTileSelectMode;
-
-  /// If specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
-  final RequestPermission? requestPermission;
-
-  /// Creates a file system item selection widget.
   FilesystemPicker({
-    Key? key,
-    this.rootName,
-    required this.rootDirectory,
+    Key key,
+    this.fixedRootName,
+    this.fixedRootDirectory,
     this.fsType = FilesystemType.all,
+    this.multiSelect,
     this.pickText,
+    this.cancelText,
     this.permissionText,
     this.title,
     this.folderIconColor,
     this.allowedExtensions,
-    required this.onSelect,
-    required this.fileTileSelectMode,
     this.requestPermission,
   }) : super(key: key);
 
@@ -134,16 +122,36 @@ class FilesystemPicker extends StatefulWidget {
 class _FilesystemPickerState extends State<FilesystemPicker> {
   bool permissionRequesting = true;
   bool permissionAllowed = false;
+  bool useRootSelector = false;
+  bool loadingFSE = true;
+  bool toggleSelectAll = false;
 
-  late Directory directory;
-  String? directoryName;
-  late List<_PathItem> pathItems;
+  final FileSystemListController fileSystemListController = FileSystemListController();
+  final StackList<Directory> history = StackList<Directory>();
+  final Map<String, FileSystemEntityType> selectedPaths = Map<
+      String,
+      FileSystemEntityType>();
+
+  final List<StorageInfo> _storageInfo = [];
+  Directory directory;
+  String directoryName;
+  final List<PathItem> pathItems = [];
+
+  Directory rootDirectory;
+  String rootName = "";
 
   @override
   void initState() {
     super.initState();
     _requestPermission();
-    _setDirectory(widget.rootDirectory);
+    if (widget.fixedRootDirectory != null) {
+      rootDirectory = widget.fixedRootDirectory;
+      useRootSelector = false;
+    } else {
+      useRootSelector = true;
+    }
+    setRootName();
+    _setDirectory(rootDirectory);
   }
 
   Future<void> _requestPermission() async {
@@ -158,135 +166,460 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     }
   }
 
-  void _setDirectory(Directory value) {
+  void setRootName() {
+    if (useRootSelector && rootDirectory != null) {
+      rootName =
+      widget.fixedRootName != null ? widget.fixedRootName : _storageInfo
+          .where((element) => element.rootDir == rootDirectory.path)
+          .first
+          .label;
+    } else {
+      rootName =
+      widget.fixedRootName != null ? widget.fixedRootName : "Storage";
+    }
+  }
+
+  Future<void> _setDirectory(Directory value) async {
+    setState(() {
+      loadingFSE = true;
+    });
+
+    if (value == null) {
+      if (_storageInfo == null || _storageInfo.isEmpty) {
+        try {
+          _storageInfo.addAll(await PlatformMethods.getStorageInfo());
+        } on PlatformException {}
+      }
+
+      value = rootDirectory = Directory(_storageInfo[0].rootDir);
+      setRootName();
+    }
+
     directory = value;
 
-    String dirPath = Path.relative(directory.path,
-        from: Path.dirname(widget.rootDirectory.path));
+    String dirPath = Path.relative(
+        directory.path, from: Path.dirname(rootDirectory.path));
     final List<String> items = dirPath.split(Platform.pathSeparator);
-    pathItems = [];
+    pathItems.clear();
 
     String rootItem = items.first;
-    String rootPath = Path.dirname(widget.rootDirectory.path) +
+    String rootPath = Path.dirname(rootDirectory.path) +
         Platform.pathSeparator +
         rootItem;
-    pathItems.add(_PathItem(path: rootPath, text: widget.rootName ?? rootItem));
+    pathItems.add(PathItem(path: rootPath, text: rootName ?? rootItem));
     items.removeAt(0);
 
     String path = rootPath;
 
     for (var item in items) {
       path += Platform.pathSeparator + item;
-      pathItems.add(_PathItem(path: path, text: item));
+      pathItems.add(PathItem(path: path, text: item));
     }
 
-    directoryName = ((directory.path == widget.rootDirectory.path) &&
-            (widget.rootName != null))
-        ? widget.rootName
+    directoryName = ((directory.path == rootDirectory.path) &&
+        (rootName != null))
+        ? rootName
         : Path.basename(directory.path);
+
+    setState(() {
+      loadingFSE = false;
+    });
   }
 
-  void _changeDirectory(Directory value) {
+  // change directory and put the previous directory into history stack
+  Future<void> _changeDirectory(Directory value) async {
     if (directory.absolute.path != value.absolute.path) {
-      setState(() {
-        _setDirectory(value);
-      });
+      toggleSelectAll = false;
+      history.push(directory);
+      _setDirectory(value);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title ?? directoryName!),
-        leading: IconButton(
-          icon: Icon(Icons.close),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        bottom: PreferredSize(
-          child: Theme(
-            data: ThemeData(
-              textTheme: TextTheme(
-                button: TextStyle(
-                    color: AppBarTheme.of(context)
+    return WillPopScope(
+      onWillPop: _handleBackAction,
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text(widget.title ?? directoryName),
+            leading: Builder(
+              builder: (ctx) {
+                return IconButton(
+                  icon: Icon(useRootSelector ? Icons.menu : Icons.close),
+                  onPressed: () {
+                    if (useRootSelector) {
+                      Scaffold.of(ctx).openDrawer();
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  },
+                );
+              },
+            ),
+            actions: selectedPaths.length > 0 && widget.multiSelect ? [
+              IconButton(
+                  tooltip: "Select/Unselect All",
+                  icon: Icon(Icons.select_all),
+                  onPressed: () {
+                    fileSystemListController.items.forEach((p) {
+                      if (widget.fsType == FilesystemType.all
+                          || (widget.fsType == FilesystemType.file &&
+                              p.type == FileSystemEntityType.file)
+                          || (widget.fsType == FilesystemType.folder &&
+                              p.type == FileSystemEntityType.directory)) {
+                        if (toggleSelectAll == false) {
+                          selectedPaths[p.absolutePath] = p.type;
+                        } else {
+                          selectedPaths.remove(p.absolutePath);
+                        }
+                      }
+                    });
+
+                    setState(() {
+                      toggleSelectAll = !toggleSelectAll;
+                    });
+                  }
+              )
+            ] : null,
+            bottom: PreferredSize(
+              child: Theme(
+                data: ThemeData(
+                  textTheme: TextTheme(
+                    button: TextStyle(
+                        color: AppBarTheme
+                            .of(context)
                             .textTheme
                             ?.headline6
                             ?.color ??
-                        Theme.of(context).primaryTextTheme.headline6?.color),
-              ),
-            ),
-            child: Breadcrumbs<String>(
-              items: (!permissionRequesting && permissionAllowed)
-                  ? pathItems
-                      .map((path) => BreadcrumbItem<String>(
+                            Theme
+                                .of(context)
+                                .primaryTextTheme
+                                ?.headline6
+                                ?.color),
+                  ),
+                ),
+                child: Breadcrumbs<String>(
+                  items: (!permissionRequesting && permissionAllowed)
+                      ? pathItems
+                      .map((path) =>
+                      BreadcrumbItem<String>(
                           text: path.text, data: path.path))
                       .toList(growable: false)
-                  : [],
-              onSelect: (String? value) {
-                if (value != null) _changeDirectory(Directory(value));
-              },
+                      : [],
+                  onSelect: (String value) {
+                    if (value != null)  _changeDirectory(Directory(value));
+                  },
+                ),
+              ),
+              preferredSize: const Size.fromHeight(50),
             ),
           ),
-          preferredSize: const Size.fromHeight(50),
-        ),
-      ),
-      body: permissionRequesting
-          ? Center(child: CircularProgressIndicator())
-          : (permissionAllowed
-              ? FilesystemList(
-                  isRoot: (directory.absolute.path ==
-                      widget.rootDirectory.absolute.path),
-                  rootDirectory: directory,
-                  fsType: widget.fsType,
-                  folderIconColor: widget.folderIconColor,
-                  allowedExtensions: widget.allowedExtensions,
-                  onChange: _changeDirectory,
-                  onSelect: widget.onSelect,
-                  fileTileSelectMode: widget.fileTileSelectMode,
-                )
-              : Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(20),
-                  child: Text(
-                      widget.permissionText ??
-                          'Access to the storage was not granted.',
-                      textScaleFactor: 1.2),
-                )),
-      bottomNavigationBar: (widget.fsType == FilesystemType.folder)
-          ? Container(
-              height: 50,
-              child: BottomAppBar(
-                color: Theme.of(context).primaryColor,
-                child: Center(
-                  child: TextButton.icon(
-                    style: TextButton.styleFrom(
-                      primary: AppBarTheme.of(context)
-                              .textTheme
-                              ?.headline6
-                              ?.color ??
-                          Theme.of(context).primaryTextTheme.headline6?.color,
-                      onSurface: (AppBarTheme.of(context)
-                                  .textTheme
-                                  ?.headline6
-                                  ?.color ??
-                              Theme.of(context)
+          drawerEnableOpenDragGesture: false,
+          drawer: useRootSelector ? Drawer(
+            child: FutureBuilder<List<StorageInfo>>(
+              future: () async {
+                if (_storageInfo == null || _storageInfo.isEmpty) {
+                  try {
+                    _storageInfo.clear();
+                    _storageInfo.addAll(await PlatformMethods.getStorageInfo());
+                  } on PlatformException {}
+                }
+
+                return _storageInfo;
+              }(),
+              builder: (context, AsyncSnapshot<List<StorageInfo>> snapshot) {
+                if (snapshot.hasData) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Material(
+                        child: SafeArea(
+                          child: Container(
+                            margin: EdgeInsets.only(top: 40),
+                            child: ListTile(
+                              title: Text('Select Storage',
+                                  style: Theme
+                                      .of(context)
+                                      .primaryTextTheme
+                                      .headline6),
+                              leading: Icon(Icons.storage, color: Theme
+                                  .of(context)
                                   .primaryTextTheme
                                   .headline6
-                                  ?.color)!
-                          .withOpacity(0.5),
+                                  .color),
+                            ),
+                          ),
+                        ),
+                        color: Theme
+                            .of(context)
+                            .primaryColor,
+                      ),
+                      Flexible(
+                          fit: FlexFit.loose,
+                          child: ListView(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            children: () {
+                              List<Widget> chs = [];
+
+                              bool internalFirst = true;
+                              _storageInfo.forEach((ss) {
+                                chs.add(RadioListTile<int>(
+                                  secondary: selectedPaths.keys.any((ee) =>
+                                      ee.startsWith(ss.rootDir)) ? Icon(
+                                      Icons.library_add_check, color: Theme
+                                      .of(context)
+                                      .primaryColorDark) : null,
+                                  title: Text(
+                                      internalFirst ? "Internal Storage" : Path
+                                          .basename(ss.rootDir)),
+                                  subtitle: Text(
+                                      "Free Space: " +
+                                          ss.availableGB.toString() +
+                                          " GB"),
+                                  value: _storageInfo.indexOf(ss),
+                                  groupValue: _storageInfo.map((e) => e.rootDir)
+                                      .toList()
+                                      .indexOf(rootDirectory.path),
+                                  onChanged: (val) {
+                                    rootDirectory =
+                                        Directory(_storageInfo[val].rootDir);
+                                    setRootName();
+                                    _setDirectory(rootDirectory);
+                                    Navigator.pop(context);
+                                  },
+                                ));
+                                internalFirst = false;
+                              });
+
+                              return chs;
+                            }(),
+                          )
+                      ),
+                      Visibility(
+                          visible: selectedPaths.length > 0,
+                          child: Material(
+                            child: SafeArea(
+                              child: ListTile(
+                                leading: Icon(
+                                    Icons.library_add_check, color: Theme
+                                    .of(context)
+                                    .primaryTextTheme
+                                    .headline6
+                                    .color),
+                                title: Text("Selected " +
+                                    (widget.fsType == FilesystemType.all
+                                        ? "Items"
+                                        : widget.fsType == FilesystemType.file
+                                        ? "Files"
+                                        : "Directories"),
+                                    style: Theme
+                                        .of(context)
+                                        .primaryTextTheme
+                                        .headline6),
+                              ),
+                            ),
+                            color: Theme
+                                .of(context)
+                                .primaryColor,
+                          )),
+                      Flexible(
+                          fit: FlexFit.tight,
+                          child: ListView(
+                            padding: EdgeInsets.zero,
+                            children: () {
+                              var chs = <Widget>[];
+                              selectedPaths.forEach((key, value) {
+                                chs.add(ListTile(
+                                  leading: value == FileSystemEntityType.file
+                                      ? fileIcon(key, Theme
+                                      .of(context)
+                                      .primaryColor)
+                                      : Icon(
+                                    Icons.folder,
+                                    color: Theme
+                                        .of(context)
+                                        .primaryColor,
+                                    size: iconSize,
+                                  ),
+                                  title: Text(Path.basename(key)),
+                                  onTap: () {
+                                    if (key.startsWith(
+                                        rootDirectory.absolute.path) == false) {
+                                      rootDirectory = Directory(_storageInfo
+                                          .firstWhere((ss) =>
+                                          key.startsWith(ss.rootDir))
+                                          .rootDir);
+                                      setRootName();
+                                    }
+                                    _changeDirectory(Directory(
+                                        key == rootDirectory.absolute.path
+                                            ? key
+                                            : Path.dirname(key)));
+                                    Navigator.pop(context);
+                                  },
+                                ));
+                                if (selectedPaths.length > 1) {
+                                  chs.add(fseHBorder);
+                                }
+                              });
+                              return chs;
+                            }(),
+                          )
+                      ),
+                      Visibility(
+                          visible: selectedPaths.length > 1,
+                          child: Material(
+                            child: ListTile(
+                              title: Text("Count:",
+                                  style: Theme
+                                      .of(context)
+                                      .primaryTextTheme
+                                      .headline6),
+                              trailing: Text(selectedPaths.length.toString(),
+                                  style: Theme
+                                      .of(context)
+                                      .primaryTextTheme
+                                      .headline6),
+                            ),
+                            color: Theme
+                                .of(context)
+                                .primaryColor,
+                          )),
+                    ],
+                  );
+                }
+
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
+          ) : null,
+          body: permissionRequesting || loadingFSE
+              ? Center(child: CircularProgressIndicator())
+              : (permissionAllowed
+              ? FilesystemList(
+              controller: fileSystemListController,
+              isRoot: (directory.absolute.path == rootDirectory.absolute.path),
+              rootDirectory: directory,
+              multiSelect: widget.multiSelect,
+              fsType: widget.fsType,
+              folderIconColor: widget.folderIconColor,
+              allowedExtensions: widget.allowedExtensions,
+              onChange: _changeDirectory,
+              selectedItems: selectedPaths.keys,
+              onSelect: (path, isSelected, itemType) {
+                setState(() {
+                  if (widget.multiSelect == false) {
+                    selectedPaths.clear();
+                    selectedPaths[path] = itemType;
+                  } else {
+                    if (isSelected) {
+                      selectedPaths.remove(path);
+                    } else {
+                      selectedPaths[path] = itemType;
+                    }
+                  }
+                });
+              }
+          )
+              : Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.all(20),
+            child: Text(
+                widget.permissionText ??
+                    'Access to the storage was not granted.',
+                textScaleFactor: 1.2),
+          )),
+          bottomNavigationBar: Container(
+            height: 50,
+            child: BottomAppBar(
+              color: Theme
+                  .of(context)
+                  .primaryColor,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(child: TextButton.icon(
+                    style: TextButton.styleFrom(
+                      primary: AppBarTheme
+                          .of(context)
+                          .textTheme
+                          ?.headline6
+                          ?.color ??
+                          Theme
+                              .of(context)
+                              .primaryTextTheme
+                              ?.headline6
+                              ?.color,
+                    ),
+                    icon: Icon(Icons.cancel),
+                    label: (widget.cancelText != null)
+                        ? Text(widget.cancelText)
+                        : const Text("Cancel"),
+                    onPressed: (!permissionRequesting && permissionAllowed)
+                        ? () {
+                      cancelButtonPressed = true;
+                      Navigator.pop(context);
+                    }
+                        : null,
+                  )),
+                  VerticalDivider(
+                    width: 1,
+                    color: Theme
+                        .of(context)
+                        .accentColor,
+                  ),
+                  Expanded(child: TextButton.icon(
+                    style: TextButton.styleFrom(
+                      primary: AppBarTheme
+                          .of(context)
+                          .textTheme
+                          ?.headline6
+                          ?.color ??
+                          Theme
+                              .of(context)
+                              .primaryTextTheme
+                              ?.headline6
+                              ?.color,
                     ),
                     icon: Icon(Icons.check_circle),
                     label: (widget.pickText != null)
-                        ? Text(widget.pickText!)
-                        : const SizedBox(),
-                    onPressed: (!permissionRequesting && permissionAllowed)
-                        ? () => widget.onSelect(directory.absolute.path)
+                        ? Text(widget.pickText)
+                        : const Text("Select"),
+                    onPressed: (!permissionRequesting && permissionAllowed && selectedPaths.length > 0)
+                        ? () => Navigator.pop(context, selectedPaths.keys)
                         : null,
-                  ),
-                ),
+                  ))
+                ],
               ),
-            )
-          : null,
+            ),
+          )
+      ),
     );
+  }
+
+  bool cancelButtonPressed = false;
+
+  Future<bool> _handleBackAction() {
+    if (cancelButtonPressed == false &&
+        directory.absolute.path != rootDirectory.absolute.path &&
+        history.length > 0) {
+      var p = history.pop();
+      if (p.absolute.path.startsWith(rootDirectory.absolute.path) == false) {
+        rootDirectory = Directory(_storageInfo
+            .firstWhere((ss) => p.absolute.path.startsWith(ss.rootDir))
+            .rootDir);
+        setRootName();
+      }
+      _setDirectory(p);
+      return Future.value(false);
+    }
+
+    // if on root OR history is empty OR cancel btn pressed, close picker
+    return Future.value(true);
   }
 }
