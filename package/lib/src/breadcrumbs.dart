@@ -37,7 +37,11 @@ class Breadcrumbs<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToEnd());
 
-    final Color defaultTextColor = Theme.of(context).textTheme.button.color;
+    final Color defaultTextColor = Theme
+        .of(context)
+        .textTheme
+        .button
+        .color;
 
     return ShaderMask(
       shaderCallback: (Rect bounds) {
@@ -60,12 +64,17 @@ class Breadcrumbs<T> extends StatelessWidget {
             return ButtonTheme(
               minWidth: 48,
               padding: EdgeInsets.symmetric(
-                      vertical: ButtonTheme.of(context).padding.vertical) +
+                  vertical: ButtonTheme
+                      .of(context)
+                      .padding
+                      .vertical) +
                   const EdgeInsets.symmetric(horizontal: 8),
-              child: FlatButton(
-                textColor: (index == (items.length - 1))
-                    ? (textColor ?? defaultTextColor)
-                    : (textColor ?? defaultTextColor).withOpacity(0.75),
+              child: TextButton(
+                style: TextButton.styleFrom(
+                    primary: (index == (items.length - 1))
+                        ? (textColor ?? defaultTextColor)
+                        : (textColor ?? defaultTextColor).withOpacity(0.75)
+                ),
                 child: Text(items[index].text),
                 onPressed: () {
                   if (items[index].onSelect != null) {
@@ -78,15 +87,19 @@ class Breadcrumbs<T> extends StatelessWidget {
               ),
             );
           },
-          separatorBuilder: (_, __) => Container(
-            alignment: Alignment.center,
-            child: Icon(
-              Icons.chevron_right,
-              color: (textColor ?? defaultTextColor).withOpacity(0.45),
-            ),
-          ),
+          separatorBuilder: (_, __) =>
+              Container(
+                alignment: Alignment.center,
+                child: Icon(
+                  Icons.chevron_right,
+                  color: (textColor ?? defaultTextColor).withOpacity(0.45),
+                ),
+              ),
           headerBuilder: (_) =>
-              SizedBox(width: ButtonTheme.of(context).padding.horizontal - 8),
+              SizedBox(width: ButtonTheme
+                  .of(context)
+                  .padding
+                  .horizontal - 8),
           footerBuilder: (_) => const SizedBox(width: 70),
         ),
       ),
