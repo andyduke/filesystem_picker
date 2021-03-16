@@ -50,27 +50,25 @@ extension ListViewExtended on ListView {
   /// [SliverChildBuilderDelegate.addSemanticIndexes] property. None may be
   /// null.
   static ListView separatedWithHeaderFooter({
-    Key key,
+    Key? key,
     Axis scrollDirection = Axis.vertical,
     bool reverse = false,
-    ScrollController controller,
-    bool primary,
-    ScrollPhysics physics,
+    ScrollController? controller,
+    bool? primary,
+    ScrollPhysics? physics,
     bool shrinkWrap = false,
-    EdgeInsetsGeometry padding,
-    @required IndexedWidgetBuilder itemBuilder,
-    @required IndexedWidgetBuilder separatorBuilder,
-    WidgetBuilder headerBuilder,
-    WidgetBuilder footerBuilder,
-    @required int itemCount,
+    EdgeInsetsGeometry? padding,
+    required IndexedWidgetBuilder itemBuilder,
+    required IndexedWidgetBuilder separatorBuilder,
+    WidgetBuilder? headerBuilder,
+    WidgetBuilder? footerBuilder,
+    required int itemCount,
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
-    double cacheExtent,
+    double? cacheExtent,
   }) {
-    assert(itemBuilder != null);
-    assert(separatorBuilder != null);
-    assert(itemCount != null && itemCount >= 0);
+    assert(itemCount >= 0);
     final int childCount =
         _computeSemanticChildCount(itemCount, headerBuilder, footerBuilder);
 
@@ -88,12 +86,6 @@ extension ListViewExtended on ListView {
           widget = itemBuilder(context, itemIndex);
         } else {
           widget = separatorBuilder(context, itemIndex);
-          assert(() {
-            if (widget == null) {
-              throw FlutterError('separatorBuilder cannot return null.');
-            }
-            return true;
-          }());
         }
         return widget;
       },
@@ -123,8 +115,8 @@ extension ListViewExtended on ListView {
   }
 
   // Helper method to compute the semantic child count for the separated constructor.
-  static int _computeSemanticChildCount(
-      int itemCount, WidgetBuilder headerBuilder, WidgetBuilder footerBuilder) {
+  static int _computeSemanticChildCount(int itemCount,
+      WidgetBuilder? headerBuilder, WidgetBuilder? footerBuilder) {
     return math.max(0, itemCount * 2 - 1) +
         ((headerBuilder != null) ? 1 : 0) +
         ((footerBuilder != null) ? 1 : 0);

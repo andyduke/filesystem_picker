@@ -1,29 +1,44 @@
 import 'package:flutter/material.dart';
 import 'listview_extensions.dart';
 
+/// Path element description class for breadcrumbs
 class BreadcrumbItem<T> {
+  /// Item text
   final String text;
-  final T data;
-  final ValueChanged<T> onSelect;
 
+  /// Item related data
+  final T? data;
+
+  /// Called when an item is selected
+  final ValueChanged<T>? onSelect;
+
+  /// Creates an item of breadcrumbs
   BreadcrumbItem({
-    @required this.text,
+    required this.text,
     this.data,
     this.onSelect,
   });
 }
 
+/// Scrolling horizontal breadcrumbs with `Icons.chevron_right` separator and fade on the right.
 class Breadcrumbs<T> extends StatelessWidget {
-  final List<BreadcrumbItem<T>> items;
+  /// List of items of breadcrumbs
+  final List<BreadcrumbItem<T?>> items;
+
+  /// Height of the breadcrumbs panel
   final double height;
-  final Color textColor;
-  final ValueChanged<T> onSelect;
+
+  /// List item text color
+  final Color? textColor;
+
+  /// Called when an item is selected
+  final ValueChanged<T?>? onSelect;
 
   final ScrollController _scrollController = ScrollController();
 
   Breadcrumbs({
-    Key key,
-    @required this.items,
+    Key? key,
+    required this.items,
     this.height = 50,
     this.textColor,
     this.onSelect,
@@ -35,9 +50,9 @@ class Breadcrumbs<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToEnd());
+    WidgetsBinding.instance!.addPostFrameCallback((_) => _scrollToEnd());
 
-    final Color defaultTextColor = Theme.of(context).textTheme.button.color;
+    final Color? defaultTextColor = Theme.of(context).textTheme.button!.color;
 
     return ShaderMask(
       shaderCallback: (Rect bounds) {
@@ -62,18 +77,18 @@ class Breadcrumbs<T> extends StatelessWidget {
               padding: EdgeInsets.symmetric(
                       vertical: ButtonTheme.of(context).padding.vertical) +
                   const EdgeInsets.symmetric(horizontal: 8),
-              child: FlatButton(
-                textColor: (index == (items.length - 1))
-                    ? (textColor ?? defaultTextColor)
-                    : (textColor ?? defaultTextColor).withOpacity(0.75),
-                child: Text(items[index].text),
+              child: TextButton(
+                child: Text(
+                  items[index].text,
+                  style: TextStyle(
+                    color: (index == (items.length - 1))
+                        ? (textColor ?? defaultTextColor)
+                        : (textColor ?? defaultTextColor)!.withOpacity(0.75),
+                  ),
+                ),
                 onPressed: () {
-                  if (items[index].onSelect != null) {
-                    items[index].onSelect(items[index].data);
-                  }
-                  if (onSelect != null) {
-                    onSelect(items[index].data);
-                  }
+                  items[index].onSelect?.call(items[index].data);
+                  onSelect?.call(items[index].data);
                 },
               ),
             );
@@ -82,7 +97,7 @@ class Breadcrumbs<T> extends StatelessWidget {
             alignment: Alignment.center,
             child: Icon(
               Icons.chevron_right,
-              color: (textColor ?? defaultTextColor).withOpacity(0.45),
+              color: (textColor ?? defaultTextColor)!.withOpacity(0.45),
             ),
           ),
           headerBuilder: (_) =>

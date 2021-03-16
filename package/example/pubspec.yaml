@@ -1,16 +1,16 @@
 name: filesystem_picker_example
 description: Demonstrates how to use 'FileSystemPicker'.
-
+publish_to: none
 version: 1.0.3
 
 environment:
-  sdk: ">=2.3.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  path_provider: ^1.1.0
-  permission_handler: ^5.0.1+1
+  path_provider: ^2.0.1
+  permission_handler: ^6.1.0
   filesystem_picker:
     path: ../
 

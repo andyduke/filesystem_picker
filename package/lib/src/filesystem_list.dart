@@ -9,24 +9,23 @@ class FilesystemList extends StatelessWidget {
   final bool isRoot;
   final Directory rootDirectory;
   final FilesystemType fsType;
-  final Color folderIconColor;
-  final List<String> allowedExtensions;
+  final Color? folderIconColor;
+  final List<String>? allowedExtensions;
   final ValueChanged<Directory> onChange;
   final ValueSelected onSelect;
   final FileTileSelectMode fileTileSelectMode;
 
   FilesystemList({
-    Key key,
+    Key? key,
     this.isRoot = false,
-    @required this.rootDirectory,
+    required this.rootDirectory,
     this.fsType = FilesystemType.all,
     this.folderIconColor,
     this.allowedExtensions,
-    @required this.onChange,
-    @required this.onSelect,
-    @required this.fileTileSelectMode,
-  })  : assert(fileTileSelectMode != null),
-        super(key: key);
+    required this.onChange,
+    required this.onSelect,
+    required this.fileTileSelectMode,
+  }) : super(key: key);
 
   Future<List<FileSystemEntity>> _dirContents() {
     var files = <FileSystemEntity>[];
@@ -37,8 +36,8 @@ class FilesystemList extends StatelessWidget {
         if ((fsType != FilesystemType.folder) || (file is Directory)) {
           if ((file is File) &&
               (allowedExtensions != null) &&
-              (allowedExtensions.length > 0)) {
-            if (!allowedExtensions.contains(Path.extension(file.path))) return;
+              (allowedExtensions!.length > 0)) {
+            if (!allowedExtensions!.contains(Path.extension(file.path))) return;
           }
           files.add(file);
         }
@@ -74,13 +73,13 @@ class FilesystemList extends StatelessWidget {
         if (snapshot.hasData) {
           return ListView.builder(
             shrinkWrap: true,
-            itemCount: snapshot.data.length + (isRoot ? 0 : 1),
+            itemCount: snapshot.data!.length + (isRoot ? 0 : 1),
             itemBuilder: (BuildContext context, int index) {
               if (!isRoot && index == 0) {
                 return _topNavigation();
               }
 
-              final item = snapshot.data[index - (isRoot ? 0 : 1)];
+              final item = snapshot.data![index - (isRoot ? 0 : 1)];
               return FilesystemListTile(
                 fsType: fsType,
                 item: item,

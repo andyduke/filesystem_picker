@@ -10,7 +10,7 @@ class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 
-  static _MyAppState of(BuildContext context) {
+  static _MyAppState? of(BuildContext context) {
     return context.findAncestorStateOfType<_MyAppState>();
   }
 }
@@ -51,25 +51,24 @@ class DemoPage extends StatefulWidget {
 }
 
 class _DemoPageState extends State<DemoPage> {
-  Directory rootPath;
+  Directory? rootPath;
 
-  String filePath;
-  String dirPath;
+  String? filePath;
+  String? dirPath;
 
   FileTileSelectMode filePickerSelectMode = FileTileSelectMode.checkButton;
 
   @override
   void initState() {
-    super.initState();
-
     _prepareStorage();
+    super.initState();
   }
 
   Future<void> _prepareStorage() async {
     rootPath = await getTemporaryDirectory();
 
     // Create sample directory if not exists
-    Directory sampleFolder = Directory('${rootPath.path}/Sample folder');
+    Directory sampleFolder = Directory('${rootPath!.path}/Sample folder');
     if (!sampleFolder.existsSync()) {
       sampleFolder.createSync();
     }
@@ -84,10 +83,10 @@ class _DemoPageState extends State<DemoPage> {
   }
 
   Future<void> _openFile(BuildContext context) async {
-    String path = await FilesystemPicker.open(
+    String? path = await FilesystemPicker.open(
       title: 'Open file',
       context: context,
-      rootDirectory: rootPath,
+      rootDirectory: rootPath!,
       fsType: FilesystemType.file,
       folderIconColor: Colors.teal,
       allowedExtensions: ['.txt'],
@@ -100,7 +99,11 @@ class _DemoPageState extends State<DemoPage> {
       File file = File('$path');
       String contents = await file.readAsString();
 
-      Scaffold.of(context).showSnackBar(SnackBar(content: Text(contents)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(contents),
+        ),
+      );
     }
 
     setState(() {
@@ -109,10 +112,10 @@ class _DemoPageState extends State<DemoPage> {
   }
 
   Future<void> _pickDir(BuildContext context) async {
-    String path = await FilesystemPicker.open(
+    String? path = await FilesystemPicker.open(
       title: 'Save to folder',
       context: context,
-      rootDirectory: rootPath,
+      rootDirectory: rootPath!,
       fsType: FilesystemType.folder,
       pickText: 'Save file to this folder',
       folderIconColor: Colors.teal,
@@ -138,8 +141,8 @@ class _DemoPageState extends State<DemoPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 // Theme Brightness Switch Button
-                RaisedButton(
-                  child: Text((appState.brightness == Brightness.light)
+                ElevatedButton(
+                  child: Text((appState!.brightness == Brightness.light)
                       ? 'Switch to Dark theme'
                       : 'Switch to Light theme'),
                   onPressed: () {
@@ -158,7 +161,7 @@ class _DemoPageState extends State<DemoPage> {
                   padding: const EdgeInsets.only(bottom: 20),
                   child: Text(
                     'Directory Picker',
-                    style: Theme.of(context).textTheme.headline,
+                    style: Theme.of(context).textTheme.headline5,
                   ),
                 ),
 
@@ -168,7 +171,7 @@ class _DemoPageState extends State<DemoPage> {
                     child: Text('$dirPath'),
                   ),
 
-                RaisedButton(
+                ElevatedButton(
                   child: Text('Save File'),
                   onPressed:
                       (rootPath != null) ? () => _pickDir(context) : null,
@@ -182,7 +185,7 @@ class _DemoPageState extends State<DemoPage> {
                   padding: const EdgeInsets.only(bottom: 20),
                   child: Text(
                     'File Picker',
-                    style: Theme.of(context).textTheme.headline,
+                    style: Theme.of(context).textTheme.headline5,
                   ),
                 ),
 
@@ -192,7 +195,7 @@ class _DemoPageState extends State<DemoPage> {
                     child: Text('$filePath'),
                   ),
 
-                RaisedButton(
+                ElevatedButton(
                   child: Text('Open File'),
                   onPressed:
                       (rootPath != null) ? () => _openFile(context) : null,
@@ -204,9 +207,9 @@ class _DemoPageState extends State<DemoPage> {
                     title: Text('Whole item selection mode'),
                     controlAffinity: ListTileControlAffinity.leading,
                     value: filePickerSelectMode == FileTileSelectMode.wholeTile,
-                    onChanged: (bool newValue) => {
+                    onChanged: (bool? newValue) => {
                       setState(() {
-                        filePickerSelectMode = newValue
+                        filePickerSelectMode = newValue!
                             ? FileTileSelectMode.wholeTile
                             : FileTileSelectMode.checkButton;
                       })

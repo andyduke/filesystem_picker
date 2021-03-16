@@ -6,13 +6,13 @@ import 'filesystem_list.dart';
 import 'package:path/path.dart' as Path;
 import 'breadcrumbs.dart';
 
-class PathItem {
+class _PathItem {
   final String text;
   final String path;
 
-  PathItem({
-    @required this.path,
-    @required this.text,
+  _PathItem({
+    required this.path,
+    required this.text,
   });
 
   @override
@@ -21,9 +21,16 @@ class PathItem {
   }
 }
 
+/// FileSystem file or folder picker dialog.
+///
+/// Allows the user to browse the file system and pick a folder or file.
+///
+/// See also:
+///
+///  * [FilesystemPicker.open]
 class FilesystemPicker extends StatefulWidget {
   /// Open FileSystemPicker dialog
-  /// 
+  ///
   /// Returns null if nothing was selected.
   ///
   /// * [rootDirectory] specifies the root of the filesystem view.
@@ -35,18 +42,18 @@ class FilesystemPicker extends StatefulWidget {
   /// * [allowedExtensions] specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`
   /// * [fileTileSelectMode] specifies how to files can be selected (either tapping on the whole tile or only on trailing button). (default depends on [fsType])
   /// * [requestPermission] if specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
-  static Future<String> open({
-    @required BuildContext context,
-    @required Directory rootDirectory,
+  static Future<String?> open({
+    required BuildContext context,
+    required Directory rootDirectory,
     String rootName = 'Storage',
     FilesystemType fsType = FilesystemType.all,
-    String pickText,
-    String permissionText,
-    String title,
-    Color folderIconColor,
-    List<String> allowedExtensions,
+    String? pickText,
+    String? permissionText,
+    String? title,
+    Color? folderIconColor,
+    List<String>? allowedExtensions,
     FileTileSelectMode fileTileSelectMode = FileTileSelectMode.checkButton,
-    RequestPermission requestPermission,
+    RequestPermission? requestPermission,
   }) async {
     return Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (BuildContext context) {
@@ -62,8 +69,7 @@ class FilesystemPicker extends StatefulWidget {
           onSelect: (String value) {
             Navigator.of(context).pop<String>(value);
           },
-          fileTileSelectMode:
-              fileTileSelectMode ?? FileTileSelectMode.checkButton,
+          fileTileSelectMode: fileTileSelectMode,
           requestPermission: requestPermission,
         );
       }),
@@ -72,33 +78,54 @@ class FilesystemPicker extends StatefulWidget {
 
   // ---
 
-  final String rootName;
-  final Directory rootDirectory;
-  final FilesystemType fsType;
-  final ValueSelected onSelect;
-  final String pickText;
-  final String permissionText;
-  final String title;
-  final Color folderIconColor;
-  final List<String> allowedExtensions;
-  final FileTileSelectMode fileTileSelectMode;
-  final RequestPermission requestPermission;
+  /// Specifies the name of the filesystem view root in breadcrumbs.
+  final String? rootName;
 
+  /// Specifies the root of the filesystem view.
+  final Directory rootDirectory;
+
+  /// Specifies the type of filesystem view (folder and files, folder only or files only), by default `FilesystemType.all`.
+  final FilesystemType fsType;
+
+  /// Called when a file system item is selected.
+  final ValueSelected onSelect;
+
+  /// Specifies the text for the folder selection button (only for [fsType] = FilesystemType.folder).
+  final String? pickText;
+
+  /// Specifies the text of the message that there is no permission to access the storage, by default: "Access to the storage was not granted.".
+  final String? permissionText;
+
+  /// Specifies the text of the dialog title.
+  final String? title;
+
+  /// Specifies the color of the icon for the folder.
+  final Color? folderIconColor;
+
+  /// Specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`
+  final List<String>? allowedExtensions;
+
+  /// Specifies how to files can be selected (either tapping on the whole tile or only on trailing button). (default depends on [fsType])
+  final FileTileSelectMode fileTileSelectMode;
+
+  /// If specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
+  final RequestPermission? requestPermission;
+
+  /// Creates a file system item selection widget.
   FilesystemPicker({
-    Key key,
+    Key? key,
     this.rootName,
-    @required this.rootDirectory,
+    required this.rootDirectory,
     this.fsType = FilesystemType.all,
     this.pickText,
     this.permissionText,
     this.title,
     this.folderIconColor,
     this.allowedExtensions,
-    @required this.onSelect,
-    @required this.fileTileSelectMode,
+    required this.onSelect,
+    required this.fileTileSelectMode,
     this.requestPermission,
-  })  : assert(fileTileSelectMode != null),
-        super(key: key);
+  }) : super(key: key);
 
   @override
   _FilesystemPickerState createState() => _FilesystemPickerState();
@@ -108,9 +135,9 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   bool permissionRequesting = true;
   bool permissionAllowed = false;
 
-  Directory directory;
-  String directoryName;
-  List<PathItem> pathItems;
+  late Directory directory;
+  String? directoryName;
+  late List<_PathItem> pathItems;
 
   @override
   void initState() {
@@ -143,14 +170,14 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     String rootPath = Path.dirname(widget.rootDirectory.path) +
         Platform.pathSeparator +
         rootItem;
-    pathItems.add(PathItem(path: rootPath, text: widget.rootName ?? rootItem));
+    pathItems.add(_PathItem(path: rootPath, text: widget.rootName ?? rootItem));
     items.removeAt(0);
 
     String path = rootPath;
 
     for (var item in items) {
       path += Platform.pathSeparator + item;
-      pathItems.add(PathItem(path: path, text: item));
+      pathItems.add(_PathItem(path: path, text: item));
     }
 
     directoryName = ((directory.path == widget.rootDirectory.path) &&
@@ -171,7 +198,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title ?? directoryName),
+        title: Text(widget.title ?? directoryName!),
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
@@ -181,8 +208,11 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
             data: ThemeData(
               textTheme: TextTheme(
                 button: TextStyle(
-                    color: AppBarTheme.of(context).textTheme?.title?.color ??
-                        Theme.of(context).primaryTextTheme?.title?.color),
+                    color: AppBarTheme.of(context)
+                            .textTheme
+                            ?.headline6
+                            ?.color ??
+                        Theme.of(context).primaryTextTheme.headline6?.color),
               ),
             ),
             child: Breadcrumbs<String>(
@@ -192,8 +222,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                           text: path.text, data: path.path))
                       .toList(growable: false)
                   : [],
-              onSelect: (String value) {
-                _changeDirectory(Directory(value));
+              onSelect: (String? value) {
+                if (value != null) _changeDirectory(Directory(value));
               },
             ),
           ),
@@ -228,19 +258,26 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
               child: BottomAppBar(
                 color: Theme.of(context).primaryColor,
                 child: Center(
-                  child: FlatButton.icon(
-                    textColor:
-                        AppBarTheme.of(context).textTheme?.title?.color ??
-                            Theme.of(context).primaryTextTheme?.title?.color,
-                    disabledTextColor: (AppBarTheme.of(context)
-                                .textTheme
-                                ?.title
-                                ?.color ??
-                            Theme.of(context).primaryTextTheme?.title?.color)
-                        .withOpacity(0.5),
+                  child: TextButton.icon(
+                    style: TextButton.styleFrom(
+                      primary: AppBarTheme.of(context)
+                              .textTheme
+                              ?.headline6
+                              ?.color ??
+                          Theme.of(context).primaryTextTheme.headline6?.color,
+                      onSurface: (AppBarTheme.of(context)
+                                  .textTheme
+                                  ?.headline6
+                                  ?.color ??
+                              Theme.of(context)
+                                  .primaryTextTheme
+                                  .headline6
+                                  ?.color)!
+                          .withOpacity(0.5),
+                    ),
                     icon: Icon(Icons.check_circle),
                     label: (widget.pickText != null)
-                        ? Text(widget.pickText)
+                        ? Text(widget.pickText!)
                         : const SizedBox(),
                     onPressed: (!permissionRequesting && permissionAllowed)
                         ? () => widget.onSelect(directory.absolute.path)
