@@ -1,21 +1,20 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:filesystem_picker_plugin/src/platform.dart';
+import 'package:filesystem_picker/src/platform.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'common.dart';
 import 'filesystem_list.dart';
 import 'package:path/path.dart' as Path;
 import 'breadcrumbs.dart';
 
-class PathItem {
+class _PathItem {
   final String text;
   final String path;
 
-  PathItem({
-    @required this.path,
-    @required this.text,
+  _PathItem({
+    required this.path,
+    required this.text,
   });
 
   @override
@@ -24,6 +23,13 @@ class PathItem {
   }
 }
 
+/// FileSystem file or folder picker dialog.
+///
+/// Allows the user to browse the file system and pick a folder or file.
+///
+/// See also:
+///
+///  * [FilesystemPicker.open]
 class FilesystemPicker extends StatefulWidget {
   /// Open FileSystemPicker dialog
   /// 
@@ -38,19 +44,19 @@ class FilesystemPicker extends StatefulWidget {
   /// * [allowedExtensions] specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`
   /// * [fileTileSelectMode] specifies how to files can be selected (either tapping on the whole tile or only on trailing button). (default depends on [fsType])
   /// * [requestPermission] if specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
-  static Future<Iterable<String>> open({
-    @required BuildContext context,
-    Directory fixedRootDirectory,
-    String fixedRootName,
+  static Future<Iterable<String>?> open({
+    required BuildContext context,
+    Directory? fixedRootDirectory,
+    String? fixedRootName,
     FilesystemType fsType = FilesystemType.all,
     bool multiSelect = false,
-    String pickText = "Select",
-    String cancelText = "Cancel",
-    String permissionText,
-    String title,
-    Color folderIconColor,
-    List<String> allowedExtensions,
-    RequestPermission requestPermission,
+    String? pickText = "Select",
+    String? cancelText = "Cancel",
+    String? permissionText,
+    String? title,
+    Color? folderIconColor,
+    List<String>? allowedExtensions,
+    RequestPermission? requestPermission,
   }) async {
     return Navigator.of(context).push<Iterable<String>>(
       MaterialPageRoute(builder: (BuildContext context) {
@@ -74,24 +80,24 @@ class FilesystemPicker extends StatefulWidget {
 
   // ---
 
-  final String fixedRootName;
-  final Directory fixedRootDirectory;
+  final String? fixedRootName;
+  final Directory? fixedRootDirectory;
   final FilesystemType fsType;
   final bool multiSelect;
-  final String pickText;
-  final String cancelText;
-  final String permissionText;
-  final String title;
-  final Color folderIconColor;
-  final List<String> allowedExtensions;
-  final RequestPermission requestPermission;
+  final String? pickText;
+  final String? cancelText;
+  final String? permissionText;
+  final String? title;
+  final Color? folderIconColor;
+  final List<String>? allowedExtensions;
+  final RequestPermission? requestPermission;
 
   FilesystemPicker({
-    Key key,
+    Key? key,
     this.fixedRootName,
     this.fixedRootDirectory,
     this.fsType = FilesystemType.all,
-    this.multiSelect,
+    this.multiSelect = false,
     this.pickText,
     this.cancelText,
     this.permissionText,
@@ -120,12 +126,12 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       FileSystemEntityType>();
 
   final List<StorageInfo> _storageInfo = [];
-  Directory directory;
-  String directoryName;
-  final List<PathItem> pathItems = [];
+  Directory? directory;
+  String? directoryName;
+  final List<_PathItem> pathItems = [];
 
-  Directory rootDirectory;
-  String rootName = "";
+  Directory? rootDirectory;
+  String? rootName = "";
 
   @override
   void initState() {
@@ -170,18 +176,16 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   void setRootName() {
     if (useRootSelector && rootDirectory != null) {
-      rootName =
-      widget.fixedRootName != null ? widget.fixedRootName : _storageInfo
-          .where((element) => element.rootDir == rootDirectory.path)
+      rootName = widget.fixedRootName != null ? widget.fixedRootName : _storageInfo
+          .where((element) => element.rootDir == rootDirectory!.path)
           .first
           .label;
     } else {
-      rootName =
-      widget.fixedRootName != null ? widget.fixedRootName : "Storage";
+      rootName = widget.fixedRootName != null ? widget.fixedRootName : "Storage";
     }
   }
 
-  Future<void> _setDirectory(Directory value) async {
+  Future<void> _setDirectory(Directory? value) async {
     setState(() {
       loadingFSE = true;
     });
@@ -189,28 +193,29 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     directory = value;
 
     String dirPath = Path.relative(
-        directory.path, from: Path.dirname(rootDirectory.path));
+        directory!.path,
+        from: Path.dirname(rootDirectory!.path));
     final List<String> items = dirPath.split(Platform.pathSeparator);
     pathItems.clear();
 
     String rootItem = items.first;
-    String rootPath = Path.dirname(rootDirectory.path) +
+    String rootPath = Path.dirname(rootDirectory!.path) +
         Platform.pathSeparator +
         rootItem;
-    pathItems.add(PathItem(path: rootPath, text: rootName ?? rootItem));
+    pathItems.add(_PathItem(path: rootPath, text: rootName ?? rootItem));
     items.removeAt(0);
 
     String path = rootPath;
 
     for (var item in items) {
       path += Platform.pathSeparator + item;
-      pathItems.add(PathItem(path: path, text: item));
+      pathItems.add(_PathItem(path: path, text: item));
     }
 
-    directoryName = ((directory.path == rootDirectory.path) &&
+    directoryName = ((directory!.path == rootDirectory!.path) &&
         (rootName != null))
         ? rootName
-        : Path.basename(directory.path);
+        : Path.basename(directory!.path);
 
     setState(() {
       loadingFSE = false;
@@ -219,10 +224,13 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   // change directory and put the previous directory into history stack
   Future<void> _changeDirectory(Directory value) async {
-    if (directory.absolute.path != value.absolute.path) {
+    if (directory!.absolute.path != value.absolute.path) {
       toggleSelectAll = false;
-      history.push(directory);
+      history.push(directory!);
       _setDirectory(value);
+      if (widget.multiSelect == false){
+        selectedPaths.clear();
+      }
     }
   }
 
@@ -232,7 +240,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       onWillPop: _handleBackAction,
       child: Scaffold(
           appBar: AppBar(
-            title: Text(widget.title ?? directoryName),
+            title: Text(widget.title ?? directoryName!),
             leading: Builder(
               builder: (ctx) {
                 return IconButton(
@@ -297,8 +305,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                           text: path.text, data: path.path))
                       .toList(growable: false)
                       : [],
-                  onSelect: (String value) {
-                    _changeDirectory(Directory(value));
+                  onSelect: (String? value) {
+                    _changeDirectory(Directory(value!));
                   },
                 ),
               ),
@@ -325,7 +333,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                         leading: Icon(Icons.storage, color: Theme
                             .of(context)
                             .primaryTextTheme
-                            .headline6
+                            .headline6!
                             .color),
                       ),
                     ),
@@ -360,10 +368,9 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                             value: _storageInfo.indexOf(ss),
                             groupValue: _storageInfo.map((e) => e.rootDir)
                                 .toList()
-                                .indexOf(rootDirectory.path),
+                                .indexOf(rootDirectory!.path),
                             onChanged: (val) {
-                              rootDirectory =
-                                  Directory(_storageInfo[val].rootDir);
+                              rootDirectory = Directory(_storageInfo[val!].rootDir);
                               setRootName();
                               _setDirectory(rootDirectory);
                               Navigator.pop(context);
@@ -385,7 +392,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                               Icons.library_add_check, color: Theme
                               .of(context)
                               .primaryTextTheme
-                              .headline6
+                              .headline6!
                               .color),
                           title: Text("Selected " +
                               (widget.fsType == FilesystemType.all
@@ -425,7 +432,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                             title: Text(Path.basename(key)),
                             onTap: () {
                               if (key.startsWith(
-                                  rootDirectory.absolute.path) == false) {
+                                  rootDirectory!.absolute.path) == false) {
                                 rootDirectory = Directory(_storageInfo
                                     .firstWhere((ss) =>
                                     key.startsWith(ss.rootDir))
@@ -433,7 +440,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                                 setRootName();
                               }
                               _changeDirectory(Directory(
-                                  key == rootDirectory.absolute.path
+                                  key == rootDirectory!.absolute.path
                                       ? key
                                       : Path.dirname(key)));
                               Navigator.pop(context);
@@ -474,8 +481,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
               : (permissionAllowed
               ? FilesystemList(
               controller: fileSystemListController,
-              isRoot: (directory.absolute.path == rootDirectory.absolute.path),
-              rootDirectory: directory,
+              isRoot: (directory!.absolute.path == rootDirectory!.absolute.path),
+              rootDirectory: directory!,
               multiSelect: widget.multiSelect,
               fsType: widget.fsType,
               folderIconColor: widget.folderIconColor,
@@ -530,7 +537,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                     ),
                     icon: Icon(Icons.cancel),
                     label: (widget.cancelText != null)
-                        ? Text(widget.cancelText)
+                        ? Text(widget.cancelText!)
                         : const Text("Cancel"),
                     onPressed: (!permissionRequesting && permissionAllowed)
                         ? () {
@@ -560,7 +567,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                     ),
                     icon: Icon(Icons.check_circle),
                     label: (widget.pickText != null)
-                        ? Text(widget.pickText)
+                        ? Text(widget.pickText!)
                         : const Text("Select"),
                     onPressed: (!permissionRequesting && permissionAllowed && selectedPaths.length > 0)
                         ? () => Navigator.pop(context, selectedPaths.keys)
@@ -578,10 +585,10 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   Future<bool> _handleBackAction() {
     if (cancelButtonPressed == false &&
-        directory.absolute.path != rootDirectory.absolute.path &&
+        directory!.absolute.path != rootDirectory!.absolute.path &&
         history.length > 0) {
       var p = history.pop();
-      if (p.absolute.path.startsWith(rootDirectory.absolute.path) == false) {
+      if (p.absolute.path.startsWith(rootDirectory!.absolute.path) == false) {
         rootDirectory = Directory(_storageInfo
             .firstWhere((ss) => p.absolute.path.startsWith(ss.rootDir))
             .rootDir);

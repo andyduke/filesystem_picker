@@ -12,7 +12,7 @@ class PlatformMethods {
           'isExternalStorageManager');
       return result;
     } on PlatformException catch (e) {
-      print("Oh no...\n\n" + e.message);
+      print("Oh no...\n\n" + e.message!);
     }
 
     return false;
@@ -33,7 +33,7 @@ class PlatformMethods {
 
       return storageInfos;
     } on PlatformException catch (e) {
-      print("Oh no...\n\n" + e.message);
+      print("Oh no...\n\n" + e.message!);
     }
 
     return [];

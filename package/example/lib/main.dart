@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:filesystem_picker_plugin/filesystem_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -10,7 +10,7 @@ class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
 
-  static _MyAppState of(BuildContext context) {
+  static _MyAppState? of(BuildContext context) {
     return context.findAncestorStateOfType<_MyAppState>();
   }
 }
@@ -51,10 +51,10 @@ class DemoPage extends StatefulWidget {
 }
 
 class _DemoPageState extends State<DemoPage> {
-  Directory rootPath;
+  Directory? rootPath;
 
-  String filePath;
-  String dirPath;
+  String? filePath;
+  String? dirPath;
 
   bool multiSelectMode = false;
 
@@ -69,7 +69,7 @@ class _DemoPageState extends State<DemoPage> {
     rootPath = await getTemporaryDirectory();
 
     // Create sample directory if not exists
-    Directory sampleFolder = Directory('${rootPath.path}/Sample folder');
+    Directory sampleFolder = Directory('${rootPath!.path}/Sample folder');
     if (!sampleFolder.existsSync()) {
       sampleFolder.createSync();
     }
@@ -147,7 +147,7 @@ class _DemoPageState extends State<DemoPage> {
                   children: <Widget>[
                     // Theme Brightness Switch Button
                     ElevatedButton(
-                      child: Text((appState.brightness == Brightness.light)
+                      child: Text((appState!.brightness == Brightness.light)
                           ? 'Switch to Dark theme'
                           : 'Switch to Light theme'),
                       onPressed: () {
@@ -218,9 +218,9 @@ class _DemoPageState extends State<DemoPage> {
                         title: Text('Multi Select Mode'),
                         controlAffinity: ListTileControlAffinity.leading,
                         value: multiSelectMode,
-                        onChanged: (bool newValue) {
+                        onChanged: (bool? newValue) {
                           setState(() {
-                            multiSelectMode = newValue;
+                            multiSelectMode = newValue!;
                           });
                         },
                       ),

@@ -21,24 +21,24 @@ class FilesystemList extends StatelessWidget {
   final bool isRoot;
   final Directory rootDirectory;
   final FilesystemType fsType;
-  final Color folderIconColor;
-  final List<String> allowedExtensions;
+  final Color? folderIconColor;
+  final List<String>? allowedExtensions;
   final ValueChanged<Directory> onChange;
   final ValueSelected onSelect;
   final Iterable<String> selectedItems;
   final bool multiSelect;
 
   FilesystemList({
-    Key key,
-    @required this.controller,
+    Key? key,
+    required this.controller,
     this.isRoot = false,
-    @required this.rootDirectory,
+    required this.rootDirectory,
     this.fsType = FilesystemType.all,
     this.folderIconColor,
     this.allowedExtensions,
-    @required this.onChange,
-    @required this.onSelect,
-    @required this.selectedItems,
+    required this.onChange,
+    required this.onSelect,
+    required this.selectedItems,
     this.multiSelect = false,
   }) : super(key: key);
 
@@ -52,8 +52,8 @@ class FilesystemList extends StatelessWidget {
         if ((fsType != FilesystemType.folder) || (file is Directory)) {
           if ((file is File) &&
               (allowedExtensions != null) &&
-              (allowedExtensions.length > 0)) {
-            if (!allowedExtensions.contains(Path.extension(file.path))) return;
+              (allowedExtensions!.length > 0)) {
+            if (!allowedExtensions!.contains(Path.extension(file.path))) return;
           }
           items.add(file);
         }
@@ -87,7 +87,7 @@ class FilesystemList extends StatelessWidget {
       builder: (BuildContext context,
           AsyncSnapshot<List<FileSystemEntity>> snapshot) {
         controller.items.clear();
-        if (snapshot.hasData && snapshot.data.length >= 0) {
+        if (snapshot.hasData && snapshot.data!.length >= 0) {
           List<Widget> chs = [];
 
           if (!isRoot) {
@@ -95,11 +95,11 @@ class FilesystemList extends StatelessWidget {
             chs.add(fseHBorder);
           }
 
-          if (snapshot.data.length > 0) {
+          if (snapshot.data!.length > 0) {
             //List<FileSystemEntity> symbolicLinks = [];
             List<FileSystemEntity> dirs = [];
             List<FileSystemEntity> files = [];
-            snapshot.data.forEach((fse) {
+            snapshot.data!.forEach((fse) {
               if (fse is File) {
                 files.add(fse);
               } else if (fse is Directory) {
@@ -138,25 +138,6 @@ class FilesystemList extends StatelessWidget {
             children: chs,
           );
 
-          // return ListView.builder(
-          //   shrinkWrap: true,
-          //   itemCount: snapshot.data.length + (isRoot ? 0 : 1),
-          //   itemBuilder: (BuildContext context, int index) {
-          //     if (!isRoot && index == 0) {
-          //       return _topNavigation();
-          //     }
-          //
-          //     final item = snapshot.data[index - (isRoot ? 0 : 1)];
-          //     return FilesystemListTile(
-          //       fsType: fsType,
-          //       item: item,
-          //       folderIconColor: folderIconColor,
-          //       onChange: onChange,
-          //       onSelect: onSelect,
-          //       fileTileSelectMode: fileTileSelectMode,
-          //     );
-          //   },
-          // );
         } else {
           return const Center(
             child: const CircularProgressIndicator(),

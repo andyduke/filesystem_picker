@@ -7,7 +7,7 @@ import 'package:path/path.dart' as Path;
 class FilesystemListTile extends StatelessWidget {
   final FilesystemType fsType;
   final FileSystemEntity item;
-  final Color folderIconColor;
+  final Color? folderIconColor;
   final ValueChanged<Directory> onChange;
   final bool multiSelect;
   final bool isSelected;
@@ -15,15 +15,15 @@ class FilesystemListTile extends StatelessWidget {
   final ValueSelected onSelect;
 
   FilesystemListTile({
-    Key key,
+    Key? key,
     this.fsType = FilesystemType.all,
-    @required this.item,
+    required this.item,
     this.folderIconColor,
-    @required this.onChange,
-    @required this.multiSelect,
-    @required this.isSelected,
-    @required this.subItemsSelected,
-    @required this.onSelect
+    required this.onChange,
+    required this.multiSelect,
+    required this.isSelected,
+    required this.subItemsSelected,
+    required this.onSelect
   }) : super(key: key);
 
   Widget _leading(BuildContext context) {
@@ -51,14 +51,14 @@ class FilesystemListTile extends StatelessWidget {
             color: Colors.transparent,
             child: ic,
           ),
-          onTap: () => onChange(item)
+          onTap: () => onChange(item as Directory)
       );
     } else {
       return ic;
     }
   }
 
-  Widget _trailing(BuildContext context) {
+  Widget? _trailing(BuildContext context) {
     var chs = <Widget>[];
     if (subItemsSelected && item is Directory) {
       chs.add(Icon(Icons.library_add_check, color: Theme
@@ -121,7 +121,7 @@ class FilesystemListTile extends StatelessWidget {
             color: Colors.transparent,
             child: tx,
           ),
-          onTap: () => onChange(item)
+          onTap: () => onChange(item as Directory)
       );
     } else {
       return tx;
@@ -140,7 +140,7 @@ class FilesystemListTile extends StatelessWidget {
         trailing: _trailing(context),
         title: _main(context),
         onTap: (item is Directory && fsType == FilesystemType.file)
-            ? () => onChange(item)
+            ? () => onChange(item as Directory)
             : (fsType == FilesystemType.file
             ? () =>
             onSelect(item.absolute.path, isSelected,
