@@ -29,11 +29,12 @@ class FilesystemPickerPlugin: FlutterPlugin, MethodCallHandler {
     if (call.method == "getPlatformVersion") {
       result.success("Android ${Build.VERSION.RELEASE}")
     } else if (call.method == "isExternalStorageManager") {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        result.success(Environment.isExternalStorageManager())
-      } else {
-        result.success(true)
-      }
+//      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//        result.success(Environment.isExternalStorageManager())
+//      } else {
+//        result.success(true)
+//      }
+      result.success(true)
     } else if (call.method == "getExtStorageData") {
       val reply = StorageUtils.getExternalStorageAvailableData(context)
       result.success(reply)

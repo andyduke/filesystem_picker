@@ -293,7 +293,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                             Theme
                                 .of(context)
                                 .primaryTextTheme
-                                ?.headline6
+                                .headline6
                                 ?.color),
                   ),
                 ),
@@ -372,6 +372,9 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                             onChanged: (val) {
                               rootDirectory = Directory(_storageInfo[val!].rootDir);
                               setRootName();
+                              if (widget.multiSelect == false){
+                                selectedPaths.clear();
+                              }
                               _setDirectory(rootDirectory);
                               Navigator.pop(context);
                             },
@@ -532,7 +535,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                           Theme
                               .of(context)
                               .primaryTextTheme
-                              ?.headline6
+                              .headline6
                               ?.color,
                     ),
                     icon: Icon(Icons.cancel),
@@ -562,7 +565,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                           Theme
                               .of(context)
                               .primaryTextTheme
-                              ?.headline6
+                              .headline6
                               ?.color,
                     ),
                     icon: Icon(Icons.check_circle),

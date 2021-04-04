@@ -68,9 +68,7 @@ extension ListViewExtended on ListView {
     bool addSemanticIndexes = true,
     double? cacheExtent,
   }) {
-    assert(itemBuilder != null);
-    assert(separatorBuilder != null);
-    assert(itemCount != null && itemCount >= 0);
+    assert(itemCount >= 0);
     final int childCount =
     _computeSemanticChildCount(itemCount, headerBuilder, footerBuilder);
 
@@ -88,12 +86,6 @@ extension ListViewExtended on ListView {
           widget = itemBuilder(context, itemIndex);
         } else {
           widget = separatorBuilder(context, itemIndex);
-          assert(() {
-            if (widget == null) {
-              throw FlutterError('separatorBuilder cannot return null.');
-            }
-            return true;
-          }());
         }
         return widget;
       },
