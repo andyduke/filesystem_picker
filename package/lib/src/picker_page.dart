@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:filesystem_picker/src/filename_text_widget.dart';
 import 'package:filesystem_picker/src/platform.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -402,7 +403,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                                   ? "Items"
                                   : widget.fsType == FilesystemType.file
                                   ? "Files"
-                                  : "Directories"),
+                                  : "Folders") + " (" + selectedPaths.length.toString() + ")",
                               style: Theme
                                   .of(context)
                                   .primaryTextTheme
@@ -414,7 +415,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                           .primaryColor,
                     )),
                 Flexible(
-                    fit: FlexFit.tight,
+                    fit: FlexFit.loose,
                     child: ListView(
                       padding: EdgeInsets.zero,
                       children: () {
@@ -432,7 +433,9 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                                   .primaryColor,
                               size: iconSize,
                             ),
-                            title: Text(Path.basename(key)),
+                            title: FilenameTextWidget(key,
+                              isDirectory: value == FileSystemEntityType.directory,
+                            ),
                             onTap: () {
                               if (key.startsWith(
                                   rootDirectory!.absolute.path) == false) {
@@ -457,25 +460,10 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                       }(),
                     )
                 ),
-                Visibility(
-                    visible: selectedPaths.length > 1,
-                    child: Material(
-                      child: ListTile(
-                        title: Text("Count:",
-                            style: Theme
-                                .of(context)
-                                .primaryTextTheme
-                                .headline6),
-                        trailing: Text(selectedPaths.length.toString(),
-                            style: Theme
-                                .of(context)
-                                .primaryTextTheme
-                                .headline6),
-                      ),
-                      color: Theme
-                          .of(context)
-                          .primaryColor,
-                    )),
+                Container(
+                  height: 1,
+                  color: Theme.of(context).primaryColor,
+                )
               ],
             ),
           ) : null,
