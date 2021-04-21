@@ -85,6 +85,8 @@ class _DemoPageState extends State<DemoPage> {
 
   Future<void> _openFile(BuildContext context) async {
     var paths = await FilesystemPicker.open(
+      // fixedRootDirectory: rootPath,
+      // fixedRootName: "Sum Ting",
       title: 'Open file',
       context: context,
       fsType: FilesystemType.file,
@@ -109,9 +111,10 @@ class _DemoPageState extends State<DemoPage> {
 
   Future<void> _pickDir(BuildContext context) async {
     var paths = await FilesystemPicker.open(
+      // fixedRootDirectory: rootPath,
+      // fixedRootName: "Sum Ting",
       title: 'Save to folder',
       context: context,
-      //rootDirectory: rootPath,
       fsType: FilesystemType.folder,
       pickText: 'Save file to this folder',
       multiSelect: multiSelectMode,
