@@ -36,8 +36,8 @@ class FilesystemPicker extends StatefulWidget {
   /// 
   /// Returns null if nothing was selected.
   ///
-  /// * [rootDirectory] specifies the root of the filesystem view.
-  /// * [rootName] specifies the name of the filesystem view root in breadcrumbs, by default "Storage".
+  /// * [fixedRootDirectory] specifies the root of the filesystem view.
+  /// * [fixedRootName] specifies the name of the filesystem view root in breadcrumbs, by default "Storage".
   /// * [fsType] specifies the type of filesystem view (folder and files, folder only or files only), by default `FilesystemType.all`.
   /// * [pickText] specifies the text for the folder selection button (only for [fsType] = FilesystemType.folder).
   /// * [permissionText] specifies the text of the message that there is no permission to access the storage, by default: "Access to the storage was not granted.".
@@ -167,7 +167,6 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       if (rootDirectory == null) {
         rootDirectory = Directory(_storageInfo[0].rootDir);
         setRootName();
-        _setDirectory(rootDirectory);
       }
     } catch (err) {
       failedLoadStorageInfo = true;
@@ -184,6 +183,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     } else {
       rootName = widget.fixedRootName != null ? widget.fixedRootName : "Storage";
     }
+
+    _setDirectory(rootDirectory);
   }
 
   Future<void> _setDirectory(Directory? value) async {
