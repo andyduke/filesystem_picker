@@ -1,7 +1,8 @@
 import 'dart:io';
+
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:path_provider/path_provider.dart' as prov;
 import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
@@ -51,7 +52,9 @@ class DemoPage extends StatefulWidget {
 }
 
 class _DemoPageState extends State<DemoPage> {
-  Directory? rootPath;
+  Directory? temporaryDirectory;
+  Directory? documentsDirectory;
+  Directory? supportDirectory;
 
   String? filePath;
   String? dirPath;
@@ -66,10 +69,12 @@ class _DemoPageState extends State<DemoPage> {
   }
 
   Future<void> _prepareStorage() async {
-    rootPath = await getTemporaryDirectory();
+    temporaryDirectory = await prov.getTemporaryDirectory();
+    documentsDirectory = await prov.getApplicationDocumentsDirectory();
+    supportDirectory = await prov.getApplicationSupportDirectory();
 
-    // Create sample directory if not exists
-    var sampleFolder = Directory('${rootPath!.path}/Sample folder');
+    // Create sample directory on temporaryDirectory if not exists
+    var sampleFolder = Directory('${temporaryDirectory!.path}/Sample folder');
     if (!sampleFolder.existsSync()) {
       sampleFolder.createSync();
     }
@@ -85,15 +90,26 @@ class _DemoPageState extends State<DemoPage> {
 
   Future<void> _openFile(BuildContext context) async {
     var paths = await FilesystemPicker.open(
-      // fixedRootDirectory: rootPath,
-      // fixedRootName: "Sum Ting",
-      title: 'Open file',
+      rootDirectories: [
+       temporaryDirectory!,
+      ],
+      rootNames: [
+        'Temporary',
+      ],
+      title: 'Open File',
       context: context,
       fsType: FilesystemType.file,
       multiSelect: multiSelectMode,
       requestPermission: () async =>
-          await Permission.storage.request().isGranted,
+      await Permission.storage
+          .request()
+          .isGranted,
       pickText: 'Select File',
+      themeData: Theme.of(context).copyWith(
+        primaryColor: Colors.purple,
+        primaryColorLight: Colors.purple.shade200,
+        primaryColorDark: Colors.purple.shade700
+      ),
     );
 
     if (paths != null) {
@@ -109,15 +125,24 @@ class _DemoPageState extends State<DemoPage> {
 
   Future<void> _pickDir(BuildContext context) async {
     var paths = await FilesystemPicker.open(
-      // fixedRootDirectory: rootPath,
-      // fixedRootName: "Sum Ting",
-      title: 'Save to folder',
+      rootDirectories: [
+        temporaryDirectory!,
+        documentsDirectory!,
+        supportDirectory!
+      ],
+      rootNames: [
+        'Temporary',
+        'My Documents',
+      ],
+      title: 'Directory Picker',
       context: context,
       fsType: FilesystemType.folder,
-      pickText: 'Save file to this folder',
+      pickText: 'Pick Item(s)',
       multiSelect: multiSelectMode,
       requestPermission: () async =>
-          await Permission.storage.request().isGranted,
+      await Permission.storage
+          .request()
+          .isGranted,
     );
 
     if (paths != null) {
@@ -137,92 +162,102 @@ class _DemoPageState extends State<DemoPage> {
 
     return Scaffold(
       body: Builder(
-        builder: (context) => Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  // Theme Brightness Switch Button
-                  ElevatedButton(
-                    onPressed: () {
-                      appState!.setThemeBrightness(
-                          appState.brightness == Brightness.light
-                              ? Brightness.dark
-                              : Brightness.light);
-                    },
-                    child: Text((appState!.brightness == Brightness.light)
-                        ? 'Switch to Dark theme'
-                        : 'Switch to Light theme'),
+        builder: (context) =>
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      // Theme Brightness Switch Button
+                      ElevatedButton(
+                        onPressed: () {
+                          appState!.setThemeBrightness(
+                              appState.brightness == Brightness.light
+                                  ? Brightness.dark
+                                  : Brightness.light);
+                        },
+                        child: Text((appState!.brightness == Brightness.light)
+                            ? 'Switch to Dark theme'
+                            : 'Switch to Light theme'),
+                      ),
+
+                      Divider(height: 60),
+
+                      // Directory picker section
+
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Text(
+                          'Directory Picker',
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .headline5,
+                        ),
+                      ),
+
+                      if (dirPath != null)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Text('$dirPath'),
+                        ),
+
+                      ElevatedButton(
+                        onPressed:
+                        (temporaryDirectory != null && documentsDirectory != null && supportDirectory != null) ? () => _pickDir(context) : null,
+                        child: Text('Pick Folder(s)'),
+                      ),
+
+                      Divider(height: 60),
+
+                      // File picker section
+
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Text(
+                          'File Picker',
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .headline5,
+                        ),
+                      ),
+
+                      if (filePath != null)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Text('$filePath'),
+                        ),
+
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.purple
+                        ),
+                        onPressed:
+                        (temporaryDirectory != null) ? () => _openFile(context) : null,
+                        child: Text('Open File(s)'),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: CheckboxListTile(
+                          title: Text('Multiple selections'),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          value: multiSelectMode,
+                          onChanged: (bool? newValue) {
+                            setState(() {
+                              multiSelectMode = newValue!;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-
-                  Divider(height: 60),
-
-                  // Directory picker section
-
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Text(
-                      'Directory Picker',
-                      style: Theme.of(context).textTheme.headline5,
-                    ),
-                  ),
-
-                  if (dirPath != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text('$dirPath'),
-                    ),
-
-                  ElevatedButton(
-                    onPressed:
-                        (rootPath != null) ? () => _pickDir(context) : null,
-                    child: Text('Save File'),
-                  ),
-
-                  Divider(height: 60),
-
-                  // File picker section
-
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Text(
-                      'File Picker',
-                      style: Theme.of(context).textTheme.headline5,
-                    ),
-                  ),
-
-                  if (filePath != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text('$filePath'),
-                    ),
-
-                  ElevatedButton(
-                    onPressed:
-                        (rootPath != null) ? () => _openFile(context) : null,
-                    child: Text('Open File'),
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: CheckboxListTile(
-                      title: Text('Multi Select Mode'),
-                      controlAffinity: ListTileControlAffinity.leading,
-                      value: multiSelectMode,
-                      onChanged: (bool? newValue) {
-                        setState(() {
-                          multiSelectMode = newValue!;
-                        });
-                      },
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
       ),
     );
   }

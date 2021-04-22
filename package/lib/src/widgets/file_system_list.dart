@@ -5,8 +5,8 @@ import 'package:filesystem_picker/src/utils/models/file_system_mini_item.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 
-import '../constants/typedefs/typedefs.dart';
 import '../constants/enums/file_system_type.dart';
+import '../constants/typedefs/typedefs.dart';
 import 'filesystem_list_tile.dart';
 
 class FilesystemList extends StatelessWidget {
@@ -20,6 +20,8 @@ class FilesystemList extends StatelessWidget {
   final ValueSelected onSelect;
   final Iterable<String> selectedItems;
   final bool multiSelect;
+  final ThemeData? themeData;
+  final TextDirection? textDirection;
 
   FilesystemList({
     Key? key,
@@ -33,6 +35,8 @@ class FilesystemList extends StatelessWidget {
     required this.onSelect,
     required this.selectedItems,
     this.multiSelect = false,
+    this.themeData,
+    this.textDirection,
   }) : super(key: key);
 
   Future<List<FileSystemEntity>> _getDirContents() {
@@ -116,6 +120,8 @@ class FilesystemList extends StatelessWidget {
                   subItemsSelected: selectedItems.any((ee) => ee
                       .startsWith(fse.absolute.path + Platform.pathSeparator)),
                   multiSelect: multiSelect,
+                  themeData: themeData,
+                  textDirection: textDirection,
                 ),
               );
               chs.add(Divider(color: Colors.grey, height: 1));

@@ -1,11 +1,11 @@
 import 'dart:io';
+
+import 'package:filesystem_picker/src/constants/enums/file_system_type.dart';
+import 'package:filesystem_picker/src/constants/typedefs/typedefs.dart';
+import 'package:filesystem_picker/src/utils/helpers/file_icon_helper.dart';
+import 'package:filesystem_picker/src/widgets/filename_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
-import 'filename_text.dart';
-import '../utils/helpers/file_icon_helper.dart';
-import '../constants/enums/file_system_type.dart';
-import '../constants/typedefs/typedefs.dart';
 
 class FilesystemListTile extends StatelessWidget {
   final FilesystemType fsType;
@@ -16,26 +16,30 @@ class FilesystemListTile extends StatelessWidget {
   final bool isSelected;
   final bool subItemsSelected;
   final ValueSelected onSelect;
+  final ThemeData? themeData;
+  final TextDirection? textDirection;
 
-  FilesystemListTile({
-    Key? key,
-    this.fsType = FilesystemType.all,
-    required this.item,
-    this.folderIconColor,
-    required this.onChange,
-    required this.multiSelect,
-    required this.isSelected,
-    required this.subItemsSelected,
-    required this.onSelect,
-  }) : super(key: key);
+  FilesystemListTile(
+      {Key? key,
+      this.fsType = FilesystemType.all,
+      required this.item,
+      this.folderIconColor,
+      required this.onChange,
+      required this.multiSelect,
+      required this.isSelected,
+      required this.subItemsSelected,
+      required this.onSelect,
+      this.themeData,
+      this.textDirection})
+      : super(key: key);
 
   Widget _leading(BuildContext context) {
     Icon ic;
     var col = isSelected
-        ? Theme.of(context).primaryColorLight
+        ? (themeData ?? Theme.of(context)).primaryColorLight
         : (item is File
-            ? Theme.of(context).unselectedWidgetColor
-            : (folderIconColor ?? Theme.of(context).primaryColor));
+            ? (themeData ?? Theme.of(context)).unselectedWidgetColor
+            : (folderIconColor ?? (themeData ?? Theme.of(context)).primaryColor));
     if (item is Directory) {
       ic = Icon(
         Icons.folder,
@@ -46,24 +50,14 @@ class FilesystemListTile extends StatelessWidget {
       ic = FileIconHelper.getIcon(item.path, col);
     }
 
-    if (multiSelect && item is Directory) {
-      return GestureDetector(
-        onTap: () => onChange(item as Directory),
-        child: Container(
-          color: Colors.transparent,
-          child: ic,
-        ),
-      );
-    } else {
-      return ic;
-    }
+    return ic;
   }
 
   Widget _trailing(BuildContext context) {
     var chs = <Widget>[];
     if (subItemsSelected && item is Directory) {
       chs.add(Icon(Icons.library_add_check,
-          color: Theme.of(context).primaryColorDark));
+          color: (themeData ?? Theme.of(context)).primaryColorDark));
     }
 
     if ((item is File && fsType == FilesystemType.file && multiSelect) ||
@@ -80,8 +74,8 @@ class FilesystemListTile extends StatelessWidget {
         child: Icon(
           isSelected ? Icons.check_box : Icons.check_box_outline_blank,
           color: isSelected
-              ? Theme.of(context).primaryColorLight
-              : Theme.of(context).disabledColor.withOpacity(0.5),
+              ? (themeData ?? Theme.of(context)).primaryColorLight
+              : (themeData ?? Theme.of(context)).disabledColor.withOpacity(0.5),
         ),
       ));
     }
@@ -109,65 +103,50 @@ class FilesystemListTile extends StatelessWidget {
       item.path,
       isDirectory: item is Directory,
       textStyle: isSelected
-          ? Theme.of(context).primaryTextTheme.bodyText1
-          : Theme.of(context).textTheme.bodyText1,
+          ? (themeData ?? Theme.of(context)).primaryTextTheme.bodyText1
+          : (themeData ?? Theme.of(context)).textTheme.bodyText1,
     );
-    if (item is Directory) {
-      return GestureDetector(
-        onTap: () => onChange(item as Directory),
-        child: Container(
-          color: Colors.transparent,
-          child: tx,
-        ),
-      );
-    } else {
-      return tx;
-    }
+
+    return tx;
   }
 
   @override
   Widget build(BuildContext context) {
     return Material(
       key: Key(item.absolute.path),
-      color:
-          isSelected ? Theme.of(context).primaryColorDark : Colors.transparent,
+      color: isSelected ? (themeData ?? Theme.of(context)).primaryColorDark : Colors.transparent,
       child: InkWell(
-        onTap: (item is Directory && fsType == FilesystemType.file)
-            ? () => onChange(item as Directory)
-            : (fsType == FilesystemType.file
-                ? () => onSelect(
-                    item.absolute.path,
-                    isSelected,
-                    item is File
-                        ? FileSystemEntityType.file
-                        : item is Directory
-                            ? FileSystemEntityType.directory
-                            : FileSystemEntityType.notFound)
-                : null),
-        child: SizedBox(
-          height: 60,
-          width: double.maxFinite,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(left: 15, right: 15),
-                child: _leading(context),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(15),
-                  child: _main(context),
+          onTap: () {
+            if (item is Directory) {
+              onChange(item as Directory);
+            } else if (item is File) {
+              onSelect(
+                  item.absolute.path, isSelected, FileSystemEntityType.file);
+            }
+          },
+          child: SizedBox(
+            height: 60,
+            width: double.maxFinite,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 15, right: 15),
+                  child: _leading(context),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(15),
-                child: _trailing(context),
-              )
-            ],
-          ),
-        ),
-      ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.all(15),
+                    child: _main(context),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(15),
+                  child: _trailing(context),
+                )
+              ],
+            ),
+          )),
     );
   }
 }
