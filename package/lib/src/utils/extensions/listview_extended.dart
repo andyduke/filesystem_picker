@@ -69,14 +69,14 @@ extension ListViewExtended on ListView {
     double? cacheExtent,
   }) {
     assert(itemCount >= 0);
-    final int childCount =
-    _computeSemanticChildCount(itemCount, headerBuilder, footerBuilder);
+    final childCount =
+        _computeSemanticChildCount(itemCount, headerBuilder, footerBuilder);
 
-    SliverChildBuilderDelegate childrenDelegate = SliverChildBuilderDelegate(
-          (BuildContext context, int index) {
+    var childrenDelegate = SliverChildBuilderDelegate(
+      (BuildContext context, int index) {
         // final int itemIndex = (index ~/ 2);
-        final int delta = ((headerBuilder != null) ? 1 : 0);
-        final int itemIndex = (index - delta) ~/ 2;
+        final delta = ((headerBuilder != null) ? 1 : 0);
+        final itemIndex = (index - delta) ~/ 2;
         Widget widget;
         if ((headerBuilder != null) && (index == 0)) {
           widget = headerBuilder(context);
