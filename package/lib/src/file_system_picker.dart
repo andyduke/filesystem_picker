@@ -4,18 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:path/path.dart' as path;
 
-import '../utils/models/path_item.dart';
-import '../utils/models/stack_list.dart';
-import '../constants/typedefs/typedefs.dart';
-import '../constants/enums/file_system_type.dart';
-import '../platform/platform.dart';
-import '../utils/helpers/file_icon_helper.dart';
-import '../utils/models/breadcrumb_item.dart';
-import '../utils/models/file_system_mini_item.dart';
-import '../utils/models/storage_info.dart';
-import 'breadcrumbs.dart';
-import 'file_system_list.dart';
-import 'filename_text.dart';
+import 'utils/models/path_item.dart';
+import 'utils/models/stack_list.dart';
+import 'constants/typedefs/typedefs.dart';
+import 'constants/enums/file_system_type.dart';
+import 'platform/platform.dart';
+import 'utils/helpers/file_icon_helper.dart';
+import 'utils/models/breadcrumb_item.dart';
+import 'utils/models/file_system_mini_item.dart';
+import 'utils/models/storage_info.dart';
+import 'widgets/breadcrumbs.dart';
+import 'widgets/file_system_list.dart';
+import 'widgets/filename_text.dart';
 
 /// FileSystem file or folder picker dialog.
 ///
