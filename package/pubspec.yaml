@@ -12,10 +12,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  pedantic: ^1.11.0
+
   path: ^1.8.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
 flutter:

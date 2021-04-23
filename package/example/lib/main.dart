@@ -1,7 +1,8 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+
 import 'package:filesystem_picker/filesystem_picker.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart' as prov;
 import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
@@ -51,30 +52,35 @@ class DemoPage extends StatefulWidget {
 }
 
 class _DemoPageState extends State<DemoPage> {
-  Directory? rootPath;
+  Directory? temporaryDirectory;
+  Directory? documentsDirectory;
+  Directory? supportDirectory;
 
   String? filePath;
   String? dirPath;
 
-  FileTileSelectMode filePickerSelectMode = FileTileSelectMode.checkButton;
+  bool multiSelectMode = false;
 
   @override
   void initState() {
-    _prepareStorage();
     super.initState();
+
+    _prepareStorage();
   }
 
   Future<void> _prepareStorage() async {
-    rootPath = await getTemporaryDirectory();
+    temporaryDirectory = await prov.getTemporaryDirectory();
+    documentsDirectory = await prov.getApplicationDocumentsDirectory();
+    supportDirectory = await prov.getApplicationSupportDirectory();
 
-    // Create sample directory if not exists
-    Directory sampleFolder = Directory('${rootPath!.path}/Sample folder');
+    // Create sample directory on temporaryDirectory if not exists
+    var sampleFolder = Directory('${temporaryDirectory!.path}/Sample folder');
     if (!sampleFolder.existsSync()) {
       sampleFolder.createSync();
     }
 
     // Create sample file if not exists
-    File sampleFile = File('${sampleFolder.path}/Sample.txt');
+    var sampleFile = File('${sampleFolder.path}/Sample.txt');
     if (!sampleFile.existsSync()) {
       sampleFile.writeAsStringSync('FileSystem Picker sample file.');
     }
@@ -83,49 +89,66 @@ class _DemoPageState extends State<DemoPage> {
   }
 
   Future<void> _openFile(BuildContext context) async {
-    String? path = await FilesystemPicker.open(
-      title: 'Open file',
+    var paths = await FilesystemPicker.open(
+      rootDirectories: [
+        temporaryDirectory!,
+      ],
+      rootNames: [
+        'Temporary',
+      ],
+      title: 'Open File',
       context: context,
-      rootDirectory: rootPath!,
       fsType: FilesystemType.file,
-      folderIconColor: Colors.teal,
-      allowedExtensions: ['.txt'],
-      fileTileSelectMode: filePickerSelectMode,
+      multiSelect: multiSelectMode,
       requestPermission: () async =>
           await Permission.storage.request().isGranted,
+      pickText: 'Select File',
+      themeData: Theme.of(context).copyWith(
+          primaryColor: Colors.green,
+          primaryColorLight: Colors.green.shade200,
+          primaryColorDark: Colors.green.shade700),
     );
 
-    if (path != null) {
-      File file = File('$path');
-      String contents = await file.readAsString();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(contents),
-        ),
-      );
+    if (paths != null) {
+      setState(() {
+        filePath = paths.join('\n\n');
+      });
+    } else {
+      setState(() {
+        filePath = '';
+      });
     }
-
-    setState(() {
-      filePath = path;
-    });
   }
 
   Future<void> _pickDir(BuildContext context) async {
-    String? path = await FilesystemPicker.open(
-      title: 'Save to folder',
+    var paths = await FilesystemPicker.open(
+      rootDirectories: [
+        temporaryDirectory!,
+        documentsDirectory!,
+        supportDirectory!
+      ],
+      rootNames: [
+        'Temporary',
+        'My Documents',
+      ],
+      title: 'Directory Picker',
       context: context,
-      rootDirectory: rootPath!,
       fsType: FilesystemType.folder,
-      pickText: 'Save file to this folder',
-      folderIconColor: Colors.teal,
+      pickText: 'Pick Item(s)',
+      multiSelect: multiSelectMode,
       requestPermission: () async =>
           await Permission.storage.request().isGranted,
     );
 
-    setState(() {
-      dirPath = path;
-    });
+    if (paths != null) {
+      setState(() {
+        dirPath = paths.join('\n\n');
+      });
+    } else {
+      setState(() {
+        dirPath = '';
+      });
+    }
   }
 
   @override
@@ -137,86 +160,91 @@ class _DemoPageState extends State<DemoPage> {
         builder: (context) => Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // Theme Brightness Switch Button
-                ElevatedButton(
-                  child: Text((appState!.brightness == Brightness.light)
-                      ? 'Switch to Dark theme'
-                      : 'Switch to Light theme'),
-                  onPressed: () {
-                    appState.setThemeBrightness(
-                        appState.brightness == Brightness.light
-                            ? Brightness.dark
-                            : Brightness.light);
-                  },
-                ),
-
-                Divider(height: 60),
-
-                // Directory picker section
-
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Text(
-                    'Directory Picker',
-                    style: Theme.of(context).textTheme.headline5,
-                  ),
-                ),
-
-                if (dirPath != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text('$dirPath'),
-                  ),
-
-                ElevatedButton(
-                  child: Text('Save File'),
-                  onPressed:
-                      (rootPath != null) ? () => _pickDir(context) : null,
-                ),
-
-                Divider(height: 60),
-
-                // File picker section
-
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Text(
-                    'File Picker',
-                    style: Theme.of(context).textTheme.headline5,
-                  ),
-                ),
-
-                if (filePath != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text('$filePath'),
-                  ),
-
-                ElevatedButton(
-                  child: Text('Open File'),
-                  onPressed:
-                      (rootPath != null) ? () => _openFile(context) : null,
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: CheckboxListTile(
-                    title: Text('Whole item selection mode'),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    value: filePickerSelectMode == FileTileSelectMode.wholeTile,
-                    onChanged: (bool? newValue) => {
-                      setState(() {
-                        filePickerSelectMode = newValue!
-                            ? FileTileSelectMode.wholeTile
-                            : FileTileSelectMode.checkButton;
-                      })
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  // Theme Brightness Switch Button
+                  ElevatedButton(
+                    onPressed: () {
+                      appState!.setThemeBrightness(
+                          appState.brightness == Brightness.light
+                              ? Brightness.dark
+                              : Brightness.light);
                     },
+                    child: Text((appState!.brightness == Brightness.light)
+                        ? 'Switch to Dark theme'
+                        : 'Switch to Light theme'),
                   ),
-                ),
-              ],
+
+                  Divider(height: 60),
+
+                  // Directory picker section
+
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Text(
+                      'Directory Picker',
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
+                  ),
+
+                  if (dirPath != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Text('$dirPath'),
+                    ),
+
+                  ElevatedButton(
+                    onPressed: (temporaryDirectory != null &&
+                            documentsDirectory != null &&
+                            supportDirectory != null)
+                        ? () => _pickDir(context)
+                        : null,
+                    child: Text('Pick Folder(s)'),
+                  ),
+
+                  Divider(height: 60),
+
+                  // File picker section
+
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Text(
+                      'File Picker',
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
+                  ),
+
+                  if (filePath != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Text('$filePath'),
+                    ),
+
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: Colors.purple),
+                    onPressed: (temporaryDirectory != null)
+                        ? () => _openFile(context)
+                        : null,
+                    child: Text('Open File(s)'),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: CheckboxListTile(
+                      title: Text('Multiple selections'),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      value: multiSelectMode,
+                      onChanged: (bool? newValue) {
+                        setState(() {
+                          multiSelectMode = newValue!;
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

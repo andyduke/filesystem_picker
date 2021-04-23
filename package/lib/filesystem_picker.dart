@@ -1,5 +1,5 @@
 library filesystem_picker;
 
-export 'src/common.dart';
-export 'src/picker_page.dart';
-export 'src/breadcrumbs.dart';
+export 'src/file_system_picker.dart';
+export 'src/constants/enums/file_system_type.dart';
+export 'src/utils/models/breadcrumb_item.dart';
