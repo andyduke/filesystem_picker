@@ -65,7 +65,8 @@ class FilesystemPicker extends StatefulWidget {
           cancelText: cancelText,
           permissionText: permissionText,
           title: title,
-          folderIconColor: folderIconColor ?? (themeData ?? Theme.of(context)).primaryColor,
+          folderIconColor:
+              folderIconColor ?? (themeData ?? Theme.of(context)).primaryColor,
           allowedExtensions: allowedExtensions,
           requestPermission: requestPermission,
           themeData: themeData,
@@ -295,11 +296,14 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     return PreferredSize(
       preferredSize: const Size.fromHeight(50),
       child: Theme(
-        data: ThemeData (
+        data: ThemeData(
           textTheme: TextTheme(
             button: TextStyle(
               color: AppBarTheme.of(context).textTheme?.headline6?.color ??
-                  (widget.themeData ?? Theme.of(context)).primaryTextTheme.headline6?.color,
+                  (widget.themeData ?? Theme.of(context))
+                      .primaryTextTheme
+                      .headline6
+                      ?.color,
             ),
           ),
         ),
@@ -332,10 +336,12 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
               color: (widget.themeData ?? Theme.of(context)).primaryColor,
               child: SafeArea(
                 child: Container(
-                  margin: EdgeInsets.only(top: 40),
+                  margin: EdgeInsets.only(top: 50),
                   child: ListTile(
                     title: Text('Select Directory',
-                        style: (widget.themeData ?? Theme.of(context)).primaryTextTheme.headline6),
+                        style: (widget.themeData ?? Theme.of(context))
+                            .primaryTextTheme
+                            .headline6),
                     leading: Icon(Icons.storage,
                         color: Theme.of(context)
                             .primaryTextTheme
@@ -347,109 +353,115 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
             ),
           ),
           Flexible(
-              fit: FlexFit.loose,
-              child: Visibility(
-                visible: widget.rootDirectories.length > 1,
-                child: ListView.builder(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  itemCount: _roots.length,
-                  itemBuilder: (_, index) {
-                    var r = _roots.elementAt(index);
-                    return RadioListTile<int>(
-                      secondary: selectedPaths.keys
-                          .any((ee) => ee.startsWith(r.absolutePath))
-                          ? Icon(Icons.library_add_check,
-                          color: (widget.themeData ?? Theme.of(context)).primaryColorDark)
-                          : null,
-                      title: Text(r.label.toUpperCase()),
-                      value: _roots.indexOf(r),
-                      groupValue: _roots
-                          .map((e) => e.absolutePath)
-                          .toList()
-                          .indexOf(rootDirectory!.absolutePath),
-                      onChanged: (val) {
-                        rootDirectory = _roots[val!];
-                        if (widget.multiSelect == false) {
-                          selectedPaths.clear();
-                        }
-                        _setDirectory(rootDirectory!.directory);
-                        Navigator.pop(context);
-                      },
-                    );
-                  },
-                ),
-              )),
+            fit: FlexFit.loose,
+            child: Visibility(
+              visible: widget.rootDirectories.length > 1,
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                itemCount: _roots.length,
+                itemBuilder: (_, index) {
+                  var r = _roots.elementAt(index);
+                  return RadioListTile<int>(
+                    secondary: selectedPaths.keys
+                            .any((ee) => ee.startsWith(r.absolutePath))
+                        ? Icon(Icons.library_add_check,
+                            color: (widget.themeData ?? Theme.of(context))
+                                .primaryColorDark)
+                        : null,
+                    title: Text(r.label.toUpperCase()),
+                    value: _roots.indexOf(r),
+                    groupValue: _roots
+                        .map((e) => e.absolutePath)
+                        .toList()
+                        .indexOf(rootDirectory!.absolutePath),
+                    onChanged: (val) {
+                      rootDirectory = _roots[val!];
+                      if (widget.multiSelect == false) {
+                        selectedPaths.clear();
+                      }
+                      _setDirectory(rootDirectory!.directory);
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
           Visibility(
             visible: widget.multiSelect,
             child: Material(
               color: (widget.themeData ?? Theme.of(context)).primaryColor,
-              child: SafeArea(
-                child: ListTile(
-                  leading: Icon(Icons.library_add_check,
-                      color: Theme.of(context)
-                          .primaryTextTheme
-                          .headline6!
-                          .color),
-                  title: Text(
-                      'Selected ' +
-                          (widget.fsType == FilesystemType.all
-                              ? 'Items'
-                              : widget.fsType == FilesystemType.file
+              child: ListTile(
+                leading: Icon(Icons.library_add_check,
+                    color: Theme.of(context).primaryTextTheme.headline6!.color),
+                title: Text(
+                  'Selected ' +
+                      (widget.fsType == FilesystemType.all
+                          ? 'Items'
+                          : widget.fsType == FilesystemType.file
                               ? 'Files'
                               : 'Folders') +
-                          ' (' +
-                          selectedPaths.length.toString() +
-                          ')',
-                      style: (widget.themeData ?? Theme.of(context)).primaryTextTheme.headline6),
+                      ' (' +
+                      selectedPaths.length.toString() +
+                      ')',
+                  style: (widget.themeData ?? Theme.of(context))
+                      .primaryTextTheme
+                      .headline6,
                 ),
               ),
             ),
           ),
           Flexible(
-              fit: FlexFit.loose,
-              child: Visibility(
-                visible: widget.multiSelect,
-                child: ListView.separated(
-                  padding: EdgeInsets.zero,
-                  itemCount: selectedPaths.length,
-                  separatorBuilder: (_, index) => Divider(color: Colors.grey, height: 1),
-                  itemBuilder: (_, index) {
-                    var pathString = selectedPaths.keys.elementAt(index);
-                    var fseType = selectedPaths.values.elementAt(index);
-                    return ListTile(
-                      leading: fseType == FileSystemEntityType.file
-                          ? FileIconHelper.getIcon(
-                          pathString, (widget.themeData ?? Theme.of(context)).primaryColor)
-                          : Icon(
-                        Icons.folder,
-                        color: widget.folderIconColor ?? (widget.themeData ?? Theme.of(context)).primaryColor,
-                        size: FileIconHelper.iconSize,
-                      ),
-                      title: FilenameText(
-                        pathString,
-                        isDirectory: fseType == FileSystemEntityType.directory,
-                      ),
-                      onTap: () {
-                        if (pathString.startsWith(rootDirectory!.absolutePath) ==
-                            false) {
-                          rootDirectory = _roots.firstWhere(
-                                  (ss) => pathString.startsWith(ss.absolutePath));
-                        }
-                        _changeDirectory(Directory(
-                            pathString == rootDirectory!.absolutePath
-                                ? pathString
-                                : pt.dirname(pathString)));
-                        Navigator.pop(context);
-                      },
-                    );
-                  },
-                ),
-              )),
+            fit: FlexFit.loose,
+            child: Visibility(
+              visible: widget.multiSelect,
+              child: ListView.separated(
+                padding: EdgeInsets.zero,
+                itemCount: selectedPaths.length,
+                separatorBuilder: (_, index) =>
+                    Divider(color: Colors.grey, height: 1),
+                itemBuilder: (_, index) {
+                  var pathString = selectedPaths.keys.elementAt(index);
+                  var fseType = selectedPaths.values.elementAt(index);
+                  return ListTile(
+                    leading: fseType == FileSystemEntityType.file
+                        ? FileIconHelper.getIcon(
+                            pathString,
+                            (widget.themeData ?? Theme.of(context))
+                                .primaryColor)
+                        : Icon(
+                            Icons.folder,
+                            color: widget.folderIconColor ??
+                                (widget.themeData ?? Theme.of(context))
+                                    .primaryColor,
+                            size: FileIconHelper.iconSize,
+                          ),
+                    title: FilenameText(
+                      pathString,
+                      isDirectory: fseType == FileSystemEntityType.directory,
+                    ),
+                    onTap: () {
+                      if (pathString.startsWith(rootDirectory!.absolutePath) ==
+                          false) {
+                        rootDirectory = _roots.firstWhere(
+                            (ss) => pathString.startsWith(ss.absolutePath));
+                      }
+                      _changeDirectory(Directory(
+                          pathString == rootDirectory!.absolutePath
+                              ? pathString
+                              : pt.dirname(pathString)));
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
           Container(
             height: 1,
             color: (widget.themeData ?? Theme.of(context)).primaryColor,
-          )
+          ),
         ],
       ),
     );
@@ -507,55 +519,41 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
           children: [
             Expanded(
                 child: TextButton.icon(
-                  style: TextButton.styleFrom(
-                    primary: AppBarTheme.of(context)
-                        .textTheme
-                        ?.headline6
-                        ?.color ??
-                        Theme.of(context)
-                            .primaryTextTheme
-                            .headline6
-                            ?.color,
-                  ),
-                  icon: Icon(Icons.cancel),
-                  label: (widget.cancelText != null)
-                      ? Text(widget.cancelText!)
-                      : const Text('Cancel'),
-                  onPressed:
-                  (!permissionRequesting && permissionAllowed)
-                      ? () {
-                    cancelButtonPressed = true;
-                    Navigator.pop(context);
-                  }
-                      : null,
-                )),
+              style: TextButton.styleFrom(
+                primary: AppBarTheme.of(context).textTheme?.headline6?.color ??
+                    Theme.of(context).primaryTextTheme.headline6?.color,
+              ),
+              icon: Icon(Icons.cancel),
+              label: (widget.cancelText != null)
+                  ? Text(widget.cancelText!)
+                  : const Text('Cancel'),
+              onPressed: (!permissionRequesting && permissionAllowed)
+                  ? () {
+                      cancelButtonPressed = true;
+                      Navigator.pop(context);
+                    }
+                  : null,
+            )),
             VerticalDivider(
               width: 1,
               color: (widget.themeData ?? Theme.of(context)).accentColor,
             ),
             Expanded(
                 child: TextButton.icon(
-                  style: TextButton.styleFrom(
-                    primary: AppBarTheme.of(context)
-                        .textTheme
-                        ?.headline6
-                        ?.color ??
-                        Theme.of(context)
-                            .primaryTextTheme
-                            .headline6
-                            ?.color,
-                  ),
-                  icon: Icon(Icons.check_circle),
-                  label: (widget.pickText != null)
-                      ? Text(widget.pickText!)
-                      : const Text('Select'),
-                  onPressed: (!permissionRequesting &&
+              style: TextButton.styleFrom(
+                primary: AppBarTheme.of(context).textTheme?.headline6?.color ??
+                    Theme.of(context).primaryTextTheme.headline6?.color,
+              ),
+              icon: Icon(Icons.check_circle),
+              label: (widget.pickText != null)
+                  ? Text(widget.pickText!)
+                  : const Text('Select'),
+              onPressed: (!permissionRequesting &&
                       permissionAllowed &&
                       selectedPaths.isNotEmpty)
-                      ? () =>
-                      Navigator.pop(context, selectedPaths.keys)
-                      : null,
-                ))
+                  ? () => Navigator.pop(context, selectedPaths.keys)
+                  : null,
+            ))
           ],
         ),
       ),
@@ -563,6 +561,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   }
 
   bool cancelButtonPressed = false;
+
   Future<bool> _handleBackAction() {
     if (cancelButtonPressed == false &&
         history.length > 0 &&
@@ -570,7 +569,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
             directory!.absolute.path != rootDirectory!.absolutePath)) {
       var p = history.pop();
       if (p.absolute.path.startsWith(rootDirectory!.absolutePath) == false) {
-        rootDirectory = _roots.firstWhere((ss) => p.absolute.path.startsWith(ss.absolutePath));
+        rootDirectory = _roots
+            .firstWhere((ss) => p.absolute.path.startsWith(ss.absolutePath));
       }
 
       toggleSelectAll = false;

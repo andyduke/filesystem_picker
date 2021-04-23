@@ -91,7 +91,7 @@ class _DemoPageState extends State<DemoPage> {
   Future<void> _openFile(BuildContext context) async {
     var paths = await FilesystemPicker.open(
       rootDirectories: [
-       temporaryDirectory!,
+        temporaryDirectory!,
       ],
       rootNames: [
         'Temporary',
@@ -101,15 +101,12 @@ class _DemoPageState extends State<DemoPage> {
       fsType: FilesystemType.file,
       multiSelect: multiSelectMode,
       requestPermission: () async =>
-      await Permission.storage
-          .request()
-          .isGranted,
+          await Permission.storage.request().isGranted,
       pickText: 'Select File',
       themeData: Theme.of(context).copyWith(
-        primaryColor: Colors.purple,
-        primaryColorLight: Colors.purple.shade200,
-        primaryColorDark: Colors.purple.shade700
-      ),
+          primaryColor: Colors.green,
+          primaryColorLight: Colors.green.shade200,
+          primaryColorDark: Colors.green.shade700),
     );
 
     if (paths != null) {
@@ -140,9 +137,7 @@ class _DemoPageState extends State<DemoPage> {
       pickText: 'Pick Item(s)',
       multiSelect: multiSelectMode,
       requestPermission: () async =>
-      await Permission.storage
-          .request()
-          .isGranted,
+          await Permission.storage.request().isGranted,
     );
 
     if (paths != null) {
@@ -162,102 +157,97 @@ class _DemoPageState extends State<DemoPage> {
 
     return Scaffold(
       body: Builder(
-        builder: (context) =>
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      // Theme Brightness Switch Button
-                      ElevatedButton(
-                        onPressed: () {
-                          appState!.setThemeBrightness(
-                              appState.brightness == Brightness.light
-                                  ? Brightness.dark
-                                  : Brightness.light);
-                        },
-                        child: Text((appState!.brightness == Brightness.light)
-                            ? 'Switch to Dark theme'
-                            : 'Switch to Light theme'),
-                      ),
-
-                      Divider(height: 60),
-
-                      // Directory picker section
-
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: Text(
-                          'Directory Picker',
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .headline5,
-                        ),
-                      ),
-
-                      if (dirPath != null)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Text('$dirPath'),
-                        ),
-
-                      ElevatedButton(
-                        onPressed:
-                        (temporaryDirectory != null && documentsDirectory != null && supportDirectory != null) ? () => _pickDir(context) : null,
-                        child: Text('Pick Folder(s)'),
-                      ),
-
-                      Divider(height: 60),
-
-                      // File picker section
-
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: Text(
-                          'File Picker',
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .headline5,
-                        ),
-                      ),
-
-                      if (filePath != null)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Text('$filePath'),
-                        ),
-
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.purple
-                        ),
-                        onPressed:
-                        (temporaryDirectory != null) ? () => _openFile(context) : null,
-                        child: Text('Open File(s)'),
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: CheckboxListTile(
-                          title: Text('Multiple selections'),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          value: multiSelectMode,
-                          onChanged: (bool? newValue) {
-                            setState(() {
-                              multiSelectMode = newValue!;
-                            });
-                          },
-                        ),
-                      ),
-                    ],
+        builder: (context) => Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  // Theme Brightness Switch Button
+                  ElevatedButton(
+                    onPressed: () {
+                      appState!.setThemeBrightness(
+                          appState.brightness == Brightness.light
+                              ? Brightness.dark
+                              : Brightness.light);
+                    },
+                    child: Text((appState!.brightness == Brightness.light)
+                        ? 'Switch to Dark theme'
+                        : 'Switch to Light theme'),
                   ),
-                ),
+
+                  Divider(height: 60),
+
+                  // Directory picker section
+
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Text(
+                      'Directory Picker',
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
+                  ),
+
+                  if (dirPath != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Text('$dirPath'),
+                    ),
+
+                  ElevatedButton(
+                    onPressed: (temporaryDirectory != null &&
+                            documentsDirectory != null &&
+                            supportDirectory != null)
+                        ? () => _pickDir(context)
+                        : null,
+                    child: Text('Pick Folder(s)'),
+                  ),
+
+                  Divider(height: 60),
+
+                  // File picker section
+
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Text(
+                      'File Picker',
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
+                  ),
+
+                  if (filePath != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Text('$filePath'),
+                    ),
+
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: Colors.purple),
+                    onPressed: (temporaryDirectory != null)
+                        ? () => _openFile(context)
+                        : null,
+                    child: Text('Open File(s)'),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: CheckboxListTile(
+                      title: Text('Multiple selections'),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      value: multiSelectMode,
+                      onChanged: (bool? newValue) {
+                        setState(() {
+                          multiSelectMode = newValue!;
+                        });
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
+          ),
+        ),
       ),
     );
   }
