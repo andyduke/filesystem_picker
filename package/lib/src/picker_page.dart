@@ -65,7 +65,8 @@ class FilesystemPicker extends StatefulWidget {
           permissionText: permissionText,
           title: title,
           folderIconColor: folderIconColor,
-          allowedExtensions: allowedExtensions,
+          allowedExtensions:
+              allowedExtensions?.map<String>((e) => e.toLowerCase()).toList(),
           onSelect: (String value) {
             Navigator.of(context).pop<String>(value);
           },
@@ -105,6 +106,9 @@ class FilesystemPicker extends StatefulWidget {
   /// Specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`
   final List<String>? allowedExtensions;
 
+  /// Extension name comparison mode, case insensitive by default, and lowercase is required for allowedExtensions parameter
+  final bool extensionCaseSensitive;
+
   /// Specifies how to files can be selected (either tapping on the whole tile or only on trailing button). (default depends on [fsType])
   final FileTileSelectMode fileTileSelectMode;
 
@@ -125,6 +129,7 @@ class FilesystemPicker extends StatefulWidget {
     required this.onSelect,
     required this.fileTileSelectMode,
     this.requestPermission,
+    this.extensionCaseSensitive = false,
   }) : super(key: key);
 
   @override
@@ -240,6 +245,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                   fsType: widget.fsType,
                   folderIconColor: widget.folderIconColor,
                   allowedExtensions: widget.allowedExtensions,
+                  extensionCaseSensitive: widget.extensionCaseSensitive,
                   onChange: _changeDirectory,
                   onSelect: widget.onSelect,
                   fileTileSelectMode: widget.fileTileSelectMode,

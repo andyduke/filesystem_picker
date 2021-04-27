@@ -11,6 +11,7 @@ class FilesystemList extends StatelessWidget {
   final FilesystemType fsType;
   final Color? folderIconColor;
   final List<String>? allowedExtensions;
+  final bool extensionCaseSensitive;
   final ValueChanged<Directory> onChange;
   final ValueSelected onSelect;
   final FileTileSelectMode fileTileSelectMode;
@@ -22,6 +23,7 @@ class FilesystemList extends StatelessWidget {
     this.fsType = FilesystemType.all,
     this.folderIconColor,
     this.allowedExtensions,
+    this.extensionCaseSensitive = false,
     required this.onChange,
     required this.onSelect,
     required this.fileTileSelectMode,
@@ -37,7 +39,10 @@ class FilesystemList extends StatelessWidget {
           if ((file is File) &&
               (allowedExtensions != null) &&
               (allowedExtensions!.length > 0)) {
-            if (!allowedExtensions!.contains(Path.extension(file.path))) return;
+            String ext = Path.extension(file.path);
+            if (!allowedExtensions!
+                .contains(extensionCaseSensitive ? ext : ext.toLowerCase()))
+              return;
           }
           files.add(file);
         }
