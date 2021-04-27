@@ -91,8 +91,7 @@ class _DemoPageState extends State<DemoPage> {
       folderIconColor: Colors.teal,
       allowedExtensions: ['.txt'],
       fileTileSelectMode: filePickerSelectMode,
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
+      requestPermission: () async => requestPermission(),
     );
 
     if (path != null) {
@@ -119,13 +118,19 @@ class _DemoPageState extends State<DemoPage> {
       fsType: FilesystemType.folder,
       pickText: 'Save file to this folder',
       folderIconColor: Colors.teal,
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
+      requestPermission: () async => await requestPermission(),
     );
 
     setState(() {
       dirPath = path;
     });
+  }
+
+  Future<bool> requestPermission() async {
+    if( Platform.isWindows ){
+      return Future.value(true);
+    }
+    return await Permission.storage.request().isGranted;
   }
 
   @override
