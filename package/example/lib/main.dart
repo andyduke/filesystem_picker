@@ -1,6 +1,7 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+
 import 'package:filesystem_picker/filesystem_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -56,6 +57,8 @@ class _DemoPageState extends State<DemoPage> {
   String? filePath;
   String? dirPath;
 
+  final bool isDesktop = !(Platform.isAndroid || Platform.isIOS);
+
   FileTileSelectMode filePickerSelectMode = FileTileSelectMode.checkButton;
 
   @override
@@ -91,8 +94,9 @@ class _DemoPageState extends State<DemoPage> {
       folderIconColor: Colors.teal,
       allowedExtensions: ['.txt'],
       fileTileSelectMode: filePickerSelectMode,
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
+      requestPermission: !isDesktop
+          ? () async => await Permission.storage.request().isGranted
+          : null,
     );
 
     if (path != null) {
@@ -119,8 +123,9 @@ class _DemoPageState extends State<DemoPage> {
       fsType: FilesystemType.folder,
       pickText: 'Save file to this folder',
       folderIconColor: Colors.teal,
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
+      requestPermission: !isDesktop
+          ? () async => await Permission.storage.request().isGranted
+          : null,
     );
 
     setState(() {
