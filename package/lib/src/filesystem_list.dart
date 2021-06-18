@@ -5,7 +5,7 @@ import 'package:path/path.dart' as Path;
 import 'common.dart';
 import 'filesystem_list_tile.dart';
 
-class FilesystemList extends StatelessWidget {
+class FilesystemList extends StatefulWidget {
   final bool isRoot;
   final Directory rootDirectory;
   final FilesystemType fsType;
@@ -27,17 +27,28 @@ class FilesystemList extends StatelessWidget {
     required this.fileTileSelectMode,
   }) : super(key: key);
 
+  @override
+  State<StatefulWidget> createState() => _FilesystemListState();
+}
+
+class _FilesystemListState extends State<FilesystemList> {
+  List<FileSystemEntity> _files = [];
+  bool isDisposed = false;
+  bool notReady = true;
+  ScrollController controller = ScrollController();
+  Map<String, double> positions = {};
+
   Future<List<FileSystemEntity>> _dirContents() {
     var files = <FileSystemEntity>[];
     var completer = new Completer<List<FileSystemEntity>>();
-    var lister = this.rootDirectory.list(recursive: false);
+    var lister = widget.rootDirectory.list(recursive: false);
     lister.listen(
-      (file) {
-        if ((fsType != FilesystemType.folder) || (file is Directory)) {
+          (file) {
+        if ((widget.fsType != FilesystemType.folder) || (file is Directory)) {
           if ((file is File) &&
-              (allowedExtensions != null) &&
-              (allowedExtensions!.length > 0)) {
-            if (!allowedExtensions!.contains(Path.extension(file.path))) return;
+              (widget.allowedExtensions != null) &&
+              (widget.allowedExtensions!.length > 0)) {
+            if (!widget.allowedExtensions!.contains(Path.extension(file.path))) return;
           }
           files.add(file);
         }
@@ -50,6 +61,56 @@ class FilesystemList extends StatelessWidget {
     return completer.future;
   }
 
+  @override
+  Widget build(BuildContext context) {
+
+    return ListView.builder(
+      controller: controller,
+      shrinkWrap: true,
+      itemCount: notReady ? 0 : (_files.length + (widget.isRoot ? 0 : 1)),
+      itemBuilder: (BuildContext context, int index) {
+        if (!widget.isRoot && index == 0) {
+          return _topNavigation();
+        }
+
+        final item = _files[index - (widget.isRoot ? 0 : 1)];
+        return FilesystemListTile(
+          fsType: widget.fsType,
+          item: item,
+          folderIconColor: widget.folderIconColor,
+          onChange: widget.onChange,
+          onSelect: widget.onSelect,
+          fileTileSelectMode: widget.fileTileSelectMode,
+        );
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(onScroll);
+    setupList();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    isDisposed = true;
+    controller.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant FilesystemList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.rootDirectory.absolute.path !=
+        widget.rootDirectory.absolute.path) {
+      setupList();
+    }
+  }
+
+
   InkWell _topNavigation() {
     return InkWell(
       child: const ListTile(
@@ -57,45 +118,27 @@ class FilesystemList extends StatelessWidget {
         title: Text("..", textScaleFactor: 1.5),
       ),
       onTap: () {
-        final li = this.rootDirectory.path.split(Platform.pathSeparator)
+        final li = widget.rootDirectory.path.split(Platform.pathSeparator)
           ..removeLast();
-        onChange(Directory(li.join(Platform.pathSeparator)));
+        widget.onChange(Directory(li.join(Platform.pathSeparator)));
       },
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _dirContents(),
-      builder: (BuildContext context,
-          AsyncSnapshot<List<FileSystemEntity>> snapshot) {
-        if (snapshot.hasData) {
-          return ListView.builder(
-            shrinkWrap: true,
-            itemCount: snapshot.data!.length + (isRoot ? 0 : 1),
-            itemBuilder: (BuildContext context, int index) {
-              if (!isRoot && index == 0) {
-                return _topNavigation();
-              }
+  void setupList() async {
+    notReady = true;
+    _files = await _dirContents();
+    setState(() {
+      notReady = false;
+      String path = widget.rootDirectory.absolute.path;
+      if (positions.containsKey(path))
+        controller.jumpTo(positions[path]!);
+    });
+  }
 
-              final item = snapshot.data![index - (isRoot ? 0 : 1)];
-              return FilesystemListTile(
-                fsType: fsType,
-                item: item,
-                folderIconColor: folderIconColor,
-                onChange: onChange,
-                onSelect: onSelect,
-                fileTileSelectMode: fileTileSelectMode,
-              );
-            },
-          );
-        } else {
-          return const Center(
-            child: const CircularProgressIndicator(),
-          );
-        }
-      },
-    );
+  void onScroll() {
+    if (!notReady) {
+      positions[widget.rootDirectory.absolute.path] = controller.offset;
+    }
   }
 }
