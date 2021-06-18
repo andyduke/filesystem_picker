@@ -54,6 +54,7 @@ class FilesystemPicker extends StatefulWidget {
     List<String>? allowedExtensions,
     FileTileSelectMode fileTileSelectMode = FileTileSelectMode.checkButton,
     RequestPermission? requestPermission,
+    Directory? initialDirectory,
   }) async {
     return Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (BuildContext context) {
@@ -71,6 +72,7 @@ class FilesystemPicker extends StatefulWidget {
           },
           fileTileSelectMode: fileTileSelectMode,
           requestPermission: requestPermission,
+          initialDirectory: initialDirectory,
         );
       }),
     );
@@ -83,6 +85,8 @@ class FilesystemPicker extends StatefulWidget {
 
   /// Specifies the root of the filesystem view.
   final Directory rootDirectory;
+
+  final Directory? initialDirectory;
 
   /// Specifies the type of filesystem view (folder and files, folder only or files only), by default `FilesystemType.all`.
   final FilesystemType fsType;
@@ -125,6 +129,7 @@ class FilesystemPicker extends StatefulWidget {
     required this.onSelect,
     required this.fileTileSelectMode,
     this.requestPermission,
+    this.initialDirectory
   }) : super(key: key);
 
   @override
@@ -143,7 +148,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   void initState() {
     super.initState();
     _requestPermission();
-    _setDirectory(widget.rootDirectory);
+    _setDirectory(widget.initialDirectory??widget.rootDirectory);
   }
 
   Future<void> _requestPermission() async {
