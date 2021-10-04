@@ -204,18 +204,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         bottom: PreferredSize(
-          child: Theme(
-            data: ThemeData(
-              textTheme: TextTheme(
-                button: TextStyle(
-                    color: AppBarTheme.of(context)
-                            .textTheme
-                            ?.headline6
-                            ?.color ??
-                        Theme.of(context).primaryTextTheme.headline6?.color),
-              ),
-            ),
-            child: Breadcrumbs<String>(
+          child: Breadcrumbs<String>(
               items: (!permissionRequesting && permissionAllowed)
                   ? pathItems
                       .map((path) => BreadcrumbItem<String>(
@@ -226,7 +215,6 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                 if (value != null) _changeDirectory(Directory(value));
               },
             ),
-          ),
           preferredSize: const Size.fromHeight(50),
         ),
       ),
