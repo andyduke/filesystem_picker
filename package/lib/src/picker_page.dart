@@ -146,7 +146,9 @@ class FilesystemPicker extends StatefulWidget {
 }
 
 class _FilesystemPickerState extends State<FilesystemPicker> {
-  static double _defaultTopBarIconSize = 24;
+  static const double _defaultTopBarIconSize = 24;
+  static const double _defaultTopBarHeight = 50;
+  static const double _defaultBottomBarHeight = 50;
 
   bool permissionRequesting = true;
   bool permissionAllowed = false;
@@ -206,6 +208,82 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     }
   }
 
+  Widget _buildBar(BuildContext context, FilesystemPickerActionThemeData theme) {
+    final pickerIconTheme = theme.getCheckIconTheme(context);
+    final foregroundColor = (!permissionRequesting && permissionAllowed)
+        ? theme.getForegroundColor(context)
+        : theme.getDisabledForegroundColor(context);
+
+    return SizedBox(
+      height: _defaultBottomBarHeight,
+
+      //
+      child: Material(
+        color: theme.getBackgroundColor(context),
+        shape: theme.getShape(context),
+        elevation: theme.getElevation(context) ?? 0,
+        child: TextButton.icon(
+          style: TextButton.styleFrom(
+            primary: theme.getForegroundColor(context),
+            onSurface: theme.getDisabledForegroundColor(context),
+          ),
+          icon: Icon(
+            theme.getCheckIcon(context),
+            // color: pickerIconTheme.color,
+            color: foregroundColor,
+            size: pickerIconTheme.size,
+          ),
+          label: (widget.pickText != null)
+              ? Text(widget.pickText!, style: theme.getTextStyle(context, foregroundColor))
+              : const SizedBox(),
+          onPressed:
+              (!permissionRequesting && permissionAllowed) ? () => widget.onSelect(directory.absolute.path) : null,
+        ),
+      ),
+      /*
+              child: BottomAppBar(
+                color: theme.getBackgroundColor(context),
+                child: Center(
+                  child: TextButton.icon(
+                    style: TextButton.styleFrom(
+                        primary: theme.getForegroundColor(context),
+                        onSurface: theme.getDisabledForegroundColor(context)),
+                    icon: Icon(Icons.check_circle),
+                    label: (widget.pickText != null) ? Text(widget.pickText!) : const SizedBox(),
+                    onPressed: (!permissionRequesting && permissionAllowed)
+                        ? () => widget.onSelect(directory.absolute.path)
+                        : null,
+                  ),
+                ),
+              ),
+              */
+    );
+  }
+
+  Widget _buildFAB(BuildContext context, FilesystemPickerActionThemeData theme) {
+    final onPressed =
+        (!permissionRequesting && permissionAllowed) ? () => widget.onSelect(directory.absolute.path) : null;
+
+    if (widget.pickText != null) {
+      return FloatingActionButton.extended(
+        icon: Icon(theme.getCheckIcon(context)),
+        label: Text(widget.pickText!),
+        foregroundColor: theme.getForegroundColor(context),
+        backgroundColor: theme.getBackgroundColor(context),
+        elevation: theme.getElevation(context),
+        onPressed: onPressed,
+      );
+    } else {
+      return FloatingActionButton(
+        child: Icon(theme.getCheckIcon(context)),
+        foregroundColor: theme.getForegroundColor(context),
+        backgroundColor: theme.getBackgroundColor(context),
+        elevation: theme.getElevation(context),
+        onPressed: onPressed,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final options = FilesystemPickerDefaultOptions.of(context);
@@ -221,6 +299,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     final systemOverlayStyle = topBarTheme.getSystemOverlayStyle(context);
     final breadcrumbsTheme = topBarTheme.getBreadcrumbsThemeData(context);
     final showGoUpItem = widget.showGoUpItem ?? options.showGoUpItem;
+    final pickerActionTheme = effectiveTheme.getPickerAction(context);
 
     return Scaffold(
       backgroundColor: effectiveTheme.getBackgroundColor(context),
@@ -277,9 +356,11 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
             ),
           ),
           */
-          preferredSize: const Size.fromHeight(50),
+          preferredSize: const Size.fromHeight(_defaultTopBarHeight),
         ),
       ),
+
+      // File list
       body: permissionRequesting
           ? Center(
               child: CircularProgressIndicator(
@@ -301,31 +382,16 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
               : Container(
                   alignment: Alignment.center,
                   padding: const EdgeInsets.all(20),
-                  child: Text(widget.permissionText ?? 'Access to the storage was not granted.', textScaleFactor: 1.2),
+                  child: Text(widget.permissionText ?? options.permissionText, textScaleFactor: 1.2),
                 )),
-      bottomNavigationBar: (widget.fsType == FilesystemType.folder)
-          ? Container(
-              height: 50,
-              child: BottomAppBar(
-                color: Theme.of(context).primaryColor,
-                child: Center(
-                  child: TextButton.icon(
-                    style: TextButton.styleFrom(
-                      primary: AppBarTheme.of(context).toolbarTextStyle?.color ??
-                          Theme.of(context).primaryTextTheme.headline6?.color,
-                      onSurface: (AppBarTheme.of(context).toolbarTextStyle?.color ??
-                              Theme.of(context).primaryTextTheme.headline6?.color)!
-                          .withOpacity(0.5),
-                    ),
-                    icon: Icon(Icons.check_circle),
-                    label: (widget.pickText != null) ? Text(widget.pickText!) : const SizedBox(),
-                    onPressed: (!permissionRequesting && permissionAllowed)
-                        ? () => widget.onSelect(directory.absolute.path)
-                        : null,
-                  ),
-                ),
-              ),
-            )
+
+      // Picker Action
+      floatingActionButton: (pickerActionTheme.isFABMode && (widget.fsType == FilesystemType.folder))
+          ? _buildFAB(context, pickerActionTheme)
+          : null,
+      floatingActionButtonLocation: pickerActionTheme.getFloatingButtonLocation(context),
+      bottomNavigationBar: (pickerActionTheme.isBarMode && (widget.fsType == FilesystemType.folder))
+          ? _buildBar(context, pickerActionTheme)
           : null,
     );
   }
