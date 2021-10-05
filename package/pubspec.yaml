@@ -1,6 +1,6 @@
 name: filesystem_picker
 description: FileSystem file or folder picker dialog. Allows the user to browse the file system and pick a folder or file.
-version: 2.0.0-nullsafety.0
+version: 2.0.0
 author: Andy Chentsov <chentsov@gmail.com>
 homepage: https://github.com/andyduke/filesystem_picker/tree/master/package
 repository: https://github.com/andyduke/filesystem_picker

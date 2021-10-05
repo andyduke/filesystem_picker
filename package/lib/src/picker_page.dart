@@ -208,11 +208,16 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
             data: ThemeData(
               textTheme: TextTheme(
                 button: TextStyle(
+                  color: AppBarTheme.of(context).toolbarTextStyle?.color ??
+                      Theme.of(context).primaryTextTheme.headline6?.color,
+                  /*
                     color: AppBarTheme.of(context)
                             .textTheme
                             ?.headline6
                             ?.color ??
-                        Theme.of(context).primaryTextTheme.headline6?.color),
+                        Theme.of(context).primaryTextTheme.headline6?.color,
+                    */
+                ),
               ),
             ),
             child: Breadcrumbs<String>(
@@ -261,19 +266,16 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                   child: TextButton.icon(
                     style: TextButton.styleFrom(
                       primary: AppBarTheme.of(context)
-                              .textTheme
-                              ?.headline6
+                              .toolbarTextStyle
                               ?.color ??
                           Theme.of(context).primaryTextTheme.headline6?.color,
-                      onSurface: (AppBarTheme.of(context)
-                                  .textTheme
-                                  ?.headline6
-                                  ?.color ??
-                              Theme.of(context)
-                                  .primaryTextTheme
-                                  .headline6
-                                  ?.color)!
-                          .withOpacity(0.5),
+                      onSurface:
+                          (AppBarTheme.of(context).toolbarTextStyle?.color ??
+                                  Theme.of(context)
+                                      .primaryTextTheme
+                                      .headline6
+                                      ?.color)!
+                              .withOpacity(0.5),
                     ),
                     icon: Icon(Icons.check_circle),
                     label: (widget.pickText != null)
