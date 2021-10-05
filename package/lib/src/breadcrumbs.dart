@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'listview_extensions.dart';
+import 'options/theme/_breadcrumbs_theme.dart';
 
 /// Path element description class for breadcrumbs
 class BreadcrumbItem<T> {
@@ -22,6 +23,8 @@ class BreadcrumbItem<T> {
 
 /// Scrolling horizontal breadcrumbs with `Icons.chevron_right` separator and fade on the right.
 class Breadcrumbs<T> extends StatelessWidget {
+  static const double defaultHeight = 50;
+
   /// List of items of breadcrumbs
   final List<BreadcrumbItem<T?>> items;
 
@@ -34,14 +37,17 @@ class Breadcrumbs<T> extends StatelessWidget {
   /// Called when an item is selected
   final ValueChanged<T?>? onSelect;
 
+  final BreadcrumbsThemeData? theme;
+
   final ScrollController _scrollController = ScrollController();
 
   Breadcrumbs({
     Key? key,
     required this.items,
-    this.height = 50,
+    this.height = defaultHeight,
     this.textColor,
     this.onSelect,
+    this.theme,
   }) : super(key: key);
 
   _scrollToEnd() async {
@@ -52,57 +58,69 @@ class Breadcrumbs<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance!.addPostFrameCallback((_) => _scrollToEnd());
 
-    final Color? defaultTextColor = Theme.of(context).textTheme.button!.color;
+    final effectiveTheme = theme ?? BreadcrumbsThemeData();
+    final textStyle = effectiveTheme.getTextStyle(context);
+    final activeColor = effectiveTheme.getItemColor(context, textColor);
+    final inactiveColor = effectiveTheme.getInactiveItemColor(context, textColor);
+    final separatorColor = effectiveTheme.getSeparatorColor(context, textColor);
+    final overlayColor = effectiveTheme.getOverlayColor(context, textColor);
 
-    return ShaderMask(
-      shaderCallback: (Rect bounds) {
-        return LinearGradient(
-          begin: Alignment(0.7, 0.5),
-          end: Alignment.centerRight,
-          colors: <Color>[Colors.white, Colors.transparent],
-        ).createShader(bounds);
-      },
-      blendMode: BlendMode.dstIn,
-      child: Container(
-        alignment: Alignment.topLeft,
-        height: height,
-        child: ListViewExtended.separatedWithHeaderFooter(
-          controller: _scrollController,
-          shrinkWrap: true,
-          scrollDirection: Axis.horizontal,
-          itemCount: items.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ButtonTheme(
-              minWidth: 48,
-              padding: EdgeInsets.symmetric(
-                      vertical: ButtonTheme.of(context).padding.vertical) +
-                  const EdgeInsets.symmetric(horizontal: 8),
-              child: TextButton(
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: effectiveTheme.backgroundColor,
+      ),
+      child: ShaderMask(
+        shaderCallback: (Rect bounds) {
+          return LinearGradient(
+            begin: Alignment(0.7, 0.5),
+            end: Alignment.centerRight,
+            colors: <Color>[Colors.white, Colors.transparent],
+          ).createShader(bounds);
+        },
+        blendMode: BlendMode.dstIn,
+        child: Container(
+          alignment: Alignment.topLeft,
+          height: height,
+          child: ListViewExtended.separatedWithHeaderFooter(
+            controller: _scrollController,
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: items.length,
+            itemBuilder: (BuildContext context, int index) {
+              final textColor = (index == (items.length - 1)) ? activeColor : inactiveColor;
+
+              return TextButton(
+                style: ButtonStyle(
+                  overlayColor: MaterialStateProperty.all(overlayColor),
+                  minimumSize: (effectiveTheme.itemMinimumSize != null)
+                      ? MaterialStateProperty.all(effectiveTheme.itemMinimumSize)
+                      : null,
+                  padding: (effectiveTheme.itemPadding != null)
+                      ? MaterialStateProperty.all(effectiveTheme.itemPadding)
+                      : null,
+                  tapTargetSize: effectiveTheme.itemTapTargetSize,
+                ),
                 child: Text(
                   items[index].text,
-                  style: TextStyle(
-                    color: (index == (items.length - 1))
-                        ? (textColor ?? defaultTextColor)
-                        : (textColor ?? defaultTextColor)!.withOpacity(0.75),
-                  ),
+                  style: textStyle.copyWith(color: textColor),
                 ),
                 onPressed: () {
                   items[index].onSelect?.call(items[index].data);
                   onSelect?.call(items[index].data);
                 },
+              );
+            },
+            separatorBuilder: (_, __) => Align(
+              alignment: Alignment.center,
+              child: Icon(
+                effectiveTheme.getSeparatorIcon(context),
+                color: separatorColor,
+                size: effectiveTheme.getSeparatorIconSize(context),
               ),
-            );
-          },
-          separatorBuilder: (_, __) => Container(
-            alignment: Alignment.center,
-            child: Icon(
-              Icons.chevron_right,
-              color: (textColor ?? defaultTextColor)!.withOpacity(0.45),
             ),
+            headerBuilder: (_) => SizedBox(width: effectiveTheme.getLeadingSpacing(context)),
+            footerBuilder: (_) => SizedBox(width: effectiveTheme.getTrailingSpacing(context)),
           ),
-          headerBuilder: (_) =>
-              SizedBox(width: ButtonTheme.of(context).padding.horizontal - 8),
-          footerBuilder: (_) => const SizedBox(width: 70),
         ),
       ),
     );
