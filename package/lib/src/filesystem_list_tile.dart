@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'common.dart';
 import 'package:path/path.dart' as Path;
 
+import 'options/theme/_filelist_theme.dart';
+
 class FilesystemListTile extends StatelessWidget {
-  static double iconSize = 32;
+  // static double iconSize = 32;
 
   final FilesystemType fsType;
   final FileSystemEntity item;
@@ -12,6 +14,7 @@ class FilesystemListTile extends StatelessWidget {
   final ValueChanged<Directory> onChange;
   final ValueSelected onSelect;
   final FileTileSelectMode fileTileSelectMode;
+  final FilesystemPickerFileListThemeData? theme;
 
   FilesystemListTile({
     Key? key,
@@ -21,51 +24,51 @@ class FilesystemListTile extends StatelessWidget {
     required this.onChange,
     required this.onSelect,
     required this.fileTileSelectMode,
+    this.theme,
   }) : super(key: key);
 
-  Widget _leading(BuildContext context) {
+  Widget _leading(BuildContext context, FilesystemPickerFileListThemeData theme, bool isFile) {
     if (item is Directory) {
       return Icon(
-        Icons.folder,
-        color: folderIconColor ?? Theme.of(context).unselectedWidgetColor,
-        size: iconSize,
+        theme.getFolderIcon(context),
+        color: theme.getFolderIconColor(context, folderIconColor),
+        size: theme.getIconSize(context),
       );
     } else {
-      return _fileIcon(item.path, Theme.of(context).unselectedWidgetColor);
+      return _fileIcon(context, theme, item.path, isFile);
     }
   }
 
   /// Set the icon for a file
-  Icon _fileIcon(String filename, Color color) {
-    IconData icon = Icons.description;
+  Icon _fileIcon(BuildContext context, FilesystemPickerFileListThemeData theme, String filename, bool isFile,
+      [Color? color]) {
+    IconData icon = theme.getFileIcon(context);
 
     final _extension = filename.split(".").last;
-    if (_extension == "db" ||
-        _extension == "sqlite" ||
-        _extension == "sqlite3") {
+    if (_extension == "db" || _extension == "sqlite" || _extension == "sqlite3") {
       icon = Icons.dns;
-    } else if (_extension == "jpg" ||
-        _extension == "jpeg" ||
-        _extension == "png") {
+    } else if (_extension == "jpg" || _extension == "jpeg" || _extension == "png") {
       icon = Icons.image;
     }
     // default
     return Icon(
       icon,
-      color: color,
-      size: iconSize,
+      color: theme.getFileIconColor(context, color),
+      size: theme.getIconSize(context),
     );
   }
 
-  Widget? _trailing(BuildContext context) {
-    if ((fsType == FilesystemType.all) ||
-        ((fsType == FilesystemType.file) &&
-            (item is File) &&
-            (fileTileSelectMode != FileTileSelectMode.wholeTile))) {
+  Widget? _trailing(BuildContext context, FilesystemPickerFileListThemeData theme, bool isFile) {
+    final isCheckable = ((fsType == FilesystemType.all) ||
+        ((fsType == FilesystemType.file) && (item is File) && (fileTileSelectMode != FileTileSelectMode.wholeTile)));
+
+    if (isCheckable) {
+      final iconTheme = theme.getCheckIconTheme(context);
       return InkResponse(
         child: Icon(
-          Icons.check_circle,
-          color: Theme.of(context).disabledColor,
+          theme.getCheckIcon(context),
+          color: iconTheme.color,
+          size: iconTheme.size,
         ),
         onTap: () => onSelect(item.absolute.path),
       );
@@ -76,16 +79,21 @@ class FilesystemListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveTheme = theme ?? FilesystemPickerFileListThemeData();
+    final isFile = (fsType == FilesystemType.file) && (item is File);
+    final style = !isFile ? effectiveTheme.getFolderTextStyle(context) : effectiveTheme.getFileTextStyle(context);
+
     return ListTile(
-        key: Key(item.absolute.path),
-        leading: _leading(context),
-        trailing: _trailing(context),
-        title: Text(Path.basename(item.path), textScaleFactor: 1.2),
-        onTap: (item is Directory)
-            ? () => onChange(item as Directory)
-            : ((fsType == FilesystemType.file &&
-                    fileTileSelectMode == FileTileSelectMode.wholeTile)
-                ? () => onSelect(item.absolute.path)
-                : null));
+      key: Key(item.absolute.path),
+      leading: _leading(context, effectiveTheme, isFile),
+      trailing: _trailing(context, effectiveTheme, isFile),
+      title: Text(Path.basename(item.path),
+          style: style, textScaleFactor: effectiveTheme.getTextScaleFactor(context, isFile)),
+      onTap: (item is Directory)
+          ? () => onChange(item as Directory)
+          : ((fsType == FilesystemType.file && fileTileSelectMode == FileTileSelectMode.wholeTile)
+              ? () => onSelect(item.absolute.path)
+              : null),
+    );
   }
 }

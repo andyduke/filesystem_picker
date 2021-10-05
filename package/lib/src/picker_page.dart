@@ -47,14 +47,15 @@ class FilesystemPicker extends StatefulWidget {
   static Future<String?> open({
     required BuildContext context,
     required Directory rootDirectory,
-    String rootName = 'Storage',
-    FilesystemType fsType = FilesystemType.all,
+    String rootName = FilesystemPickerOptionsData.defaultRootName,
+    FilesystemType fsType = FilesystemPickerOptionsData.defaultFsType,
     String? pickText,
     String? permissionText,
     String? title,
     Color? folderIconColor,
+    bool? showGoUpItem,
     List<String>? allowedExtensions,
-    FileTileSelectMode fileTileSelectMode = FileTileSelectMode.checkButton,
+    FileTileSelectMode fileTileSelectMode = FilesystemPickerOptionsData.defaultFileTileSelectMode,
     RequestPermission? requestPermission,
     FilesystemPickerTheme? theme,
   }) async {
@@ -75,6 +76,7 @@ class FilesystemPicker extends StatefulWidget {
             Navigator.of(context).pop<String>(value);
           },
           fileTileSelectMode: fileTileSelectMode,
+          showGoUpItem: showGoUpItem,
           requestPermission: requestPermission,
           theme: theme,
         );
@@ -119,6 +121,8 @@ class FilesystemPicker extends StatefulWidget {
 
   final FilesystemPickerTheme? theme;
 
+  final bool? showGoUpItem;
+
   /// Creates a file system item selection widget.
   FilesystemPicker({
     Key? key,
@@ -134,6 +138,7 @@ class FilesystemPicker extends StatefulWidget {
     required this.fileTileSelectMode,
     this.requestPermission,
     this.theme,
+    this.showGoUpItem,
   }) : super(key: key);
 
   @override
@@ -203,18 +208,22 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveTheme = (widget.theme ?? FilesystemPickerDefaultOptions.of(context).theme).resolve(context);
-    final foregroundColor = effectiveTheme.topBar!.getForegroundColor(context);
-    final backgroundColor = effectiveTheme.topBar!.getBackgroundColor(context);
-    final elevation = effectiveTheme.topBar!.getElevation(context);
-    final shadowColor = effectiveTheme.topBar!.getShadowColor(context);
-    final shape = effectiveTheme.topBar!.getShape(context);
-    final iconTheme = effectiveTheme.topBar!.getIconTheme(context);
-    final titleTextStyle = effectiveTheme.topBar!.getTitleTextStyle(context);
-    final systemOverlayStyle = effectiveTheme.topBar!.getSystemOverlayStyle(context);
-    final breadcrumbsTheme = effectiveTheme.topBar!.getBreadcrumbsThemeData(context);
+    final options = FilesystemPickerDefaultOptions.of(context);
+    final effectiveTheme = (widget.theme ?? options.theme);
+    final topBarTheme = effectiveTheme.getTopBar(context);
+    final foregroundColor = topBarTheme.getForegroundColor(context);
+    final backgroundColor = topBarTheme.getBackgroundColor(context);
+    final elevation = topBarTheme.getElevation(context);
+    final shadowColor = topBarTheme.getShadowColor(context);
+    final shape = topBarTheme.getShape(context);
+    final iconTheme = topBarTheme.getIconTheme(context);
+    final titleTextStyle = topBarTheme.getTitleTextStyle(context);
+    final systemOverlayStyle = topBarTheme.getSystemOverlayStyle(context);
+    final breadcrumbsTheme = topBarTheme.getBreadcrumbsThemeData(context);
+    final showGoUpItem = widget.showGoUpItem ?? options.showGoUpItem;
 
     return Scaffold(
+      backgroundColor: effectiveTheme.getBackgroundColor(context),
       appBar: AppBar(
         // Theme
         foregroundColor: foregroundColor,
@@ -272,7 +281,10 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         ),
       ),
       body: permissionRequesting
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+              color: effectiveTheme.getFileList(context).getProgressIndicatorColor(context),
+            ))
           : (permissionAllowed
               ? FilesystemList(
                   isRoot: (directory.absolute.path == widget.rootDirectory.absolute.path),
@@ -283,6 +295,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                   onChange: _changeDirectory,
                   onSelect: widget.onSelect,
                   fileTileSelectMode: widget.fileTileSelectMode,
+                  theme: effectiveTheme.getFileList(context),
+                  showGoUpItem: showGoUpItem,
                 )
               : Container(
                   alignment: Alignment.center,

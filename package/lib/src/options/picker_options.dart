@@ -8,6 +8,7 @@ class FilesystemPickerOptionsData with Diagnosticable {
   static const FilesystemType defaultFsType = FilesystemType.all;
   static const String defaultPermissionText = 'Access to the storage was not granted.';
   static const FileTileSelectMode defaultFileTileSelectMode = FileTileSelectMode.checkButton;
+  static const bool defaultShowGoUpItem = true;
 
   // final FilesystemPickerTheme? theme;
   final FilesystemPickerTheme theme;
@@ -15,6 +16,7 @@ class FilesystemPickerOptionsData with Diagnosticable {
   final FilesystemType fsType;
   final String permissionText;
   final FileTileSelectMode fileTileSelectMode;
+  final bool showGoUpItem;
 
   FilesystemPickerOptionsData({
     // this.theme,
@@ -23,6 +25,7 @@ class FilesystemPickerOptionsData with Diagnosticable {
     this.fsType = defaultFsType,
     this.permissionText = defaultPermissionText,
     this.fileTileSelectMode = defaultFileTileSelectMode,
+    this.showGoUpItem = defaultShowGoUpItem,
   });
 
   @override
@@ -33,6 +36,7 @@ class FilesystemPickerOptionsData with Diagnosticable {
       fsType,
       permissionText,
       fileTileSelectMode,
+      showGoUpItem,
     );
   }
 
@@ -45,7 +49,8 @@ class FilesystemPickerOptionsData with Diagnosticable {
         other.rootName == rootName &&
         other.fsType == fsType &&
         other.permissionText == permissionText &&
-        other.fileTileSelectMode == fileTileSelectMode;
+        other.fileTileSelectMode == fileTileSelectMode &&
+        other.showGoUpItem == showGoUpItem;
   }
 
   @override
@@ -57,6 +62,7 @@ class FilesystemPickerOptionsData with Diagnosticable {
     properties.add(DiagnosticsProperty<String>('permissionText', permissionText, defaultValue: null));
     properties
         .add(DiagnosticsProperty<FileTileSelectMode>('fileTileSelectMode', fileTileSelectMode, defaultValue: null));
+    properties.add(DiagnosticsProperty<bool>('showGoUpItem', showGoUpItem, defaultValue: null));
   }
 }
 
@@ -70,6 +76,7 @@ class FilesystemPickerOptions with Diagnosticable /*extends FilesystemPickerOpti
   final FilesystemType fsType;
   final String permissionText;
   final FileTileSelectMode fileTileSelectMode;
+  final bool showGoUpItem;
 
   FilesystemPickerOptions({
     this.theme,
@@ -81,6 +88,7 @@ class FilesystemPickerOptions with Diagnosticable /*extends FilesystemPickerOpti
     this.fsType = FilesystemPickerOptionsData.defaultFsType,
     this.permissionText = FilesystemPickerOptionsData.defaultPermissionText,
     this.fileTileSelectMode = FilesystemPickerOptionsData.defaultFileTileSelectMode,
+    this.showGoUpItem = FilesystemPickerOptionsData.defaultShowGoUpItem,
 
     /*
     String rootName = FilesystemPickerOptionsData.defaultRootName,
@@ -126,6 +134,7 @@ class FilesystemPickerOptions with Diagnosticable /*extends FilesystemPickerOpti
       fsType: fsType,
       permissionText: permissionText,
       fileTileSelectMode: fileTileSelectMode,
+      showGoUpItem: showGoUpItem,
     );
   }
 

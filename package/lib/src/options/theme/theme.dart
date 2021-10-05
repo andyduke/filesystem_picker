@@ -15,6 +15,7 @@ export '_picker_action_theme.dart';
 class FilesystemPickerTheme with Diagnosticable {
   const FilesystemPickerTheme({
     required this.brightness,
+    this.backgroundColor,
     this.topBar,
     this.messageTextStyle,
     this.list,
@@ -22,12 +23,14 @@ class FilesystemPickerTheme with Diagnosticable {
   });
 
   factory FilesystemPickerTheme.light({
+    Color? backgroundColor,
     FilesystemPickerTopBarThemeData? topBar,
     TextStyle? messageTextStyle,
     FilesystemPickerFileListThemeData? list,
     FilesystemPickerActionThemeData? pickerAction,
   }) {
     return FilesystemPickerTheme(
+      backgroundColor: backgroundColor,
       brightness: Brightness.light,
       topBar: topBar,
       messageTextStyle: messageTextStyle,
@@ -37,12 +40,14 @@ class FilesystemPickerTheme with Diagnosticable {
   }
 
   factory FilesystemPickerTheme.dark({
+    Color? backgroundColor,
     FilesystemPickerTopBarThemeData? topBar,
     TextStyle? messageTextStyle,
     FilesystemPickerFileListThemeData? list,
     FilesystemPickerActionThemeData? pickerAction,
   }) {
     return FilesystemPickerTheme(
+      backgroundColor: backgroundColor,
       brightness: Brightness.dark,
       topBar: topBar,
       messageTextStyle: messageTextStyle,
@@ -52,19 +57,31 @@ class FilesystemPickerTheme with Diagnosticable {
   }
 
   final Brightness brightness;
+  final Color? backgroundColor;
   final FilesystemPickerTopBarThemeData? topBar;
   final TextStyle? messageTextStyle;
   final FilesystemPickerFileListThemeData? list;
   final FilesystemPickerActionThemeData? pickerAction;
 
-  FilesystemPickerTheme resolve(BuildContext context) {
-    return FilesystemPickerTheme(
-      brightness: brightness,
-      topBar: topBar ?? FilesystemPickerTopBarThemeData(),
-      messageTextStyle: messageTextStyle,
-      list: list ?? FilesystemPickerFileListThemeData(),
-      pickerAction: pickerAction ?? FilesystemPickerActionThemeData(),
-    );
+  Color getBackgroundColor(BuildContext context, [Color? color]) {
+    final effectiveValue = color ?? backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
+    return effectiveValue;
+  }
+
+  FilesystemPickerTopBarThemeData getTopBar(BuildContext context) {
+    return topBar ?? FilesystemPickerTopBarThemeData();
+  }
+
+  TextStyle getMessageTextStyle(BuildContext context) {
+    return messageTextStyle ?? TextStyle();
+  }
+
+  FilesystemPickerFileListThemeData getFileList(BuildContext context) {
+    return list ?? FilesystemPickerFileListThemeData();
+  }
+
+  FilesystemPickerActionThemeData getPickerAction(BuildContext context) {
+    return pickerAction ?? FilesystemPickerActionThemeData();
   }
 
   // TODO: AppBarTheme copyWith({}) {}
