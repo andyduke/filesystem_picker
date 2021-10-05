@@ -5,6 +5,8 @@ import 'common.dart';
 import 'filesystem_list.dart';
 import 'package:path/path.dart' as Path;
 import 'breadcrumbs.dart';
+import 'options/picker_options.dart';
+import 'options/theme/theme.dart';
 
 class _PathItem {
   final String text;
@@ -54,7 +56,10 @@ class FilesystemPicker extends StatefulWidget {
     List<String>? allowedExtensions,
     FileTileSelectMode fileTileSelectMode = FileTileSelectMode.checkButton,
     RequestPermission? requestPermission,
+    FilesystemPickerTheme? theme,
   }) async {
+    // TODO: use FilesystemPickerDefaultOptions
+
     return Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (BuildContext context) {
         return FilesystemPicker(
@@ -71,6 +76,7 @@ class FilesystemPicker extends StatefulWidget {
           },
           fileTileSelectMode: fileTileSelectMode,
           requestPermission: requestPermission,
+          theme: theme,
         );
       }),
     );
@@ -111,6 +117,8 @@ class FilesystemPicker extends StatefulWidget {
   /// If specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
   final RequestPermission? requestPermission;
 
+  final FilesystemPickerTheme? theme;
+
   /// Creates a file system item selection widget.
   FilesystemPicker({
     Key? key,
@@ -125,6 +133,7 @@ class FilesystemPicker extends StatefulWidget {
     required this.onSelect,
     required this.fileTileSelectMode,
     this.requestPermission,
+    this.theme,
   }) : super(key: key);
 
   @override
@@ -132,6 +141,8 @@ class FilesystemPicker extends StatefulWidget {
 }
 
 class _FilesystemPickerState extends State<FilesystemPicker> {
+  static double _defaultTopBarIconSize = 24;
+
   bool permissionRequesting = true;
   bool permissionAllowed = false;
 
@@ -161,15 +172,12 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   void _setDirectory(Directory value) {
     directory = value;
 
-    String dirPath = Path.relative(directory.path,
-        from: Path.dirname(widget.rootDirectory.path));
+    String dirPath = Path.relative(directory.path, from: Path.dirname(widget.rootDirectory.path));
     final List<String> items = dirPath.split(Platform.pathSeparator);
     pathItems = [];
 
     String rootItem = items.first;
-    String rootPath = Path.dirname(widget.rootDirectory.path) +
-        Platform.pathSeparator +
-        rootItem;
+    String rootPath = Path.dirname(widget.rootDirectory.path) + Platform.pathSeparator + rootItem;
     pathItems.add(_PathItem(path: rootPath, text: widget.rootName ?? rootItem));
     items.removeAt(0);
 
@@ -180,8 +188,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       pathItems.add(_PathItem(path: path, text: item));
     }
 
-    directoryName = ((directory.path == widget.rootDirectory.path) &&
-            (widget.rootName != null))
+    directoryName = ((directory.path == widget.rootDirectory.path) && (widget.rootName != null))
         ? widget.rootName
         : Path.basename(directory.path);
   }
@@ -196,35 +203,63 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveTheme = (widget.theme ?? FilesystemPickerDefaultOptions.of(context).theme).resolve(context);
+    final foregroundColor = effectiveTheme.topBar!.getForegroundColor(context);
+    final backgroundColor = effectiveTheme.topBar!.getBackgroundColor(context);
+    final elevation = effectiveTheme.topBar!.getElevation(context);
+    final shadowColor = effectiveTheme.topBar!.getShadowColor(context);
+    final shape = effectiveTheme.topBar!.getShape(context);
+    final iconTheme = effectiveTheme.topBar!.getIconTheme(context);
+    final titleTextStyle = effectiveTheme.topBar!.getTitleTextStyle(context);
+    final systemOverlayStyle = effectiveTheme.topBar!.getSystemOverlayStyle(context);
+    final breadcrumbsTheme = effectiveTheme.topBar!.getBreadcrumbsThemeData(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title ?? directoryName!),
+        // Theme
+        foregroundColor: foregroundColor,
+        backgroundColor: backgroundColor,
+        elevation: elevation,
+        shadowColor: shadowColor,
+        shape: shape,
+        iconTheme: iconTheme,
+        titleTextStyle: titleTextStyle,
+        systemOverlayStyle: systemOverlayStyle,
+
+        // Props
+        title: Text(widget.title ?? directoryName!, style: titleTextStyle?.copyWith(color: foregroundColor)),
         leading: IconButton(
+          iconSize: iconTheme?.size ?? _defaultTopBarIconSize,
           icon: Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(),
         ),
         bottom: PreferredSize(
+          child: Breadcrumbs<String>(
+            theme: breadcrumbsTheme,
+            textColor: foregroundColor,
+            items: (!permissionRequesting && permissionAllowed)
+                ? pathItems
+                    .map((path) => BreadcrumbItem<String>(text: path.text, data: path.path))
+                    .toList(growable: false)
+                : [],
+            onSelect: (String? value) {
+              if (value != null) _changeDirectory(Directory(value));
+            },
+          ),
+          /*
           child: Theme(
             data: ThemeData(
               textTheme: TextTheme(
                 button: TextStyle(
-                  color: AppBarTheme.of(context).toolbarTextStyle?.color ??
-                      Theme.of(context).primaryTextTheme.headline6?.color,
-                  /*
-                    color: AppBarTheme.of(context)
-                            .textTheme
-                            ?.headline6
-                            ?.color ??
-                        Theme.of(context).primaryTextTheme.headline6?.color,
-                    */
+                  color: foregroundColor,
                 ),
               ),
             ),
             child: Breadcrumbs<String>(
+              theme: breadcrumbsTheme,
               items: (!permissionRequesting && permissionAllowed)
                   ? pathItems
-                      .map((path) => BreadcrumbItem<String>(
-                          text: path.text, data: path.path))
+                      .map((path) => BreadcrumbItem<String>(text: path.text, data: path.path))
                       .toList(growable: false)
                   : [],
               onSelect: (String? value) {
@@ -232,6 +267,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
               },
             ),
           ),
+          */
           preferredSize: const Size.fromHeight(50),
         ),
       ),
@@ -239,8 +275,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
           ? Center(child: CircularProgressIndicator())
           : (permissionAllowed
               ? FilesystemList(
-                  isRoot: (directory.absolute.path ==
-                      widget.rootDirectory.absolute.path),
+                  isRoot: (directory.absolute.path == widget.rootDirectory.absolute.path),
                   rootDirectory: directory,
                   fsType: widget.fsType,
                   folderIconColor: widget.folderIconColor,
@@ -252,10 +287,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
               : Container(
                   alignment: Alignment.center,
                   padding: const EdgeInsets.all(20),
-                  child: Text(
-                      widget.permissionText ??
-                          'Access to the storage was not granted.',
-                      textScaleFactor: 1.2),
+                  child: Text(widget.permissionText ?? 'Access to the storage was not granted.', textScaleFactor: 1.2),
                 )),
       bottomNavigationBar: (widget.fsType == FilesystemType.folder)
           ? Container(
@@ -265,22 +297,14 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                 child: Center(
                   child: TextButton.icon(
                     style: TextButton.styleFrom(
-                      primary: AppBarTheme.of(context)
-                              .toolbarTextStyle
-                              ?.color ??
+                      primary: AppBarTheme.of(context).toolbarTextStyle?.color ??
                           Theme.of(context).primaryTextTheme.headline6?.color,
-                      onSurface:
-                          (AppBarTheme.of(context).toolbarTextStyle?.color ??
-                                  Theme.of(context)
-                                      .primaryTextTheme
-                                      .headline6
-                                      ?.color)!
-                              .withOpacity(0.5),
+                      onSurface: (AppBarTheme.of(context).toolbarTextStyle?.color ??
+                              Theme.of(context).primaryTextTheme.headline6?.color)!
+                          .withOpacity(0.5),
                     ),
                     icon: Icon(Icons.check_circle),
-                    label: (widget.pickText != null)
-                        ? Text(widget.pickText!)
-                        : const SizedBox(),
+                    label: (widget.pickText != null) ? Text(widget.pickText!) : const SizedBox(),
                     onPressed: (!permissionRequesting && permissionAllowed)
                         ? () => widget.onSelect(directory.absolute.path)
                         : null,
