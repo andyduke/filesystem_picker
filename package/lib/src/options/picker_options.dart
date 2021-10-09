@@ -11,6 +11,12 @@ class FilesystemPickerOptions with Diagnosticable {
   static const String defaultPermissionText = 'Access to the storage was not granted.';
   static const FileTileSelectMode defaultFileTileSelectMode = FileTileSelectMode.checkButton;
   static const bool defaultShowGoUp = true;
+  static const BoxConstraints defaultDialogConstraints = BoxConstraints(
+    minWidth: 280,
+    minHeight: 460,
+    maxWidth: 690,
+    maxHeight: 690,
+  );
 
   final FilesystemPickerThemeBase? _theme;
   final String? rootName;
@@ -19,6 +25,8 @@ class FilesystemPickerOptions with Diagnosticable {
   final FileTileSelectMode fileTileSelectMode;
   final bool showGoUp;
 
+  final BoxConstraints dialogConstraints;
+
   FilesystemPickerOptions({
     FilesystemPickerThemeBase? theme,
     this.rootName = defaultRootName,
@@ -26,6 +34,7 @@ class FilesystemPickerOptions with Diagnosticable {
     this.permissionText = defaultPermissionText,
     this.fileTileSelectMode = defaultFileTileSelectMode,
     this.showGoUp = defaultShowGoUp,
+    this.dialogConstraints = defaultDialogConstraints,
   }) : _theme = theme;
 
   static FilesystemPickerOptions _defaultOptions(BuildContext context) {
@@ -43,6 +52,7 @@ class FilesystemPickerOptions with Diagnosticable {
       permissionText,
       fileTileSelectMode,
       showGoUp,
+      dialogConstraints,
     );
   }
 
@@ -56,7 +66,8 @@ class FilesystemPickerOptions with Diagnosticable {
         other.fsType == fsType &&
         other.permissionText == permissionText &&
         other.fileTileSelectMode == fileTileSelectMode &&
-        other.showGoUp == showGoUp;
+        other.showGoUp == showGoUp &&
+        other.dialogConstraints == dialogConstraints;
   }
 
   @override
@@ -69,6 +80,7 @@ class FilesystemPickerOptions with Diagnosticable {
     properties
         .add(DiagnosticsProperty<FileTileSelectMode>('fileTileSelectMode', fileTileSelectMode, defaultValue: null));
     properties.add(DiagnosticsProperty<bool>('showGoUp', showGoUp, defaultValue: null));
+    properties.add(DiagnosticsProperty<BoxConstraints>('dialogConstraints', dialogConstraints, defaultValue: null));
   }
 }
 
@@ -93,6 +105,7 @@ class FilesystemPickerDefaultOptions extends StatefulWidget {
     String permissionText = FilesystemPickerOptions.defaultPermissionText,
     FileTileSelectMode fileTileSelectMode = FilesystemPickerOptions.defaultFileTileSelectMode,
     bool showGoUp = FilesystemPickerOptions.defaultShowGoUp,
+    BoxConstraints dialogConstraints = FilesystemPickerOptions.defaultDialogConstraints,
   })  : options = FilesystemPickerOptions(
           theme: theme,
           rootName: rootName,
@@ -100,6 +113,7 @@ class FilesystemPickerDefaultOptions extends StatefulWidget {
           permissionText: permissionText,
           fileTileSelectMode: fileTileSelectMode,
           showGoUp: showGoUp,
+          dialogConstraints: dialogConstraints,
         ),
         super(key: key);
 

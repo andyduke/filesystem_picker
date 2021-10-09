@@ -5,6 +5,7 @@ import 'common.dart';
 import 'filesystem_list.dart';
 import 'package:path/path.dart' as Path;
 import 'breadcrumbs.dart';
+import 'options/picker_dialog.dart';
 import 'options/picker_options.dart';
 import 'options/theme/theme.dart';
 import 'options/theme/theme_base.dart';
@@ -67,6 +68,48 @@ class FilesystemPicker extends StatefulWidget {
           theme: theme,
         );
       }),
+    );
+  }
+
+  // TODO: documentation
+  static Future<String?> openDialog({
+    required BuildContext context,
+    required Directory rootDirectory,
+    String? rootName,
+    FilesystemType? fsType,
+    String? pickText,
+    String? permissionText,
+    String? title,
+    Color? folderIconColor,
+    bool? showGoUp,
+    List<String>? allowedExtensions,
+    FileTileSelectMode? fileTileSelectMode,
+    RequestPermission? requestPermission,
+    FilesystemPickerThemeBase? theme,
+    BoxConstraints? constraints,
+  }) async {
+    return showDialog<String?>(
+      context: context,
+      builder: (context) => FilesystemPickerDialog(
+        constraints: constraints,
+        child: FilesystemPicker(
+          rootDirectory: rootDirectory,
+          rootName: rootName,
+          fsType: fsType,
+          pickText: pickText,
+          permissionText: permissionText,
+          title: title,
+          folderIconColor: folderIconColor,
+          allowedExtensions: allowedExtensions,
+          onSelect: (String value) {
+            Navigator.of(context).pop<String>(value);
+          },
+          fileTileSelectMode: fileTileSelectMode,
+          showGoUp: showGoUp,
+          requestPermission: requestPermission,
+          theme: theme,
+        ),
+      ),
     );
   }
 
