@@ -113,6 +113,68 @@ class FilesystemPicker extends StatefulWidget {
     );
   }
 
+  // TODO: documentation
+  static Future<String?> openBottomSheet({
+    required BuildContext context,
+    required Directory rootDirectory,
+    String? rootName,
+    FilesystemType? fsType,
+    String? pickText,
+    String? permissionText,
+    String? title,
+    Color? folderIconColor,
+    bool? showGoUp,
+    List<String>? allowedExtensions,
+    FileTileSelectMode? fileTileSelectMode,
+    RequestPermission? requestPermission,
+    FilesystemPickerThemeBase? theme,
+    BoxConstraints? constraints,
+
+    // TODO: BottomSheet options
+  }) async {
+    // TODO: refactor to FilesystemPickerBottomSheet
+
+    return await showModalBottomSheet(
+      context: context,
+      backgroundColor: Color(0x00000000),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(8),
+        ),
+      ),
+      elevation: 24,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: 300,
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.8,
+        minChildSize: 0.6,
+        maxChildSize: 0.96,
+        expand: false,
+        builder: (context, scrollController) => FilesystemPicker(
+          scrollController: scrollController,
+          rootDirectory: rootDirectory,
+          rootName: rootName,
+          fsType: fsType,
+          pickText: pickText,
+          permissionText: permissionText,
+          title: title,
+          folderIconColor: folderIconColor,
+          allowedExtensions: allowedExtensions,
+          onSelect: (String value) {
+            Navigator.of(context).pop<String>(value);
+          },
+          fileTileSelectMode: fileTileSelectMode,
+          showGoUp: showGoUp,
+          requestPermission: requestPermission,
+          theme: theme,
+        ),
+      ),
+    );
+  }
+
   // ---
 
   /// Specifies the name of the filesystem view root in breadcrumbs.
@@ -199,18 +261,6 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   FileTileSelectMode get fileTileSelectMode => widget.fileTileSelectMode ?? options.fileTileSelectMode;
   bool get showGoUp => widget.showGoUp ?? options.showGoUp;
   FilesystemPickerThemeBase get theme => (widget.theme?.merge(context, options.theme) ?? options.theme);
-
-  /*
-  @override
-  void initState() {
-    super.initState();
-
-    options = FilesystemPickerDefaultOptions.of(context);
-
-    _requestPermission();
-    _setDirectory(widget.rootDirectory);
-  }
-  */
 
   @override
   void didChangeDependencies() {
@@ -382,7 +432,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       ),
     );
 
-    final Widget body = permissionRequesting
+    final Widget body = (!initialized || permissionRequesting)
         ? FilesystemProgressIndicator(theme: effectiveTheme.getFileList(context))
         : (permissionAllowed
             ? FilesystemList(
