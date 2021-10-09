@@ -216,47 +216,31 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
     return SizedBox(
       height: _defaultBottomBarHeight,
-
-      //
       child: Material(
         color: theme.getBackgroundColor(context),
         shape: theme.getShape(context),
         elevation: theme.getElevation(context) ?? 0,
-        child: TextButton.icon(
-          style: TextButton.styleFrom(
-            primary: theme.getForegroundColor(context),
-            onSurface: theme.getDisabledForegroundColor(context),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: TextButton.icon(
+            style: TextButton.styleFrom(
+              primary: theme.getForegroundColor(context),
+              onSurface: theme.getDisabledForegroundColor(context),
+            ),
+            icon: Icon(
+              theme.getCheckIcon(context),
+              // color: pickerIconTheme.color,
+              color: foregroundColor,
+              size: pickerIconTheme.size,
+            ),
+            label: (widget.pickText != null)
+                ? Text(widget.pickText!, style: theme.getTextStyle(context, foregroundColor))
+                : const SizedBox(),
+            onPressed:
+                (!permissionRequesting && permissionAllowed) ? () => widget.onSelect(directory.absolute.path) : null,
           ),
-          icon: Icon(
-            theme.getCheckIcon(context),
-            // color: pickerIconTheme.color,
-            color: foregroundColor,
-            size: pickerIconTheme.size,
-          ),
-          label: (widget.pickText != null)
-              ? Text(widget.pickText!, style: theme.getTextStyle(context, foregroundColor))
-              : const SizedBox(),
-          onPressed:
-              (!permissionRequesting && permissionAllowed) ? () => widget.onSelect(directory.absolute.path) : null,
         ),
       ),
-      /*
-              child: BottomAppBar(
-                color: theme.getBackgroundColor(context),
-                child: Center(
-                  child: TextButton.icon(
-                    style: TextButton.styleFrom(
-                        primary: theme.getForegroundColor(context),
-                        onSurface: theme.getDisabledForegroundColor(context)),
-                    icon: Icon(Icons.check_circle),
-                    label: (widget.pickText != null) ? Text(widget.pickText!) : const SizedBox(),
-                    onPressed: (!permissionRequesting && permissionAllowed)
-                        ? () => widget.onSelect(directory.absolute.path)
-                        : null,
-                  ),
-                ),
-              ),
-              */
     );
   }
 
@@ -282,6 +266,12 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         onPressed: onPressed,
       );
     }
+  }
+
+  List<BreadcrumbItem<String>> _getBreadcrumbs() {
+    return (!permissionRequesting && permissionAllowed)
+        ? pathItems.map((path) => BreadcrumbItem<String>(text: path.text, data: path.path)).toList(growable: false)
+        : [];
   }
 
   @override
@@ -315,7 +305,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         systemOverlayStyle: systemOverlayStyle,
 
         // Props
-        title: Text(widget.title ?? directoryName!, style: titleTextStyle?.copyWith(color: foregroundColor)),
+        title: Text(widget.title ?? directoryName ?? '', style: titleTextStyle?.copyWith(color: foregroundColor)),
         leading: IconButton(
           iconSize: iconTheme?.size ?? _defaultTopBarIconSize,
           icon: Icon(Icons.close),
@@ -325,37 +315,11 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
           child: Breadcrumbs<String>(
             theme: breadcrumbsTheme,
             textColor: foregroundColor,
-            items: (!permissionRequesting && permissionAllowed)
-                ? pathItems
-                    .map((path) => BreadcrumbItem<String>(text: path.text, data: path.path))
-                    .toList(growable: false)
-                : [],
+            items: _getBreadcrumbs(),
             onSelect: (String? value) {
               if (value != null) _changeDirectory(Directory(value));
             },
           ),
-          /*
-          child: Theme(
-            data: ThemeData(
-              textTheme: TextTheme(
-                button: TextStyle(
-                  color: foregroundColor,
-                ),
-              ),
-            ),
-            child: Breadcrumbs<String>(
-              theme: breadcrumbsTheme,
-              items: (!permissionRequesting && permissionAllowed)
-                  ? pathItems
-                      .map((path) => BreadcrumbItem<String>(text: path.text, data: path.path))
-                      .toList(growable: false)
-                  : [],
-              onSelect: (String? value) {
-                if (value != null) _changeDirectory(Directory(value));
-              },
-            ),
-          ),
-          */
           preferredSize: const Size.fromHeight(_defaultTopBarHeight),
         ),
       ),

@@ -19,7 +19,6 @@ class FilesystemPickerActionThemeData with Diagnosticable {
   final Color? disabledForegroundColor;
   final Color? backgroundColor;
   final double? elevation;
-  // final Color? shadowColor;
   final ShapeBorder? shape;
 
   final TextStyle? textStyle;
@@ -34,7 +33,6 @@ class FilesystemPickerActionThemeData with Diagnosticable {
     this.disabledForegroundColor,
     this.backgroundColor,
     this.elevation,
-    // this.shadowColor,
     this.shape,
     this.textStyle,
     this.checkIcon,
@@ -69,10 +67,7 @@ class FilesystemPickerActionThemeData with Diagnosticable {
 
   TextStyle? getTextStyle(BuildContext context, [Color? color]) {
     final theme = Theme.of(context);
-    // final effectiveTextStyle =
-    //     (theme.textTheme.bodyText1 ?? TextStyle()).copyWith(color: getForegroundColor(context)).merge(textStyle);
     final effectiveTextStyle = (theme.textTheme.bodyText1 ?? TextStyle()).copyWith(color: color).merge(textStyle);
-    // final effectiveTextStyle = (theme.textTheme.bodyText1 ?? TextStyle()).merge(textStyle);
     return effectiveTextStyle;
   }
 
@@ -84,7 +79,7 @@ class FilesystemPickerActionThemeData with Diagnosticable {
 
   IconThemeData getCheckIconTheme(BuildContext context) {
     return IconThemeData(
-      color: checkIconColor ?? getForegroundColor(context) /*Theme.of(context).disabledColor*/,
+      color: checkIconColor ?? getForegroundColor(context),
       size: checkIconSize ?? defaultCheckIconSize,
     );
   }
