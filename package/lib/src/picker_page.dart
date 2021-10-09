@@ -152,6 +152,8 @@ class FilesystemPicker extends StatefulWidget {
 
   final bool? showGoUp;
 
+  final ScrollController? scrollController;
+
   /// Creates a file system item selection widget.
   FilesystemPicker({
     Key? key,
@@ -168,6 +170,7 @@ class FilesystemPicker extends StatefulWidget {
     this.requestPermission,
     this.theme,
     this.showGoUp,
+    this.scrollController,
   }) : super(key: key);
 
   @override
@@ -348,60 +351,65 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     final breadcrumbsTheme = topBarTheme.getBreadcrumbsThemeData(context);
     final pickerActionTheme = effectiveTheme.getPickerAction(context);
 
+    final PreferredSizeWidget appBar = AppBar(
+      // Theme
+      foregroundColor: foregroundColor,
+      backgroundColor: backgroundColor,
+      elevation: elevation,
+      shadowColor: shadowColor,
+      shape: shape,
+      iconTheme: iconTheme,
+      titleTextStyle: titleTextStyle,
+      systemOverlayStyle: systemOverlayStyle,
+
+      // Props
+      title: Text(widget.title ?? directoryName ?? '', style: titleTextStyle?.copyWith(color: foregroundColor)),
+      leading: IconButton(
+        iconSize: iconTheme?.size ?? _defaultTopBarIconSize,
+        icon: Icon(Icons.close),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      bottom: PreferredSize(
+        child: Breadcrumbs<String>(
+          theme: breadcrumbsTheme,
+          textColor: foregroundColor,
+          items: _getBreadcrumbs(),
+          onSelect: (String? value) {
+            if (value != null) _changeDirectory(Directory(value));
+          },
+        ),
+        preferredSize: const Size.fromHeight(_defaultTopBarHeight),
+      ),
+    );
+
+    final Widget body = permissionRequesting
+        ? FilesystemProgressIndicator(theme: effectiveTheme.getFileList(context))
+        : (permissionAllowed
+            ? FilesystemList(
+                isRoot: (directory.absolute.path == widget.rootDirectory.absolute.path),
+                rootDirectory: directory,
+                fsType: fsType,
+                folderIconColor: widget.folderIconColor,
+                allowedExtensions: widget.allowedExtensions,
+                onChange: _changeDirectory,
+                onSelect: widget.onSelect,
+                fileTileSelectMode: fileTileSelectMode,
+                theme: effectiveTheme.getFileList(context),
+                showGoUp: showGoUp,
+                scrollController: widget.scrollController,
+              )
+            : Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(20),
+                child: Text(permissionText ?? options.permissionText, textScaleFactor: 1.2),
+              ));
+
     return Scaffold(
       backgroundColor: effectiveTheme.getBackgroundColor(context),
-      appBar: AppBar(
-        // Theme
-        foregroundColor: foregroundColor,
-        backgroundColor: backgroundColor,
-        elevation: elevation,
-        shadowColor: shadowColor,
-        shape: shape,
-        iconTheme: iconTheme,
-        titleTextStyle: titleTextStyle,
-        systemOverlayStyle: systemOverlayStyle,
-
-        // Props
-        title: Text(widget.title ?? directoryName ?? '', style: titleTextStyle?.copyWith(color: foregroundColor)),
-        leading: IconButton(
-          iconSize: iconTheme?.size ?? _defaultTopBarIconSize,
-          icon: Icon(Icons.close),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        bottom: PreferredSize(
-          child: Breadcrumbs<String>(
-            theme: breadcrumbsTheme,
-            textColor: foregroundColor,
-            items: _getBreadcrumbs(),
-            onSelect: (String? value) {
-              if (value != null) _changeDirectory(Directory(value));
-            },
-          ),
-          preferredSize: const Size.fromHeight(_defaultTopBarHeight),
-        ),
-      ),
+      appBar: appBar,
 
       // File list
-      body: permissionRequesting
-          ? FilesystemProgressIndicator(theme: effectiveTheme.getFileList(context))
-          : (permissionAllowed
-              ? FilesystemList(
-                  isRoot: (directory.absolute.path == widget.rootDirectory.absolute.path),
-                  rootDirectory: directory,
-                  fsType: fsType,
-                  folderIconColor: widget.folderIconColor,
-                  allowedExtensions: widget.allowedExtensions,
-                  onChange: _changeDirectory,
-                  onSelect: widget.onSelect,
-                  fileTileSelectMode: fileTileSelectMode,
-                  theme: effectiveTheme.getFileList(context),
-                  showGoUp: showGoUp,
-                )
-              : Container(
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(20),
-                  child: Text(permissionText ?? options.permissionText, textScaleFactor: 1.2),
-                )),
+      body: SizedBox.expand(child: body),
 
       // Picker Action
       floatingActionButton: (pickerActionTheme.isFABMode && (fsType == FilesystemType.folder))

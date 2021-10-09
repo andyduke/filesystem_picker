@@ -7,7 +7,7 @@ import 'filesystem_list_tile.dart';
 import 'options/theme/_filelist_theme.dart';
 import 'progress_indicator.dart';
 
-class FilesystemList extends StatelessWidget {
+class FilesystemList extends StatefulWidget {
   final bool isRoot;
   final Directory rootDirectory;
   final FilesystemType fsType;
@@ -18,6 +18,7 @@ class FilesystemList extends StatelessWidget {
   final FileTileSelectMode fileTileSelectMode;
   final FilesystemPickerFileListThemeData? theme;
   final bool showGoUp;
+  final ScrollController? scrollController;
 
   FilesystemList({
     Key? key,
@@ -31,17 +32,44 @@ class FilesystemList extends StatelessWidget {
     required this.fileTileSelectMode,
     this.theme,
     this.showGoUp = true,
+    this.scrollController,
   }) : super(key: key);
 
-  Future<List<FileSystemEntity>> _dirContents() {
+  @override
+  State<FilesystemList> createState() => _FilesystemListState();
+}
+
+class _FilesystemListState extends State<FilesystemList> {
+  late Directory rootDirectory;
+  late Future<List<FileSystemEntity>> _dirContents;
+
+  @override
+  void initState() {
+    super.initState();
+
+    rootDirectory = widget.rootDirectory;
+    _loadDirContents();
+  }
+
+  @override
+  void didUpdateWidget(covariant FilesystemList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.rootDirectory != widget.rootDirectory) {
+      rootDirectory = widget.rootDirectory;
+      _loadDirContents();
+    }
+  }
+
+  void _loadDirContents() async {
     var files = <FileSystemEntity>[];
     var completer = new Completer<List<FileSystemEntity>>();
-    var lister = this.rootDirectory.list(recursive: false);
+    var lister = rootDirectory.list(recursive: false);
     lister.listen(
       (file) {
-        if ((fsType != FilesystemType.folder) || (file is Directory)) {
-          if ((file is File) && (allowedExtensions != null) && (allowedExtensions!.length > 0)) {
-            if (!allowedExtensions!.contains(Path.extension(file.path))) return;
+        if ((widget.fsType != FilesystemType.folder) || (file is Directory)) {
+          if ((file is File) && (widget.allowedExtensions != null) && (widget.allowedExtensions!.length > 0)) {
+            if (!widget.allowedExtensions!.contains(Path.extension(file.path))) return;
           }
           files.add(file);
         }
@@ -51,7 +79,7 @@ class FilesystemList extends StatelessWidget {
         completer.complete(files);
       },
     );
-    return completer.future;
+    _dirContents = completer.future;
   }
 
   InkWell _upNavigation(BuildContext context, FilesystemPickerFileListThemeData theme) {
@@ -71,8 +99,8 @@ class FilesystemList extends StatelessWidget {
         ),
       ),
       onTap: () {
-        final li = this.rootDirectory.path.split(Platform.pathSeparator)..removeLast();
-        onChange(Directory(li.join(Platform.pathSeparator)));
+        final li = this.widget.rootDirectory.path.split(Platform.pathSeparator)..removeLast();
+        widget.onChange(Directory(li.join(Platform.pathSeparator)));
       },
     );
   }
@@ -80,9 +108,9 @@ class FilesystemList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _dirContents(),
+      future: _dirContents,
       builder: (BuildContext context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
-        final effectiveTheme = theme ?? FilesystemPickerFileListThemeData();
+        final effectiveTheme = widget.theme ?? FilesystemPickerFileListThemeData();
 
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
@@ -94,21 +122,22 @@ class FilesystemList extends StatelessWidget {
             );
           } else if (snapshot.hasData) {
             return ListView.builder(
+              controller: widget.scrollController,
               shrinkWrap: true,
-              itemCount: snapshot.data!.length + (showGoUp ? (isRoot ? 0 : 1) : 0),
+              itemCount: snapshot.data!.length + (widget.showGoUp ? (widget.isRoot ? 0 : 1) : 0),
               itemBuilder: (BuildContext context, int index) {
-                if (showGoUp && !isRoot && index == 0) {
+                if (widget.showGoUp && !widget.isRoot && index == 0) {
                   return _upNavigation(context, effectiveTheme);
                 }
 
-                final item = snapshot.data![index - (showGoUp ? (isRoot ? 0 : 1) : 0)];
+                final item = snapshot.data![index - (widget.showGoUp ? (widget.isRoot ? 0 : 1) : 0)];
                 return FilesystemListTile(
-                  fsType: fsType,
+                  fsType: widget.fsType,
                   item: item,
-                  folderIconColor: folderIconColor,
-                  onChange: onChange,
-                  onSelect: onSelect,
-                  fileTileSelectMode: fileTileSelectMode,
+                  folderIconColor: widget.folderIconColor,
+                  onChange: widget.onChange,
+                  onSelect: widget.onSelect,
+                  fileTileSelectMode: widget.fileTileSelectMode,
                   theme: effectiveTheme,
                 );
               },
