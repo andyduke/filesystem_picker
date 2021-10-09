@@ -2,31 +2,51 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../common.dart';
 import 'theme/theme.dart';
+import 'theme/theme_base.dart';
 
-class FilesystemPickerOptionsData with Diagnosticable {
+class FilesystemPickerOptions with Diagnosticable {
   static const String defaultRootName = 'Storage';
   static const FilesystemType defaultFsType = FilesystemType.all;
   static const String defaultPermissionText = 'Access to the storage was not granted.';
   static const FileTileSelectMode defaultFileTileSelectMode = FileTileSelectMode.checkButton;
   static const bool defaultShowGoUpItem = true;
 
-  // final FilesystemPickerTheme? theme;
-  final FilesystemPickerTheme theme;
+  final FilesystemPickerThemeBase? _theme;
   final String rootName;
   final FilesystemType fsType;
   final String permissionText;
   final FileTileSelectMode fileTileSelectMode;
   final bool showGoUpItem;
 
-  FilesystemPickerOptionsData({
-    // this.theme,
-    required this.theme,
+  FilesystemPickerOptions({
+    FilesystemPickerThemeBase? theme,
     this.rootName = defaultRootName,
     this.fsType = defaultFsType,
     this.permissionText = defaultPermissionText,
     this.fileTileSelectMode = defaultFileTileSelectMode,
     this.showGoUpItem = defaultShowGoUpItem,
-  });
+  }) : _theme = theme;
+
+  static FilesystemPickerOptions _defaultOptions(BuildContext context) {
+    return FilesystemPickerOptions();
+  }
+
+  FilesystemPickerThemeBase get theme => _theme ?? FilesystemPickerTheme.light();
+
+  /*
+  FilesystemPickerOptions data(BuildContext context) {
+    late FilesystemPickerThemeBase effectiveTheme = theme ?? FilesystemPickerTheme.light();
+
+    return FilesystemPickerOptions(
+      theme: effectiveTheme,
+      rootName: rootName,
+      fsType: fsType,
+      permissionText: permissionText,
+      fileTileSelectMode: fileTileSelectMode,
+      showGoUpItem: showGoUpItem,
+    );
+  }
+  */
 
   @override
   int get hashCode {
@@ -44,7 +64,7 @@ class FilesystemPickerOptionsData with Diagnosticable {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
-    return other is FilesystemPickerOptionsData &&
+    return other is FilesystemPickerOptions &&
         other.theme == theme &&
         other.rootName == rootName &&
         other.fsType == fsType &&
@@ -56,7 +76,7 @@ class FilesystemPickerOptionsData with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<FilesystemPickerTheme>('theme', theme, defaultValue: null));
+    properties.add(DiagnosticsProperty<FilesystemPickerThemeBase>('theme', theme, defaultValue: null));
     properties.add(DiagnosticsProperty<String>('rootName', rootName, defaultValue: null));
     properties.add(DiagnosticsProperty<FilesystemType>('fsType', fsType, defaultValue: null));
     properties.add(DiagnosticsProperty<String>('permissionText', permissionText, defaultValue: null));
@@ -66,9 +86,10 @@ class FilesystemPickerOptionsData with Diagnosticable {
   }
 }
 
+/*
 class FilesystemPickerOptions with Diagnosticable /*extends FilesystemPickerOptionsData*/ {
-  final FilesystemPickerTheme? theme;
-  final FilesystemPickerTheme? darkTheme;
+  final FilesystemPickerThemeBase? theme;
+  final FilesystemPickerThemeBase? darkTheme;
   final ThemeMode? themeMode;
   // final FilesystemPickerOptionsData data;
 
@@ -109,7 +130,7 @@ class FilesystemPickerOptions with Diagnosticable /*extends FilesystemPickerOpti
   }
 
   FilesystemPickerOptionsData data(BuildContext context) {
-    late FilesystemPickerTheme effectiveTheme;
+    late FilesystemPickerThemeBase effectiveTheme;
 
     switch (themeMode) {
       case ThemeMode.light:
@@ -193,8 +214,8 @@ class FilesystemPickerOptions with Diagnosticable /*extends FilesystemPickerOpti
 
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<ThemeMode>('themeMode', themeMode, defaultValue: null));
-    properties.add(DiagnosticsProperty<FilesystemPickerTheme>('theme', theme, defaultValue: null));
-    properties.add(DiagnosticsProperty<FilesystemPickerTheme>('darkTheme', darkTheme, defaultValue: null));
+    properties.add(DiagnosticsProperty<FilesystemPickerThemeBase>('theme', theme, defaultValue: null));
+    properties.add(DiagnosticsProperty<FilesystemPickerThemeBase>('darkTheme', darkTheme, defaultValue: null));
     // properties.add(DiagnosticsProperty<FilesystemPickerOptionsData>('data', data, defaultValue: null));
 
     properties.add(DiagnosticsProperty<String>('rootName', rootName, defaultValue: null));
@@ -204,6 +225,7 @@ class FilesystemPickerOptions with Diagnosticable /*extends FilesystemPickerOpti
         .add(DiagnosticsProperty<FileTileSelectMode>('fileTileSelectMode', fileTileSelectMode, defaultValue: null));
   }
 }
+*/
 
 /*
 @immutable
@@ -289,21 +311,22 @@ class FilesystemPickerDefaultOptions extends StatefulWidget {
   static FilesystemPickerDefaultOptionsState? maybeOf(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<_FilesystemPickerOptionsScope>()?.options;
 
-  static FilesystemPickerOptionsData of(BuildContext context) =>
+  static FilesystemPickerOptions of(BuildContext context) =>
       (context.dependOnInheritedWidgetOfExactType<_FilesystemPickerOptionsScope>()?.options.defaultOptions.options ??
-              FilesystemPickerOptions._defaultOptions(context))
-          .data(context);
+          FilesystemPickerOptions._defaultOptions(context));
 }
 
 class FilesystemPickerDefaultOptionsState extends State<FilesystemPickerDefaultOptions> {
   FilesystemPickerDefaultOptions get defaultOptions => widget;
 
+  /*
   @deprecated
   // FilesystemPickerTheme get theme => widget.theme ?? FilesystemPickerTheme();
-  FilesystemPickerTheme get theme {
+  FilesystemPickerThemeBase get theme {
     debugPrint('* ${Theme.of(context)}');
     return widget.options.theme ?? FilesystemPickerTheme.light();
   }
+  */
 
   @override
   Widget build(BuildContext context) {

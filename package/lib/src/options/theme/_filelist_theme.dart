@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../filesystem_list_tile.dart';
-
 @immutable
 class FilesystemPickerFileListThemeData with Diagnosticable {
   static const double defaultIconSize = 32;

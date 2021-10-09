@@ -47,15 +47,15 @@ class FilesystemPicker extends StatefulWidget {
   static Future<String?> open({
     required BuildContext context,
     required Directory rootDirectory,
-    String rootName = FilesystemPickerOptionsData.defaultRootName,
-    FilesystemType fsType = FilesystemPickerOptionsData.defaultFsType,
+    String rootName = FilesystemPickerOptions.defaultRootName,
+    FilesystemType fsType = FilesystemPickerOptions.defaultFsType,
     String? pickText,
     String? permissionText,
     String? title,
     Color? folderIconColor,
     bool? showGoUpItem,
     List<String>? allowedExtensions,
-    FileTileSelectMode fileTileSelectMode = FilesystemPickerOptionsData.defaultFileTileSelectMode,
+    FileTileSelectMode fileTileSelectMode = FilesystemPickerOptions.defaultFileTileSelectMode,
     RequestPermission? requestPermission,
     FilesystemPickerTheme? theme,
   }) async {
