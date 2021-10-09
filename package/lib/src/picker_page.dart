@@ -46,6 +46,7 @@ class FilesystemPicker extends StatefulWidget {
   /// * [allowedExtensions] specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`
   /// * [fileTileSelectMode] specifies how to files can be selected (either tapping on the whole tile or only on trailing button). (default depends on [fsType])
   /// * [requestPermission] if specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
+  /// * [theme] TODO:
   static Future<String?> open({
     required BuildContext context,
     required Directory rootDirectory,

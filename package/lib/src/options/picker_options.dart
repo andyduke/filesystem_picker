@@ -4,6 +4,7 @@ import '../common.dart';
 import 'theme/theme.dart';
 import 'theme/theme_base.dart';
 
+@immutable
 class FilesystemPickerOptions with Diagnosticable {
   static const String defaultRootName = 'Storage';
   static const FilesystemType defaultFsType = FilesystemType.all;
@@ -73,6 +74,7 @@ class FilesystemPickerOptions with Diagnosticable {
 
 class FilesystemPickerDefaultOptions extends StatefulWidget {
   final Widget child;
+  // TODO: refactor - expand options
   final FilesystemPickerOptions options;
 
   FilesystemPickerDefaultOptions({

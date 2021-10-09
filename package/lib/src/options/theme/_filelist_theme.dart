@@ -1,5 +1,58 @@
 import 'package:flutter/foundation.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+
+@immutable
+class FilesystemPickerFileListFileTypesThemeItem {
+  final List<String> extensions;
+  final IconData? icon;
+
+  const FilesystemPickerFileListFileTypesThemeItem({
+    required this.extensions,
+    required this.icon,
+  });
+}
+
+abstract class FilesystemPickerFileListFileTypesThemeBase {
+  const FilesystemPickerFileListFileTypesThemeBase();
+
+  FilesystemPickerFileListFileTypesThemeItem? match(String extension);
+
+  FilesystemPickerFileListFileTypesThemeBase merge(FilesystemPickerFileListFileTypesThemeBase? base);
+}
+
+@immutable
+class FilesystemPickerFileListFileTypesTheme extends FilesystemPickerFileListFileTypesThemeBase {
+  static const FilesystemPickerFileListFileTypesTheme defaultFileTypes = const FilesystemPickerFileListFileTypesTheme([
+    // Databases
+    FilesystemPickerFileListFileTypesThemeItem(
+      extensions: ['db', 'sqlite', 'sqlite3'],
+      icon: Icons.dns,
+    ),
+
+    // Images
+    FilesystemPickerFileListFileTypesThemeItem(
+      extensions: ['jpg', 'jpeg', 'png'],
+      icon: Icons.image,
+    ),
+  ]);
+
+  final List<FilesystemPickerFileListFileTypesThemeItem> types;
+
+  const FilesystemPickerFileListFileTypesTheme(this.types);
+
+  FilesystemPickerFileListFileTypesThemeItem? match(String extension) {
+    return types.firstWhereOrNull((type) => type.extensions.contains(extension.toLowerCase()));
+  }
+
+  FilesystemPickerFileListFileTypesThemeBase merge(FilesystemPickerFileListFileTypesThemeBase? base) {
+    if (base is FilesystemPickerFileListFileTypesTheme) {
+      return FilesystemPickerFileListFileTypesTheme([...types, ...base.types]);
+    } else {
+      return this;
+    }
+  }
+}
 
 @immutable
 class FilesystemPickerFileListThemeData with Diagnosticable {
@@ -33,7 +86,9 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
 
   final Color? progressIndicatorColor;
 
-  // TODO: Extensions Icons
+  FilesystemPickerFileListFileTypesThemeBase get fileTypes =>
+      _fileTypes ?? FilesystemPickerFileListFileTypesTheme.defaultFileTypes;
+  final FilesystemPickerFileListFileTypesThemeBase? _fileTypes;
 
   FilesystemPickerFileListThemeData({
     this.iconSize,
@@ -53,7 +108,8 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
     this.checkIconSize,
     this.textScaleFactor,
     this.progressIndicatorColor,
-  });
+    FilesystemPickerFileListFileTypesThemeBase? fileTypes,
+  }) : _fileTypes = fileTypes;
 
   double getIconSize(BuildContext context) {
     final effectiveValue = iconSize ?? defaultIconSize;
@@ -101,8 +157,10 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
     return effectiveValue;
   }
 
-  IconData getFileIcon(BuildContext context) {
-    final effectiveValue = fileIcon ?? Icons.description;
+  IconData getFileIcon(BuildContext context, [String? extension]) {
+    final FilesystemPickerFileListFileTypesThemeItem? fileType =
+        (extension != null) ? fileTypes.match(extension) : null;
+    final effectiveValue = fileType?.icon ?? fileIcon ?? Icons.description;
     return effectiveValue;
   }
 
@@ -162,6 +220,7 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
       checkIconSize: checkIconSize ?? base.checkIconSize,
       textScaleFactor: textScaleFactor ?? base.textScaleFactor,
       progressIndicatorColor: progressIndicatorColor ?? base.progressIndicatorColor,
+      fileTypes: _fileTypes?.merge(base._fileTypes) ?? base._fileTypes,
     );
   }
 }

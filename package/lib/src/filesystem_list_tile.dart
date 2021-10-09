@@ -42,15 +42,9 @@ class FilesystemListTile extends StatelessWidget {
   /// Set the icon for a file
   Icon _fileIcon(BuildContext context, FilesystemPickerFileListThemeData theme, String filename, bool isFile,
       [Color? color]) {
-    IconData icon = theme.getFileIcon(context);
-
     final _extension = filename.split(".").last;
-    if (_extension == "db" || _extension == "sqlite" || _extension == "sqlite3") {
-      icon = Icons.dns;
-    } else if (_extension == "jpg" || _extension == "jpeg" || _extension == "png") {
-      icon = Icons.image;
-    }
-    // default
+    IconData icon = theme.getFileIcon(context, _extension);
+
     return Icon(
       icon,
       color: theme.getFileIconColor(context, color),
