@@ -10,14 +10,14 @@ class FilesystemPickerOptions with Diagnosticable {
   static const FilesystemType defaultFsType = FilesystemType.all;
   static const String defaultPermissionText = 'Access to the storage was not granted.';
   static const FileTileSelectMode defaultFileTileSelectMode = FileTileSelectMode.checkButton;
-  static const bool defaultShowGoUpItem = true;
+  static const bool defaultShowGoUp = true;
 
   final FilesystemPickerThemeBase? _theme;
-  final String rootName;
+  final String? rootName;
   final FilesystemType fsType;
   final String permissionText;
   final FileTileSelectMode fileTileSelectMode;
-  final bool showGoUpItem;
+  final bool showGoUp;
 
   FilesystemPickerOptions({
     FilesystemPickerThemeBase? theme,
@@ -25,7 +25,7 @@ class FilesystemPickerOptions with Diagnosticable {
     this.fsType = defaultFsType,
     this.permissionText = defaultPermissionText,
     this.fileTileSelectMode = defaultFileTileSelectMode,
-    this.showGoUpItem = defaultShowGoUpItem,
+    this.showGoUp = defaultShowGoUp,
   }) : _theme = theme;
 
   static FilesystemPickerOptions _defaultOptions(BuildContext context) {
@@ -42,7 +42,7 @@ class FilesystemPickerOptions with Diagnosticable {
       fsType,
       permissionText,
       fileTileSelectMode,
-      showGoUpItem,
+      showGoUp,
     );
   }
 
@@ -56,7 +56,7 @@ class FilesystemPickerOptions with Diagnosticable {
         other.fsType == fsType &&
         other.permissionText == permissionText &&
         other.fileTileSelectMode == fileTileSelectMode &&
-        other.showGoUpItem == showGoUpItem;
+        other.showGoUp == showGoUp;
   }
 
   @override
@@ -68,22 +68,40 @@ class FilesystemPickerOptions with Diagnosticable {
     properties.add(DiagnosticsProperty<String>('permissionText', permissionText, defaultValue: null));
     properties
         .add(DiagnosticsProperty<FileTileSelectMode>('fileTileSelectMode', fileTileSelectMode, defaultValue: null));
-    properties.add(DiagnosticsProperty<bool>('showGoUpItem', showGoUpItem, defaultValue: null));
+    properties.add(DiagnosticsProperty<bool>('showGoUp', showGoUp, defaultValue: null));
   }
 }
 
 class FilesystemPickerDefaultOptions extends StatefulWidget {
   final Widget child;
-  // TODO: refactor - expand options
   final FilesystemPickerOptions options;
 
+  /*
   FilesystemPickerDefaultOptions({
     Key? key,
     required this.child,
     required this.options,
-  }) : super(
-          key: key,
-        );
+  }) : super(key: key);
+  */
+
+  FilesystemPickerDefaultOptions({
+    Key? key,
+    required this.child,
+    FilesystemPickerThemeBase? theme,
+    String? rootName,
+    FilesystemType fsType = FilesystemPickerOptions.defaultFsType,
+    String permissionText = FilesystemPickerOptions.defaultPermissionText,
+    FileTileSelectMode fileTileSelectMode = FilesystemPickerOptions.defaultFileTileSelectMode,
+    bool showGoUp = FilesystemPickerOptions.defaultShowGoUp,
+  })  : options = FilesystemPickerOptions(
+          theme: theme,
+          rootName: rootName,
+          fsType: fsType,
+          permissionText: permissionText,
+          fileTileSelectMode: fileTileSelectMode,
+          showGoUp: showGoUp,
+        ),
+        super(key: key);
 
   @override
   State<FilesystemPickerDefaultOptions> createState() => FilesystemPickerDefaultOptionsState();

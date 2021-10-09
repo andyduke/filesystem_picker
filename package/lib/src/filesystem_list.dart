@@ -17,7 +17,7 @@ class FilesystemList extends StatelessWidget {
   final ValueSelected onSelect;
   final FileTileSelectMode fileTileSelectMode;
   final FilesystemPickerFileListThemeData? theme;
-  final bool showGoUpItem;
+  final bool showGoUp;
 
   FilesystemList({
     Key? key,
@@ -30,7 +30,7 @@ class FilesystemList extends StatelessWidget {
     required this.onSelect,
     required this.fileTileSelectMode,
     this.theme,
-    this.showGoUpItem = true,
+    this.showGoUp = true,
   }) : super(key: key);
 
   Future<List<FileSystemEntity>> _dirContents() {
@@ -95,13 +95,13 @@ class FilesystemList extends StatelessWidget {
           } else if (snapshot.hasData) {
             return ListView.builder(
               shrinkWrap: true,
-              itemCount: snapshot.data!.length + (showGoUpItem ? (isRoot ? 0 : 1) : 0),
+              itemCount: snapshot.data!.length + (showGoUp ? (isRoot ? 0 : 1) : 0),
               itemBuilder: (BuildContext context, int index) {
-                if (showGoUpItem && !isRoot && index == 0) {
+                if (showGoUp && !isRoot && index == 0) {
                   return _upNavigation(context, effectiveTheme);
                 }
 
-                final item = snapshot.data![index - (showGoUpItem ? (isRoot ? 0 : 1) : 0)];
+                final item = snapshot.data![index - (showGoUp ? (isRoot ? 0 : 1) : 0)];
                 return FilesystemListTile(
                   fsType: fsType,
                   item: item,

@@ -10,21 +10,6 @@ import 'options/theme/theme.dart';
 import 'options/theme/theme_base.dart';
 import 'progress_indicator.dart';
 
-class _PathItem {
-  final String text;
-  final String path;
-
-  _PathItem({
-    required this.path,
-    required this.text,
-  });
-
-  @override
-  String toString() {
-    return '$text: $path';
-  }
-}
-
 /// FileSystem file or folder picker dialog.
 ///
 /// Allows the user to browse the file system and pick a folder or file.
@@ -50,20 +35,18 @@ class FilesystemPicker extends StatefulWidget {
   static Future<String?> open({
     required BuildContext context,
     required Directory rootDirectory,
-    String rootName = FilesystemPickerOptions.defaultRootName,
-    FilesystemType fsType = FilesystemPickerOptions.defaultFsType,
+    String? rootName,
+    FilesystemType? fsType,
     String? pickText,
     String? permissionText,
     String? title,
     Color? folderIconColor,
-    bool? showGoUpItem,
+    bool? showGoUp,
     List<String>? allowedExtensions,
-    FileTileSelectMode fileTileSelectMode = FilesystemPickerOptions.defaultFileTileSelectMode,
+    FileTileSelectMode? fileTileSelectMode,
     RequestPermission? requestPermission,
     FilesystemPickerThemeBase? theme,
   }) async {
-    // TODO: use FilesystemPickerDefaultOptions
-
     return Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (BuildContext context) {
         return FilesystemPicker(
@@ -79,7 +62,7 @@ class FilesystemPicker extends StatefulWidget {
             Navigator.of(context).pop<String>(value);
           },
           fileTileSelectMode: fileTileSelectMode,
-          showGoUpItem: showGoUpItem,
+          showGoUp: showGoUp,
           requestPermission: requestPermission,
           theme: theme,
         );
@@ -96,7 +79,7 @@ class FilesystemPicker extends StatefulWidget {
   final Directory rootDirectory;
 
   /// Specifies the type of filesystem view (folder and files, folder only or files only), by default `FilesystemType.all`.
-  final FilesystemType fsType;
+  final FilesystemType? fsType;
 
   /// Called when a file system item is selected.
   final ValueSelected onSelect;
@@ -117,14 +100,14 @@ class FilesystemPicker extends StatefulWidget {
   final List<String>? allowedExtensions;
 
   /// Specifies how to files can be selected (either tapping on the whole tile or only on trailing button). (default depends on [fsType])
-  final FileTileSelectMode fileTileSelectMode;
+  final FileTileSelectMode? fileTileSelectMode;
 
   /// If specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
   final RequestPermission? requestPermission;
 
   final FilesystemPickerThemeBase? theme;
 
-  final bool? showGoUpItem;
+  final bool? showGoUp;
 
   /// Creates a file system item selection widget.
   FilesystemPicker({
@@ -141,7 +124,7 @@ class FilesystemPicker extends StatefulWidget {
     required this.fileTileSelectMode,
     this.requestPermission,
     this.theme,
-    this.showGoUpItem,
+    this.showGoUp,
   }) : super(key: key);
 
   @override
@@ -153,6 +136,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   static const double _defaultTopBarHeight = 50;
   static const double _defaultBottomBarHeight = 50;
 
+  bool initialized = false;
+
   bool permissionRequesting = true;
   bool permissionAllowed = false;
 
@@ -160,11 +145,39 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   String? directoryName;
   late List<_PathItem> pathItems;
 
+  late FilesystemPickerOptions options;
+
+  String? get rootName => widget.rootName ?? options.rootName;
+  FilesystemType get fsType => widget.fsType ?? options.fsType;
+  String? get permissionText => widget.permissionText ?? options.permissionText;
+  FileTileSelectMode get fileTileSelectMode => widget.fileTileSelectMode ?? options.fileTileSelectMode;
+  bool get showGoUp => widget.showGoUp ?? options.showGoUp;
+  FilesystemPickerThemeBase get theme => (widget.theme?.merge(context, options.theme) ?? options.theme);
+
+  /*
   @override
   void initState() {
     super.initState();
+
+    options = FilesystemPickerDefaultOptions.of(context);
+
     _requestPermission();
     _setDirectory(widget.rootDirectory);
+  }
+  */
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!initialized) {
+      initialized = true;
+
+      options = FilesystemPickerDefaultOptions.of(context);
+
+      _requestPermission();
+      _setDirectory(widget.rootDirectory);
+    }
   }
 
   Future<void> _requestPermission() async {
@@ -188,7 +201,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
     String rootItem = items.first;
     String rootPath = Path.dirname(widget.rootDirectory.path) + Platform.pathSeparator + rootItem;
-    pathItems.add(_PathItem(path: rootPath, text: widget.rootName ?? rootItem));
+    pathItems.add(_PathItem(path: rootPath, text: rootName ?? rootItem));
     items.removeAt(0);
 
     String path = rootPath;
@@ -198,8 +211,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       pathItems.add(_PathItem(path: path, text: item));
     }
 
-    directoryName = ((directory.path == widget.rootDirectory.path) && (widget.rootName != null))
-        ? widget.rootName
+    directoryName = ((directory.path == widget.rootDirectory.path) && (rootName != null))
+        ? rootName
         : Path.basename(directory.path);
   }
 
@@ -279,8 +292,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final options = FilesystemPickerDefaultOptions.of(context);
-    final effectiveTheme = (widget.theme?.merge(context, options.theme) ?? options.theme);
+    final effectiveTheme = theme;
     final topBarTheme = effectiveTheme.getTopBar(context);
     final foregroundColor = topBarTheme.getForegroundColor(context);
     final backgroundColor = topBarTheme.getBackgroundColor(context);
@@ -291,7 +303,6 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     final titleTextStyle = topBarTheme.getTitleTextStyle(context);
     final systemOverlayStyle = topBarTheme.getSystemOverlayStyle(context);
     final breadcrumbsTheme = topBarTheme.getBreadcrumbsThemeData(context);
-    final showGoUpItem = widget.showGoUpItem ?? options.showGoUpItem;
     final pickerActionTheme = effectiveTheme.getPickerAction(context);
 
     return Scaffold(
@@ -334,29 +345,44 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
               ? FilesystemList(
                   isRoot: (directory.absolute.path == widget.rootDirectory.absolute.path),
                   rootDirectory: directory,
-                  fsType: widget.fsType,
+                  fsType: fsType,
                   folderIconColor: widget.folderIconColor,
                   allowedExtensions: widget.allowedExtensions,
                   onChange: _changeDirectory,
                   onSelect: widget.onSelect,
-                  fileTileSelectMode: widget.fileTileSelectMode,
+                  fileTileSelectMode: fileTileSelectMode,
                   theme: effectiveTheme.getFileList(context),
-                  showGoUpItem: showGoUpItem,
+                  showGoUp: showGoUp,
                 )
               : Container(
                   alignment: Alignment.center,
                   padding: const EdgeInsets.all(20),
-                  child: Text(widget.permissionText ?? options.permissionText, textScaleFactor: 1.2),
+                  child: Text(permissionText ?? options.permissionText, textScaleFactor: 1.2),
                 )),
 
       // Picker Action
-      floatingActionButton: (pickerActionTheme.isFABMode && (widget.fsType == FilesystemType.folder))
+      floatingActionButton: (pickerActionTheme.isFABMode && (fsType == FilesystemType.folder))
           ? _buildFAB(context, pickerActionTheme)
           : null,
       floatingActionButtonLocation: pickerActionTheme.getFloatingButtonLocation(context),
-      bottomNavigationBar: (pickerActionTheme.isBarMode && (widget.fsType == FilesystemType.folder))
+      bottomNavigationBar: (pickerActionTheme.isBarMode && (fsType == FilesystemType.folder))
           ? _buildBar(context, pickerActionTheme)
           : null,
     );
+  }
+}
+
+class _PathItem {
+  final String text;
+  final String path;
+
+  _PathItem({
+    required this.path,
+    required this.text,
+  });
+
+  @override
+  String toString() {
+    return '$text: $path';
   }
 }
