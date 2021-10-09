@@ -7,6 +7,7 @@ import 'package:path/path.dart' as Path;
 import 'breadcrumbs.dart';
 import 'options/picker_options.dart';
 import 'options/theme/theme.dart';
+import 'options/theme/theme_base.dart';
 import 'progress_indicator.dart';
 
 class _PathItem {
@@ -58,7 +59,7 @@ class FilesystemPicker extends StatefulWidget {
     List<String>? allowedExtensions,
     FileTileSelectMode fileTileSelectMode = FilesystemPickerOptions.defaultFileTileSelectMode,
     RequestPermission? requestPermission,
-    FilesystemPickerTheme? theme,
+    FilesystemPickerThemeBase? theme,
   }) async {
     // TODO: use FilesystemPickerDefaultOptions
 
@@ -120,7 +121,7 @@ class FilesystemPicker extends StatefulWidget {
   /// If specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
   final RequestPermission? requestPermission;
 
-  final FilesystemPickerTheme? theme;
+  final FilesystemPickerThemeBase? theme;
 
   final bool? showGoUpItem;
 
@@ -278,7 +279,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   @override
   Widget build(BuildContext context) {
     final options = FilesystemPickerDefaultOptions.of(context);
-    final effectiveTheme = (widget.theme ?? options.theme);
+    final effectiveTheme = (widget.theme?.merge(context, options.theme) ?? options.theme);
     final topBarTheme = effectiveTheme.getTopBar(context);
     final foregroundColor = topBarTheme.getForegroundColor(context);
     final backgroundColor = topBarTheme.getBackgroundColor(context);

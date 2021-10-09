@@ -98,7 +98,7 @@ class Breadcrumbs<T> extends StatelessWidget {
                   padding: (effectiveTheme.itemPadding != null)
                       ? MaterialStateProperty.all(effectiveTheme.itemPadding)
                       : null,
-                  tapTargetSize: effectiveTheme.itemTapTargetSize,
+                  tapTargetSize: effectiveTheme.getItemTapTargetSize(context),
                 ),
                 child: Text(
                   items[index].text,

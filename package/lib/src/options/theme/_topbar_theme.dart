@@ -81,4 +81,18 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
         );
     return effectiveThemeData;
   }
+
+  FilesystemPickerTopBarThemeData merge(FilesystemPickerTopBarThemeData base) {
+    return FilesystemPickerTopBarThemeData(
+      foregroundColor: foregroundColor ?? base.foregroundColor,
+      backgroundColor: backgroundColor ?? base.backgroundColor,
+      elevation: elevation ?? base.elevation,
+      shadowColor: shadowColor ?? base.shadowColor,
+      shape: shape ?? base.shape,
+      iconTheme: iconTheme?.merge(base.iconTheme) ?? base.iconTheme,
+      titleTextStyle: base.titleTextStyle?.merge(titleTextStyle) ?? titleTextStyle,
+      systemOverlayStyle: systemOverlayStyle ?? base.systemOverlayStyle,
+      breadcrumbsTheme: breadcrumbsTheme?.merge(base.breadcrumbsTheme) ?? base.breadcrumbsTheme,
+    );
+  }
 }

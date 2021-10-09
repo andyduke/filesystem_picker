@@ -6,11 +6,15 @@ import 'theme_base.dart';
 
 @immutable
 class FilesystemPickerAutoSystemTheme with Diagnosticable implements FilesystemPickerThemeBase {
+  static const bool _kDefaultInherit = true;
+
   const FilesystemPickerAutoSystemTheme({
+    this.inherit = _kDefaultInherit,
     this.lightTheme,
     this.darkTheme,
   });
 
+  final bool inherit;
   final FilesystemPickerTheme? lightTheme;
   final FilesystemPickerTheme? darkTheme;
 
@@ -48,5 +52,16 @@ class FilesystemPickerAutoSystemTheme with Diagnosticable implements FilesystemP
 
   FilesystemPickerActionThemeData getPickerAction(BuildContext context) {
     return getEffectiveTheme(context).getPickerAction(context);
+  }
+
+  FilesystemPickerThemeBase merge(BuildContext context, FilesystemPickerThemeBase? base) {
+    if (inherit && base is FilesystemPickerAutoSystemTheme) {
+      return FilesystemPickerAutoSystemTheme(
+        lightTheme: (lightTheme?.merge(context, base.lightTheme) as FilesystemPickerTheme?) ?? base.lightTheme,
+        darkTheme: (darkTheme?.merge(context, base.darkTheme) as FilesystemPickerTheme?) ?? base.darkTheme,
+      );
+    }
+
+    return this;
   }
 }

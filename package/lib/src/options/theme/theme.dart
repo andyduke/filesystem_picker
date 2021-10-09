@@ -14,7 +14,10 @@ export 'theme_auto_system.dart';
 
 @immutable
 class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerThemeBase {
+  static const bool _kDefaultInherit = true;
+
   const FilesystemPickerTheme({
+    this.inherit = _kDefaultInherit,
     Color? backgroundColor,
     FilesystemPickerTopBarThemeData? topBar,
     TextStyle? messageTextStyle,
@@ -27,6 +30,7 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
         _pickerAction = pickerAction;
 
   factory FilesystemPickerTheme.light({
+    bool inherit = _kDefaultInherit,
     Color? backgroundColor,
     FilesystemPickerTopBarThemeData? topBar,
     TextStyle? messageTextStyle,
@@ -34,6 +38,7 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
     FilesystemPickerActionThemeData? pickerAction,
   }) {
     return FilesystemPickerTheme(
+      inherit: inherit,
       backgroundColor: backgroundColor,
       topBar: topBar,
       messageTextStyle: messageTextStyle,
@@ -43,6 +48,7 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
   }
 
   factory FilesystemPickerTheme.dark({
+    bool inherit = _kDefaultInherit,
     Color? backgroundColor,
     FilesystemPickerTopBarThemeData? topBar,
     TextStyle? messageTextStyle,
@@ -50,6 +56,7 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
     FilesystemPickerActionThemeData? pickerAction,
   }) {
     return FilesystemPickerTheme(
+      inherit: inherit,
       backgroundColor: backgroundColor,
       topBar: topBar,
       messageTextStyle: messageTextStyle,
@@ -58,6 +65,7 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
     );
   }
 
+  final bool inherit;
   final Color? _backgroundColor;
   final FilesystemPickerTopBarThemeData? _topBar;
   final TextStyle? _messageTextStyle;
@@ -83,6 +91,19 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
 
   FilesystemPickerActionThemeData getPickerAction(BuildContext context) {
     return _pickerAction ?? FilesystemPickerActionThemeData();
+  }
+
+  FilesystemPickerThemeBase merge(BuildContext context, FilesystemPickerThemeBase? base) {
+    if (!inherit || base == null) return this;
+
+    return FilesystemPickerTheme(
+      inherit: false,
+      backgroundColor: _backgroundColor ?? base.getBackgroundColor(context),
+      topBar: _topBar?.merge(base.getTopBar(context)) ?? base.getTopBar(context),
+      messageTextStyle: base.getMessageTextStyle(context).merge(_messageTextStyle),
+      fileList: _fileList?.merge(base.getFileList(context)) ?? base.getFileList(context),
+      pickerAction: _pickerAction?.merge(base.getPickerAction(context)) ?? base.getPickerAction(context),
+    );
   }
 
   @override

@@ -15,4 +15,6 @@ abstract class FilesystemPickerThemeBase with Diagnosticable {
   FilesystemPickerFileListThemeData getFileList(BuildContext context);
 
   FilesystemPickerActionThemeData getPickerAction(BuildContext context);
+
+  FilesystemPickerThemeBase merge(BuildContext context, FilesystemPickerThemeBase? base);
 }

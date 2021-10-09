@@ -142,4 +142,26 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
     final effectiveValue = color ?? progressIndicatorColor;
     return effectiveValue;
   }
+
+  FilesystemPickerFileListThemeData merge(FilesystemPickerFileListThemeData base) {
+    return FilesystemPickerFileListThemeData(
+      iconSize: iconSize ?? base.iconSize,
+      upIcon: upIcon ?? base.upIcon,
+      upIconSize: upIconSize ?? base.upIconSize,
+      upIconColor: upIconColor ?? base.upIconColor,
+      upText: upText ?? base.upText,
+      upTextStyle: base.upTextStyle?.merge(upTextStyle) ?? upTextStyle,
+      folderIcon: folderIcon ?? base.folderIcon,
+      folderIconColor: folderIconColor ?? base.folderIconColor,
+      folderTextStyle: base.folderTextStyle?.merge(folderTextStyle) ?? folderTextStyle,
+      fileIcon: fileIcon ?? base.fileIcon,
+      fileIconColor: fileIconColor ?? base.fileIconColor,
+      fileTextStyle: base.fileTextStyle?.merge(fileTextStyle) ?? fileTextStyle,
+      checkIcon: checkIcon ?? base.checkIcon,
+      checkIconColor: checkIconColor ?? base.checkIconColor,
+      checkIconSize: checkIconSize ?? base.checkIconSize,
+      textScaleFactor: textScaleFactor ?? base.textScaleFactor,
+      progressIndicatorColor: progressIndicatorColor ?? base.progressIndicatorColor,
+    );
+  }
 }

@@ -13,7 +13,8 @@ class FilesystemPickerActionThemeData with Diagnosticable {
   static const FilesystemPickerActionLocation defaultLocation = FilesystemPickerActionLocation.barCenter;
   static const double defaultCheckIconSize = 24;
 
-  final FilesystemPickerActionLocation location;
+  FilesystemPickerActionLocation get location => _location ?? defaultLocation;
+  final FilesystemPickerActionLocation? _location;
 
   final Color? foregroundColor;
   final Color? disabledForegroundColor;
@@ -28,7 +29,7 @@ class FilesystemPickerActionThemeData with Diagnosticable {
   final double? checkIconSize;
 
   FilesystemPickerActionThemeData({
-    this.location = defaultLocation,
+    FilesystemPickerActionLocation? location,
     this.foregroundColor,
     this.disabledForegroundColor,
     this.backgroundColor,
@@ -38,7 +39,7 @@ class FilesystemPickerActionThemeData with Diagnosticable {
     this.checkIcon,
     this.checkIconColor,
     this.checkIconSize,
-  });
+  }) : _location = location;
 
   Color? getForegroundColor(BuildContext context, [Color? color]) {
     final effectiveValue = color ?? foregroundColor ?? Theme.of(context).colorScheme.onBackground;
@@ -103,4 +104,19 @@ class FilesystemPickerActionThemeData with Diagnosticable {
   bool get isBarMode => location == FilesystemPickerActionLocation.barCenter;
 
   bool get isFABMode => location != FilesystemPickerActionLocation.barCenter;
+
+  FilesystemPickerActionThemeData merge(FilesystemPickerActionThemeData base) {
+    return FilesystemPickerActionThemeData(
+      location: _location ?? base.location,
+      foregroundColor: foregroundColor ?? base.foregroundColor,
+      disabledForegroundColor: disabledForegroundColor ?? base.disabledForegroundColor,
+      backgroundColor: backgroundColor ?? base.backgroundColor,
+      elevation: elevation ?? base.elevation,
+      shape: shape ?? base.shape,
+      textStyle: base.textStyle?.merge(textStyle) ?? textStyle,
+      checkIcon: checkIcon ?? base.checkIcon,
+      checkIconColor: checkIconColor ?? base.checkIconColor,
+      checkIconSize: checkIconSize ?? base.checkIconSize,
+    );
+  }
 }
