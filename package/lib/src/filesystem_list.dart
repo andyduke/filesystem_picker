@@ -5,6 +5,7 @@ import 'package:path/path.dart' as Path;
 import 'common.dart';
 import 'filesystem_list_tile.dart';
 import 'options/theme/_filelist_theme.dart';
+import 'progress_indicator.dart';
 
 class FilesystemList extends StatelessWidget {
   final bool isRoot;
@@ -116,11 +117,7 @@ class FilesystemList extends StatelessWidget {
             return const SizedBox();
           }
         } else {
-          return Center(
-            child: CircularProgressIndicator(
-              color: effectiveTheme.getProgressIndicatorColor(context),
-            ),
-          );
+          return FilesystemProgressIndicator(theme: effectiveTheme);
         }
       },
     );

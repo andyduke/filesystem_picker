@@ -7,6 +7,7 @@ import 'package:path/path.dart' as Path;
 import 'breadcrumbs.dart';
 import 'options/picker_options.dart';
 import 'options/theme/theme.dart';
+import 'progress_indicator.dart';
 
 class _PathItem {
   final String text;
@@ -326,10 +327,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
       // File list
       body: permissionRequesting
-          ? Center(
-              child: CircularProgressIndicator(
-              color: effectiveTheme.getFileList(context).getProgressIndicatorColor(context),
-            ))
+          ? FilesystemProgressIndicator(theme: effectiveTheme.getFileList(context))
           : (permissionAllowed
               ? FilesystemList(
                   isRoot: (directory.absolute.path == widget.rootDirectory.absolute.path),

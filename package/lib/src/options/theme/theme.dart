@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-// import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
 import '_filelist_theme.dart';
@@ -65,28 +64,6 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
   final FilesystemPickerFileListThemeData? _fileList;
   final FilesystemPickerActionThemeData? _pickerAction;
 
-  /*
-  @protected
-  ThemeData getMaterialTheme(BuildContext context) {
-    final theme = Theme.of(context);
-    if (_brightness != null) {
-      if (theme.brightness == _brightness) {
-        return theme;
-      } else {
-        switch (_brightness!) {
-          case Brightness.dark:
-            return ThemeData.dark();
-
-          case Brightness.light:
-            return ThemeData.light();
-        }
-      }
-    } else {
-      return theme;
-    }
-  }
-  */
-
   Color getBackgroundColor(BuildContext context, [Color? color]) {
     final effectiveValue = color ?? _backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
     return effectiveValue;
@@ -112,7 +89,6 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
   int get hashCode {
     return hashValues(
       _topBar,
-      // _brightness,
       _messageTextStyle,
       _fileList,
       _pickerAction,
