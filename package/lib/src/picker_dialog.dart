@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'picker_options.dart';
+import 'options/picker_options.dart';
 
 class FilesystemPickerDialog extends StatelessWidget {
   final Widget child;
@@ -18,7 +18,7 @@ class FilesystemPickerDialog extends StatelessWidget {
 
     return Dialog(
       child: ConstrainedBox(
-        constraints: constraints ?? options.dialogConstraints,
+        constraints: constraints ?? options.dialog.constraints,
         child: child,
       ),
       clipBehavior: Clip.antiAliasWithSaveLayer,

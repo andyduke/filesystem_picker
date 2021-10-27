@@ -5,7 +5,7 @@ import 'common.dart';
 import 'filesystem_list.dart';
 import 'package:path/path.dart' as Path;
 import 'breadcrumbs.dart';
-import 'options/picker_dialog.dart';
+import 'picker_dialog.dart';
 import 'options/picker_options.dart';
 import 'options/theme/theme.dart';
 import 'options/theme/theme_base.dart';
@@ -129,29 +129,27 @@ class FilesystemPicker extends StatefulWidget {
     RequestPermission? requestPermission,
     FilesystemPickerThemeBase? theme,
     BoxConstraints? constraints,
-
-    // TODO: BottomSheet options
+    Color? barrierColor,
+    ShapeBorder? shape,
+    double? elevation,
+    double? initialChildSize,
+    double? minChildSize,
+    double? maxChildSize,
   }) async {
-    // TODO: refactor to FilesystemPickerBottomSheet
+    final options = FilesystemPickerDefaultOptions.of(context);
 
     return await showModalBottomSheet(
       context: context,
-      backgroundColor: Color(0x00000000),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(8),
-        ),
-      ),
-      elevation: 24,
+      backgroundColor: barrierColor ?? options.bottomSheet.barrierColor,
+      shape: shape ?? options.bottomSheet.shape,
+      elevation: elevation ?? options.bottomSheet.elevation,
       clipBehavior: Clip.antiAliasWithSaveLayer,
       isScrollControlled: true,
-      constraints: BoxConstraints(
-        maxWidth: 300,
-      ),
+      constraints: constraints ?? options.bottomSheet.constraints,
       builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.8,
-        minChildSize: 0.6,
-        maxChildSize: 0.96,
+        initialChildSize: initialChildSize ?? options.bottomSheet.initialChildSize,
+        minChildSize: minChildSize ?? options.bottomSheet.minChildSize,
+        maxChildSize: maxChildSize ?? options.bottomSheet.maxChildSize,
         expand: false,
         builder: (context, scrollController) => FilesystemPicker(
           scrollController: scrollController,

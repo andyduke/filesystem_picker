@@ -1,3 +1,5 @@
+import 'package:filesystem_picker/src/options/picker_bottom_sheet_options.dart';
+import 'package:filesystem_picker/src/options/picker_dialog_options.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../common.dart';
@@ -11,12 +13,9 @@ class FilesystemPickerOptions with Diagnosticable {
   static const String defaultPermissionText = 'Access to the storage was not granted.';
   static const FileTileSelectMode defaultFileTileSelectMode = FileTileSelectMode.checkButton;
   static const bool defaultShowGoUp = true;
-  static const BoxConstraints defaultDialogConstraints = BoxConstraints(
-    minWidth: 280,
-    minHeight: 460,
-    maxWidth: 690,
-    maxHeight: 690,
-  );
+  static const FilesystemPickerDialogOptions defaultDialogOptions = const FilesystemPickerDialogOptions();
+  static const FilesystemPickerBottomSheetOptions defaultBottomSheetOptions =
+      const FilesystemPickerBottomSheetOptions();
 
   final FilesystemPickerThemeBase? _theme;
   final String? rootName;
@@ -25,16 +24,18 @@ class FilesystemPickerOptions with Diagnosticable {
   final FileTileSelectMode fileTileSelectMode;
   final bool showGoUp;
 
-  final BoxConstraints dialogConstraints;
+  final FilesystemPickerDialogOptions dialog;
+  final FilesystemPickerBottomSheetOptions bottomSheet;
 
-  FilesystemPickerOptions({
+  const FilesystemPickerOptions({
     FilesystemPickerThemeBase? theme,
     this.rootName = defaultRootName,
     this.fsType = defaultFsType,
     this.permissionText = defaultPermissionText,
     this.fileTileSelectMode = defaultFileTileSelectMode,
     this.showGoUp = defaultShowGoUp,
-    this.dialogConstraints = defaultDialogConstraints,
+    this.dialog = defaultDialogOptions,
+    this.bottomSheet = defaultBottomSheetOptions,
   }) : _theme = theme;
 
   static FilesystemPickerOptions _defaultOptions(BuildContext context) {
@@ -52,7 +53,8 @@ class FilesystemPickerOptions with Diagnosticable {
       permissionText,
       fileTileSelectMode,
       showGoUp,
-      dialogConstraints,
+      dialog,
+      bottomSheet,
     );
   }
 
@@ -67,20 +69,24 @@ class FilesystemPickerOptions with Diagnosticable {
         other.permissionText == permissionText &&
         other.fileTileSelectMode == fileTileSelectMode &&
         other.showGoUp == showGoUp &&
-        other.dialogConstraints == dialogConstraints;
+        other.dialog == dialog &&
+        other.bottomSheet == bottomSheet;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<FilesystemPickerThemeBase>('theme', theme, defaultValue: null));
-    properties.add(DiagnosticsProperty<String>('rootName', rootName, defaultValue: null));
-    properties.add(DiagnosticsProperty<FilesystemType>('fsType', fsType, defaultValue: null));
-    properties.add(DiagnosticsProperty<String>('permissionText', permissionText, defaultValue: null));
+    properties.add(DiagnosticsProperty<String>('rootName', rootName, defaultValue: defaultRootName));
+    properties.add(DiagnosticsProperty<FilesystemType>('fsType', fsType, defaultValue: defaultFsType));
+    properties.add(DiagnosticsProperty<String>('permissionText', permissionText, defaultValue: defaultPermissionText));
+    properties.add(DiagnosticsProperty<FileTileSelectMode>('fileTileSelectMode', fileTileSelectMode,
+        defaultValue: defaultFileTileSelectMode));
+    properties.add(DiagnosticsProperty<bool>('showGoUp', showGoUp, defaultValue: defaultShowGoUp));
     properties
-        .add(DiagnosticsProperty<FileTileSelectMode>('fileTileSelectMode', fileTileSelectMode, defaultValue: null));
-    properties.add(DiagnosticsProperty<bool>('showGoUp', showGoUp, defaultValue: null));
-    properties.add(DiagnosticsProperty<BoxConstraints>('dialogConstraints', dialogConstraints, defaultValue: null));
+        .add(DiagnosticsProperty<FilesystemPickerDialogOptions>('dialog', dialog, defaultValue: defaultDialogOptions));
+    properties.add(DiagnosticsProperty<FilesystemPickerBottomSheetOptions>('bottomSheet', bottomSheet,
+        defaultValue: defaultBottomSheetOptions));
   }
 }
 
@@ -105,7 +111,8 @@ class FilesystemPickerDefaultOptions extends StatefulWidget {
     String permissionText = FilesystemPickerOptions.defaultPermissionText,
     FileTileSelectMode fileTileSelectMode = FilesystemPickerOptions.defaultFileTileSelectMode,
     bool showGoUp = FilesystemPickerOptions.defaultShowGoUp,
-    BoxConstraints dialogConstraints = FilesystemPickerOptions.defaultDialogConstraints,
+    FilesystemPickerDialogOptions dialog = FilesystemPickerOptions.defaultDialogOptions,
+    FilesystemPickerBottomSheetOptions bottomSheet = FilesystemPickerOptions.defaultBottomSheetOptions,
   })  : options = FilesystemPickerOptions(
           theme: theme,
           rootName: rootName,
@@ -113,7 +120,8 @@ class FilesystemPickerDefaultOptions extends StatefulWidget {
           permissionText: permissionText,
           fileTileSelectMode: fileTileSelectMode,
           showGoUp: showGoUp,
-          dialogConstraints: dialogConstraints,
+          dialog: dialog,
+          bottomSheet: bottomSheet,
         ),
         super(key: key);
 
