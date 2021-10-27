@@ -15,6 +15,7 @@ class FilesystemListTile extends StatelessWidget {
   final ValueSelected onSelect;
   final FileTileSelectMode fileTileSelectMode;
   final FilesystemPickerFileListThemeData? theme;
+  final bool caseSensitiveFileExtensionComparison;
 
   FilesystemListTile({
     Key? key,
@@ -25,6 +26,7 @@ class FilesystemListTile extends StatelessWidget {
     required this.onSelect,
     required this.fileTileSelectMode,
     this.theme,
+    this.caseSensitiveFileExtensionComparison = false,
   }) : super(key: key);
 
   Widget _leading(BuildContext context, FilesystemPickerFileListThemeData theme, bool isFile) {
@@ -43,7 +45,7 @@ class FilesystemListTile extends StatelessWidget {
   Icon _fileIcon(BuildContext context, FilesystemPickerFileListThemeData theme, String filename, bool isFile,
       [Color? color]) {
     final _extension = filename.split(".").last;
-    IconData icon = theme.getFileIcon(context, _extension);
+    IconData icon = theme.getFileIcon(context, _extension, caseSensitiveFileExtensionComparison);
 
     return Icon(
       icon,

@@ -18,6 +18,7 @@ class FilesystemList extends StatefulWidget {
   final FileTileSelectMode fileTileSelectMode;
   final FilesystemPickerFileListThemeData? theme;
   final bool showGoUp;
+  final bool caseSensitiveFileExtensionComparison;
   final ScrollController? scrollController;
 
   FilesystemList({
@@ -32,6 +33,7 @@ class FilesystemList extends StatefulWidget {
     required this.fileTileSelectMode,
     this.theme,
     this.showGoUp = true,
+    this.caseSensitiveFileExtensionComparison = false,
     this.scrollController,
   }) : super(key: key);
 
@@ -69,14 +71,22 @@ class _FilesystemListState extends State<FilesystemList> {
       return;
     }
 
+    final List<String>? allowedExtensions = widget.caseSensitiveFileExtensionComparison
+        ? widget.allowedExtensions
+        : widget.allowedExtensions?.map((e) => e.toLowerCase()).toList(growable: false);
+
     var files = <FileSystemEntity>[];
     var completer = new Completer<List<FileSystemEntity>>();
     var lister = rootDirectory.list(recursive: false);
     lister.listen(
       (file) {
         if ((widget.fsType != FilesystemType.folder) || (file is Directory)) {
-          if ((file is File) && (widget.allowedExtensions != null) && (widget.allowedExtensions!.length > 0)) {
-            if (!widget.allowedExtensions!.contains(Path.extension(file.path))) return;
+          if ((file is File) && (allowedExtensions != null) && (allowedExtensions.length > 0)) {
+            String ext = Path.extension(file.path);
+            if (!widget.caseSensitiveFileExtensionComparison) {
+              ext = ext.toLowerCase();
+            }
+            if (!allowedExtensions.contains(ext)) return;
           }
           files.add(file);
         }
@@ -150,6 +160,7 @@ class _FilesystemListState extends State<FilesystemList> {
                   onSelect: widget.onSelect,
                   fileTileSelectMode: widget.fileTileSelectMode,
                   theme: effectiveTheme,
+                  caseSensitiveFileExtensionComparison: widget.caseSensitiveFileExtensionComparison,
                 );
               },
             );

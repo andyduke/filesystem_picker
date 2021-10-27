@@ -46,6 +46,7 @@ class FilesystemPicker extends StatefulWidget {
     Color? folderIconColor,
     bool? showGoUp,
     List<String>? allowedExtensions,
+    bool? caseSensitiveFileExtensionComparison,
     FileTileSelectMode? fileTileSelectMode,
     RequestPermission? requestPermission,
     FilesystemPickerThemeBase? theme,
@@ -62,6 +63,7 @@ class FilesystemPicker extends StatefulWidget {
           title: title,
           folderIconColor: folderIconColor,
           allowedExtensions: allowedExtensions,
+          caseSensitiveFileExtensionComparison: caseSensitiveFileExtensionComparison,
           onSelect: (String value) {
             Navigator.of(context).pop<String>(value);
           },
@@ -87,6 +89,7 @@ class FilesystemPicker extends StatefulWidget {
     Color? folderIconColor,
     bool? showGoUp,
     List<String>? allowedExtensions,
+    bool? caseSensitiveFileExtensionComparison,
     FileTileSelectMode? fileTileSelectMode,
     RequestPermission? requestPermission,
     FilesystemPickerThemeBase? theme,
@@ -106,6 +109,7 @@ class FilesystemPicker extends StatefulWidget {
           title: title,
           folderIconColor: folderIconColor,
           allowedExtensions: allowedExtensions,
+          caseSensitiveFileExtensionComparison: caseSensitiveFileExtensionComparison,
           onSelect: (String value) {
             Navigator.of(context).pop<String>(value);
           },
@@ -131,6 +135,7 @@ class FilesystemPicker extends StatefulWidget {
     Color? folderIconColor,
     bool? showGoUp,
     List<String>? allowedExtensions,
+    bool? caseSensitiveFileExtensionComparison,
     FileTileSelectMode? fileTileSelectMode,
     RequestPermission? requestPermission,
     FilesystemPickerThemeBase? theme,
@@ -168,6 +173,7 @@ class FilesystemPicker extends StatefulWidget {
           title: title,
           folderIconColor: folderIconColor,
           allowedExtensions: allowedExtensions,
+          caseSensitiveFileExtensionComparison: caseSensitiveFileExtensionComparison,
           onSelect: (String value) {
             Navigator.of(context).pop<String>(value);
           },
@@ -212,6 +218,8 @@ class FilesystemPicker extends StatefulWidget {
   /// Specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`
   final List<String>? allowedExtensions;
 
+  final bool? caseSensitiveFileExtensionComparison;
+
   /// Specifies how to files can be selected (either tapping on the whole tile or only on trailing button). (default depends on [fsType])
   final FileTileSelectMode? fileTileSelectMode;
 
@@ -236,6 +244,7 @@ class FilesystemPicker extends StatefulWidget {
     this.title,
     this.folderIconColor,
     this.allowedExtensions,
+    this.caseSensitiveFileExtensionComparison,
     required this.onSelect,
     required this.fileTileSelectMode,
     this.requestPermission,
@@ -253,17 +262,31 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   static const double _defaultTopBarHeight = 50;
   static const double _defaultBottomBarHeight = 50;
 
+  @protected
   bool initialized = false;
 
+  @protected
   bool permissionRequesting = true;
+
+  @protected
   bool permissionAllowed = false;
 
+  @protected
   String? errorMessage;
 
+  @protected
+  bool loading = false;
+
+  @protected
   late Directory directory;
+
+  @protected
   String? directoryName;
+
+  @protected
   late List<_PathItem> pathItems;
 
+  @protected
   late FilesystemPickerOptions options;
 
   String? get rootName => widget.rootName ?? options.rootName;
@@ -271,6 +294,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   String? get permissionText => widget.permissionText ?? options.permissionText;
   FileTileSelectMode get fileTileSelectMode => widget.fileTileSelectMode ?? options.fileTileSelectMode;
   bool get showGoUp => widget.showGoUp ?? options.showGoUp;
+  bool get caseSensitiveFileExtensionComparison =>
+      widget.caseSensitiveFileExtensionComparison ?? options.caseSensitiveFileExtensionComparison;
   FilesystemPickerThemeBase get theme => (widget.theme?.merge(context, options.theme) ?? options.theme);
 
   @override
@@ -339,10 +364,28 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         : Path.basename(directory.path);
   }
 
+  // void _changeDirectory(Directory value) {
+  //   if (directory != value) {
+  //     setState(() {
+  //       _setDirectory(value);
+  //     });
+  //   }
+  // }
+
   void _changeDirectory(Directory value) {
     if (directory != value) {
       setState(() {
-        _setDirectory(value);
+        loading = true;
+      });
+
+      _setDirectory(value);
+
+      Future.microtask(() {
+        if (mounted) {
+          setState(() {
+            loading = false;
+          });
+        }
       });
     }
   }
@@ -461,7 +504,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
     final hasMessage = !permissionAllowed || (errorMessage != null);
 
-    final Widget body = (!initialized || permissionRequesting)
+    final Widget body = (!initialized || permissionRequesting || loading)
         ? FilesystemProgressIndicator(theme: effectiveTheme.getFileList(context))
         : (!hasMessage
             ? FilesystemList(
@@ -475,6 +518,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                 fileTileSelectMode: fileTileSelectMode,
                 theme: effectiveTheme.getFileList(context),
                 showGoUp: showGoUp,
+                caseSensitiveFileExtensionComparison: caseSensitiveFileExtensionComparison,
                 scrollController: widget.scrollController,
               )
             : Container(

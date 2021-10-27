@@ -13,6 +13,7 @@ class FilesystemPickerOptions with Diagnosticable {
   static const String defaultPermissionText = 'Access to the storage was not granted.';
   static const FileTileSelectMode defaultFileTileSelectMode = FileTileSelectMode.checkButton;
   static const bool defaultShowGoUp = true;
+  static const bool defaultCaseSensitiveFileExtensionComparison = false;
   static const FilesystemPickerDialogOptions defaultDialogOptions = const FilesystemPickerDialogOptions();
   static const FilesystemPickerBottomSheetOptions defaultBottomSheetOptions =
       const FilesystemPickerBottomSheetOptions();
@@ -23,6 +24,7 @@ class FilesystemPickerOptions with Diagnosticable {
   final String permissionText;
   final FileTileSelectMode fileTileSelectMode;
   final bool showGoUp;
+  final bool caseSensitiveFileExtensionComparison;
 
   final FilesystemPickerDialogOptions dialog;
   final FilesystemPickerBottomSheetOptions bottomSheet;
@@ -34,6 +36,7 @@ class FilesystemPickerOptions with Diagnosticable {
     this.permissionText = defaultPermissionText,
     this.fileTileSelectMode = defaultFileTileSelectMode,
     this.showGoUp = defaultShowGoUp,
+    this.caseSensitiveFileExtensionComparison = defaultCaseSensitiveFileExtensionComparison,
     this.dialog = defaultDialogOptions,
     this.bottomSheet = defaultBottomSheetOptions,
   }) : _theme = theme;
@@ -53,6 +56,7 @@ class FilesystemPickerOptions with Diagnosticable {
       permissionText,
       fileTileSelectMode,
       showGoUp,
+      caseSensitiveFileExtensionComparison,
       dialog,
       bottomSheet,
     );
@@ -69,6 +73,7 @@ class FilesystemPickerOptions with Diagnosticable {
         other.permissionText == permissionText &&
         other.fileTileSelectMode == fileTileSelectMode &&
         other.showGoUp == showGoUp &&
+        other.caseSensitiveFileExtensionComparison == caseSensitiveFileExtensionComparison &&
         other.dialog == dialog &&
         other.bottomSheet == bottomSheet;
   }
@@ -83,6 +88,9 @@ class FilesystemPickerOptions with Diagnosticable {
     properties.add(DiagnosticsProperty<FileTileSelectMode>('fileTileSelectMode', fileTileSelectMode,
         defaultValue: defaultFileTileSelectMode));
     properties.add(DiagnosticsProperty<bool>('showGoUp', showGoUp, defaultValue: defaultShowGoUp));
+    properties.add(DiagnosticsProperty<bool>(
+        'caseSensitiveFileExtensionComparison', caseSensitiveFileExtensionComparison,
+        defaultValue: defaultCaseSensitiveFileExtensionComparison));
     properties
         .add(DiagnosticsProperty<FilesystemPickerDialogOptions>('dialog', dialog, defaultValue: defaultDialogOptions));
     properties.add(DiagnosticsProperty<FilesystemPickerBottomSheetOptions>('bottomSheet', bottomSheet,

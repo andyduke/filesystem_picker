@@ -16,7 +16,7 @@ class FilesystemPickerFileListFileTypesThemeItem {
 abstract class FilesystemPickerFileListFileTypesThemeBase {
   const FilesystemPickerFileListFileTypesThemeBase();
 
-  FilesystemPickerFileListFileTypesThemeItem? match(String extension);
+  FilesystemPickerFileListFileTypesThemeItem? match(String extension, {bool caseSensitive = false});
 
   FilesystemPickerFileListFileTypesThemeBase merge(FilesystemPickerFileListFileTypesThemeBase? base);
 }
@@ -41,8 +41,15 @@ class FilesystemPickerFileListFileTypesTheme extends FilesystemPickerFileListFil
 
   const FilesystemPickerFileListFileTypesTheme(this.types);
 
-  FilesystemPickerFileListFileTypesThemeItem? match(String extension) {
-    return types.firstWhereOrNull((type) => type.extensions.contains(extension.toLowerCase()));
+  FilesystemPickerFileListFileTypesThemeItem? match(String extension, {bool caseSensitive = false}) {
+    final String ext = !caseSensitive ? extension.toLowerCase() : extension;
+    return types.firstWhereOrNull((type) {
+      if (!caseSensitive) {
+        return type.extensions.map((e) => e.toLowerCase()).contains(ext);
+      } else {
+        return type.extensions.contains(ext);
+      }
+    });
   }
 
   FilesystemPickerFileListFileTypesThemeBase merge(FilesystemPickerFileListFileTypesThemeBase? base) {
@@ -157,9 +164,9 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
     return effectiveValue;
   }
 
-  IconData getFileIcon(BuildContext context, [String? extension]) {
+  IconData getFileIcon(BuildContext context, [String? extension, bool caseSensitive = false]) {
     final FilesystemPickerFileListFileTypesThemeItem? fileType =
-        (extension != null) ? fileTypes.match(extension) : null;
+        (extension != null) ? fileTypes.match(extension, caseSensitive: caseSensitive) : null;
     final effectiveValue = fileType?.icon ?? fileIcon ?? Icons.description;
     return effectiveValue;
   }
