@@ -31,7 +31,8 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
   Color? getForegroundColor(BuildContext context, [Color? color]) {
     final effectiveColor = color ??
         foregroundColor ??
-        AppBarTheme.of(context).toolbarTextStyle?.color ??
+        Theme.of(context).appBarTheme.foregroundColor ??
+        // AppBarTheme.of(context).toolbarTextStyle?.color ??
         Theme.of(context).primaryTextTheme.headline6?.color;
     return effectiveColor;
   }
