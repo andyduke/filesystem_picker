@@ -49,6 +49,7 @@ class FilesystemPicker extends StatefulWidget {
     bool? caseSensitiveFileExtensionComparison,
     FileTileSelectMode? fileTileSelectMode,
     RequestPermission? requestPermission,
+    FilesystemListFilter? itemFilter,
     FilesystemPickerThemeBase? theme,
   }) async {
     return Navigator.of(context).push<String>(
@@ -70,6 +71,7 @@ class FilesystemPicker extends StatefulWidget {
           fileTileSelectMode: fileTileSelectMode,
           showGoUp: showGoUp,
           requestPermission: requestPermission,
+          itemFilter: itemFilter,
           theme: theme,
         );
       }),
@@ -92,6 +94,7 @@ class FilesystemPicker extends StatefulWidget {
     bool? caseSensitiveFileExtensionComparison,
     FileTileSelectMode? fileTileSelectMode,
     RequestPermission? requestPermission,
+    FilesystemListFilter? itemFilter,
     FilesystemPickerThemeBase? theme,
     BoxConstraints? constraints,
   }) async {
@@ -116,6 +119,7 @@ class FilesystemPicker extends StatefulWidget {
           fileTileSelectMode: fileTileSelectMode,
           showGoUp: showGoUp,
           requestPermission: requestPermission,
+          itemFilter: itemFilter,
           theme: theme,
         ),
       ),
@@ -138,6 +142,7 @@ class FilesystemPicker extends StatefulWidget {
     bool? caseSensitiveFileExtensionComparison,
     FileTileSelectMode? fileTileSelectMode,
     RequestPermission? requestPermission,
+    FilesystemListFilter? itemFilter,
     FilesystemPickerThemeBase? theme,
     BoxConstraints? constraints,
     Color? barrierColor,
@@ -180,6 +185,7 @@ class FilesystemPicker extends StatefulWidget {
           fileTileSelectMode: fileTileSelectMode,
           showGoUp: showGoUp,
           requestPermission: requestPermission,
+          itemFilter: itemFilter,
           theme: theme,
         ),
       ),
@@ -226,6 +232,8 @@ class FilesystemPicker extends StatefulWidget {
   /// If specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
   final RequestPermission? requestPermission;
 
+  final FilesystemListFilter? itemFilter;
+
   final FilesystemPickerThemeBase? theme;
 
   final bool? showGoUp;
@@ -247,6 +255,7 @@ class FilesystemPicker extends StatefulWidget {
     this.caseSensitiveFileExtensionComparison,
     required this.onSelect,
     required this.fileTileSelectMode,
+    this.itemFilter,
     this.requestPermission,
     this.theme,
     this.showGoUp,
@@ -261,6 +270,9 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   static const double _defaultTopBarIconSize = 24;
   static const double _defaultTopBarHeight = 50;
   static const double _defaultBottomBarHeight = 50;
+
+  @protected
+  bool isValidDirectory = true;
 
   @protected
   bool initialized = false;
@@ -315,10 +327,11 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   Directory get _validInitialDirectory {
     if (widget.directory != null) {
-      if (!widget.directory!.path.startsWith(widget.rootDirectory.path)) {
+      if (!Path.isWithin(widget.rootDirectory.path, widget.directory!.path)) {
         setState(() {
           errorMessage =
               'Invalid directory "${widget.directory!.path}": not contained within the root directory "${widget.rootDirectory.path}".';
+          isValidDirectory = false;
         });
 
         return widget.rootDirectory;
@@ -418,8 +431,9 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
             label: (widget.pickText != null)
                 ? Text(widget.pickText!, style: theme.getTextStyle(context, foregroundColor))
                 : const SizedBox(),
-            onPressed:
-                (!permissionRequesting && permissionAllowed) ? () => widget.onSelect(directory.absolute.path) : null,
+            onPressed: (!permissionRequesting && permissionAllowed && isValidDirectory)
+                ? () => widget.onSelect(directory.absolute.path)
+                : null,
           ),
         ),
       ),
@@ -437,7 +451,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         foregroundColor: theme.getForegroundColor(context),
         backgroundColor: theme.getBackgroundColor(context),
         elevation: theme.getElevation(context),
-        onPressed: onPressed,
+        onPressed: isValidDirectory ? onPressed : null,
       );
     } else {
       return FloatingActionButton(
@@ -445,7 +459,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         foregroundColor: theme.getForegroundColor(context),
         backgroundColor: theme.getBackgroundColor(context),
         elevation: theme.getElevation(context),
-        onPressed: onPressed,
+        onPressed: isValidDirectory ? onPressed : null,
       );
     }
   }
@@ -516,6 +530,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                 onChange: _changeDirectory,
                 onSelect: widget.onSelect,
                 fileTileSelectMode: fileTileSelectMode,
+                itemFilter: widget.itemFilter,
                 theme: effectiveTheme.getFileList(context),
                 showGoUp: showGoUp,
                 caseSensitiveFileExtensionComparison: caseSensitiveFileExtensionComparison,

@@ -7,6 +7,8 @@ import 'filesystem_list_tile.dart';
 import 'options/theme/_filelist_theme.dart';
 import 'progress_indicator.dart';
 
+typedef FilesystemListFilter = bool Function(String path, String name);
+
 class FilesystemList extends StatefulWidget {
   final bool isRoot;
   final Directory rootDirectory;
@@ -20,6 +22,7 @@ class FilesystemList extends StatefulWidget {
   final bool showGoUp;
   final bool caseSensitiveFileExtensionComparison;
   final ScrollController? scrollController;
+  final FilesystemListFilter? itemFilter;
 
   FilesystemList({
     Key? key,
@@ -35,6 +38,7 @@ class FilesystemList extends StatefulWidget {
     this.showGoUp = true,
     this.caseSensitiveFileExtensionComparison = false,
     this.scrollController,
+    this.itemFilter,
   }) : super(key: key);
 
   @override
@@ -80,6 +84,11 @@ class _FilesystemListState extends State<FilesystemList> {
     var lister = rootDirectory.list(recursive: false);
     lister.listen(
       (file) {
+        if (widget.itemFilter != null) {
+          final localPath = Path.relative(file.path, from: rootDirectory.path);
+          if (!widget.itemFilter!.call(rootDirectory.path, localPath)) return;
+        }
+
         if ((widget.fsType != FilesystemType.folder) || (file is Directory)) {
           if ((file is File) && (allowedExtensions != null) && (allowedExtensions.length > 0)) {
             String ext = Path.extension(file.path);
