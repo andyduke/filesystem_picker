@@ -23,8 +23,9 @@ class FilesystemPicker extends StatefulWidget {
   ///
   /// Returns null if nothing was selected.
   ///
-  /// * [rootDirectory] specifies the root of the filesystem view.
   /// * [rootName] specifies the name of the filesystem view root in breadcrumbs, by default "Storage".
+  /// * [rootDirectory] specifies the root of the filesystem view.
+  /// * [directory] TODO:
   /// * [fsType] specifies the type of filesystem view (folder and files, folder only or files only), by default `FilesystemType.all`.
   /// * [pickText] specifies the text for the folder selection button (only for [fsType] = FilesystemType.folder).
   /// * [permissionText] specifies the text of the message that there is no permission to access the storage, by default: "Access to the storage was not granted.".
@@ -37,6 +38,7 @@ class FilesystemPicker extends StatefulWidget {
     required BuildContext context,
     required Directory rootDirectory,
     String? rootName,
+    Directory? directory,
     FilesystemType? fsType,
     String? pickText,
     String? permissionText,
@@ -53,6 +55,7 @@ class FilesystemPicker extends StatefulWidget {
         return FilesystemPicker(
           rootDirectory: rootDirectory,
           rootName: rootName,
+          directory: directory,
           fsType: fsType,
           pickText: pickText,
           permissionText: permissionText,
@@ -76,6 +79,7 @@ class FilesystemPicker extends StatefulWidget {
     required BuildContext context,
     required Directory rootDirectory,
     String? rootName,
+    Directory? directory,
     FilesystemType? fsType,
     String? pickText,
     String? permissionText,
@@ -95,6 +99,7 @@ class FilesystemPicker extends StatefulWidget {
         child: FilesystemPicker(
           rootDirectory: rootDirectory,
           rootName: rootName,
+          directory: directory,
           fsType: fsType,
           pickText: pickText,
           permissionText: permissionText,
@@ -118,6 +123,7 @@ class FilesystemPicker extends StatefulWidget {
     required BuildContext context,
     required Directory rootDirectory,
     String? rootName,
+    Directory? directory,
     FilesystemType? fsType,
     String? pickText,
     String? permissionText,
@@ -155,6 +161,7 @@ class FilesystemPicker extends StatefulWidget {
           scrollController: scrollController,
           rootDirectory: rootDirectory,
           rootName: rootName,
+          directory: directory,
           fsType: fsType,
           pickText: pickText,
           permissionText: permissionText,
@@ -180,6 +187,9 @@ class FilesystemPicker extends StatefulWidget {
 
   /// Specifies the root of the filesystem view.
   final Directory rootDirectory;
+
+  /// Specifies the current directory of the filesystem view.
+  final Directory? directory;
 
   /// Specifies the type of filesystem view (folder and files, folder only or files only), by default `FilesystemType.all`.
   final FilesystemType? fsType;
@@ -219,6 +229,7 @@ class FilesystemPicker extends StatefulWidget {
     Key? key,
     this.rootName,
     required this.rootDirectory,
+    this.directory,
     this.fsType = FilesystemType.all,
     this.pickText,
     this.permissionText,
@@ -247,6 +258,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   bool permissionRequesting = true;
   bool permissionAllowed = false;
 
+  String? errorMessage;
+
   late Directory directory;
   String? directoryName;
   late List<_PathItem> pathItems;
@@ -270,8 +283,24 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       options = FilesystemPickerDefaultOptions.of(context);
 
       _requestPermission();
-      _setDirectory(widget.rootDirectory);
+
+      _setDirectory(_validInitialDirectory);
     }
+  }
+
+  Directory get _validInitialDirectory {
+    if (widget.directory != null) {
+      if (!widget.directory!.path.startsWith(widget.rootDirectory.path)) {
+        setState(() {
+          errorMessage =
+              'Invalid directory "${widget.directory!.path}": not contained within the root directory "${widget.rootDirectory.path}".';
+        });
+
+        return widget.rootDirectory;
+      }
+    }
+
+    return widget.directory ?? widget.rootDirectory;
   }
 
   Future<void> _requestPermission() async {
@@ -430,9 +459,11 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       ),
     );
 
+    final hasMessage = !permissionAllowed || (errorMessage != null);
+
     final Widget body = (!initialized || permissionRequesting)
         ? FilesystemProgressIndicator(theme: effectiveTheme.getFileList(context))
-        : (permissionAllowed
+        : (!hasMessage
             ? FilesystemList(
                 isRoot: (directory.absolute.path == widget.rootDirectory.absolute.path),
                 rootDirectory: directory,
@@ -449,7 +480,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
             : Container(
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(20),
-                child: Text(permissionText ?? options.permissionText, textScaleFactor: 1.2),
+                child: Text(errorMessage ?? permissionText ?? options.permissionText,
+                    textScaleFactor: effectiveTheme.getFileList(context).getTextScaleFactor(context, true)),
               ));
 
     return Scaffold(

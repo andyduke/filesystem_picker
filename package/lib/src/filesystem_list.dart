@@ -41,7 +41,7 @@ class FilesystemList extends StatefulWidget {
 
 class _FilesystemListState extends State<FilesystemList> {
   late Directory rootDirectory;
-  late Future<List<FileSystemEntity>> _dirContents;
+  Future<List<FileSystemEntity>>? _dirContents;
 
   @override
   void initState() {
@@ -62,6 +62,13 @@ class _FilesystemListState extends State<FilesystemList> {
   }
 
   void _loadDirContents() async {
+    if (!await rootDirectory.exists()) {
+      setState(() {
+        _dirContents = Future.error('The "${rootDirectory.path} path does not exist.');
+      });
+      return;
+    }
+
     var files = <FileSystemEntity>[];
     var completer = new Completer<List<FileSystemEntity>>();
     var lister = rootDirectory.list(recursive: false);
@@ -79,7 +86,10 @@ class _FilesystemListState extends State<FilesystemList> {
         completer.complete(files);
       },
     );
-    _dirContents = completer.future;
+
+    setState(() {
+      _dirContents = completer.future;
+    });
   }
 
   InkWell _upNavigation(BuildContext context, FilesystemPickerFileListThemeData theme) {
@@ -117,7 +127,8 @@ class _FilesystemListState extends State<FilesystemList> {
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Center(
-                child: Text('Error loading file list: ${snapshot.error}'),
+                child: Text('Error loading file list: ${snapshot.error}',
+                    textScaleFactor: effectiveTheme.getTextScaleFactor(context, true)),
               ),
             );
           } else if (snapshot.hasData) {

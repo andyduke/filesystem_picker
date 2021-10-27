@@ -51,7 +51,9 @@ class Breadcrumbs<T> extends StatelessWidget {
   }) : super(key: key);
 
   _scrollToEnd() async {
-    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    }
   }
 
   @override
