@@ -4,18 +4,42 @@ import 'package:flutter/material.dart';
 
 import '_breadcrumbs_theme.dart';
 
+/// Defines a theme for the `AppBar` widget used in the picker.
+///
+/// Here you can set the color and style of the header, close button and breadcrumbs.
+///
+/// See also:
+/// * [AppBar] for additional description of visual parameters.
 @immutable
 class FilesystemPickerTopBarThemeData with Diagnosticable {
+  /// The default color for Text and Icons within the app bar.
   final Color? foregroundColor;
+
+  /// The fill color to use for an app bar's [Material].
   final Color? backgroundColor;
+
+  /// The z-coordinate at which to place this app bar relative to its parent.
   final double? elevation;
+
+  /// The color of the shadow below the app bar.
   final Color? shadowColor;
+
+  /// The shape of the app bar's [Material] as well as its shadow.
   final ShapeBorder? shape;
+
+  /// The color, opacity, and size to use for toolbar icons.
   final IconThemeData? iconTheme;
+
+  /// The default text style for the AppBar's title widget.
   final TextStyle? titleTextStyle;
+
+  /// Specifies the style to use for the system overlays that overlap the [AppBar].
   final SystemUiOverlayStyle? systemOverlayStyle;
+
+  /// Specifies the theme for the breadcrumbs used in the picker.
   final BreadcrumbsThemeData? breadcrumbsTheme;
 
+  /// Creates a theme that can be used in [FilesystemPickerTheme] and [Breadcrumbs].
   FilesystemPickerTopBarThemeData({
     this.foregroundColor,
     this.backgroundColor,
@@ -28,40 +52,69 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
     this.breadcrumbsTheme,
   });
 
+  /// Returns the default color for Text and Icons within the app bar.
+  ///
+  /// If no value is set in the theme, then the [foregroundColor] from the
+  /// current [AppBarTheme] or color of [headline6] from [primaryTextTheme] is returned
+  /// (the app theme is taken from the `context`).
   Color? getForegroundColor(BuildContext context, [Color? color]) {
     final effectiveColor = color ??
         foregroundColor ??
         Theme.of(context).appBarTheme.foregroundColor ??
-        // AppBarTheme.of(context).toolbarTextStyle?.color ??
         Theme.of(context).primaryTextTheme.headline6?.color;
     return effectiveColor;
   }
 
+  /// Returns the fill color to use for an app bar's [Material].
+  ///
+  /// If no value is set in the theme, then the [backgroundColor] from the
+  /// current [AppBarTheme] is returned (the app theme is taken from the `context`).
   Color? getBackgroundColor(BuildContext context, [Color? color]) {
     final effectiveColor = color ?? backgroundColor ?? AppBarTheme.of(context).backgroundColor;
     return effectiveColor;
   }
 
+  /// Returns the z-coordinate at which to place this app bar relative to its parent.
+  ///
+  /// If no value is set in the theme, then the [elevation] from the
+  /// current [AppBarTheme] is returned (the app theme is taken from the `context`).
   double? getElevation(BuildContext context) {
     final effectiveElevation = elevation ?? AppBarTheme.of(context).elevation;
     return effectiveElevation;
   }
 
+  /// Returns the color of the shadow below the app bar.
+  ///
+  /// If no value is set in the theme, then the [shadowColor] from the
+  /// current [AppBarTheme] is returned (the app theme is taken from the `context`).
   Color? getShadowColor(BuildContext context, [Color? color]) {
     final effectiveColor = color ?? shadowColor ?? AppBarTheme.of(context).shadowColor;
     return effectiveColor;
   }
 
+  /// Returns the shape of the app bar's [Material] as well as its shadow.
+  ///
+  /// If no value is set in the theme, then the [shape] from the
+  /// current [AppBarTheme] is returned (the app theme is taken from the `context`).
   ShapeBorder? getShape(BuildContext context) {
     final effectiveShape = shape ?? AppBarTheme.of(context).shape;
     return effectiveShape;
   }
 
+  /// Returns the [IconThemeData] to use for toolbar icons.
+  ///
+  /// If no value is set in the theme, then the [iconTheme] from the
+  /// current [AppBarTheme] is returned (the app theme is taken from the `context`).
   IconThemeData? getIconTheme(BuildContext context) {
     final effectiveIconTheme = iconTheme ?? AppBarTheme.of(context).iconTheme;
     return effectiveIconTheme;
   }
 
+  /// Returns the default text style for the AppBar's title widget.
+  ///
+  /// If no value is set in the theme, then the [titleTextStyle] from the
+  /// current [AppBarTheme] or [headline6] from [textTheme] is returned
+  /// (the app theme is taken from the `context`).
   TextStyle? getTitleTextStyle(BuildContext context) {
     final theme = Theme.of(context);
     final effectiveTextStyle =
@@ -70,11 +123,16 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
     return effectiveTextStyle;
   }
 
+  /// Returns the style to use for the system overlays that overlap the [AppBar].
+  ///
+  /// If no value is set in the theme, then the [systemOverlayStyle] from the
+  /// current [AppBarTheme] is returned (the app theme is taken from the `context`).
   SystemUiOverlayStyle? getSystemOverlayStyle(BuildContext context) {
     final effectiveOverlayStyle = systemOverlayStyle ?? AppBarTheme.of(context).systemOverlayStyle;
     return effectiveOverlayStyle;
   }
 
+  /// Returns the [BreadcrumbsThemeData] to use for breadcrumbs.
   BreadcrumbsThemeData? getBreadcrumbsThemeData(BuildContext context) {
     final effectiveThemeData = breadcrumbsTheme ??
         BreadcrumbsThemeData(
@@ -83,6 +141,10 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
     return effectiveThemeData;
   }
 
+  /// Returns a new picker topbar theme that matches this theme but with some values
+  /// replaced by the non-null parameters of the given theme.
+  ///
+  /// If the given theme is null, simply returns this theme.
   FilesystemPickerTopBarThemeData merge(FilesystemPickerTopBarThemeData base) {
     return FilesystemPickerTopBarThemeData(
       foregroundColor: foregroundColor ?? base.foregroundColor,

@@ -45,7 +45,7 @@ class FilesystemPickerOptions with Diagnosticable {
     return FilesystemPickerOptions();
   }
 
-  FilesystemPickerThemeBase get theme => _theme ?? FilesystemPickerTheme.light();
+  FilesystemPickerThemeBase get theme => _theme ?? FilesystemPickerTheme();
 
   @override
   int get hashCode {
@@ -150,7 +150,10 @@ class FilesystemPickerDefaultOptionsState extends State<FilesystemPickerDefaultO
 
   @override
   Widget build(BuildContext context) {
-    assert(Navigator.maybeOf(context) == null, /* TODO: */ 'TODO: Must be above navigator.');
+    assert(
+      Navigator.maybeOf(context) == null,
+      'The FilesystemPickerDefaultOptions widget must be above the Navigator.\n\nThis can be achieved by placing it above MaterialApp/CupertinoApp or by using the builder callback on the MaterialApp/CupertinoApp widget.',
+    );
 
     return _FilesystemPickerOptionsScope(
       options: this,

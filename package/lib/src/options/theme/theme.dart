@@ -12,10 +12,33 @@ export '_filelist_theme.dart';
 export '_picker_action_theme.dart';
 export 'theme_auto_system.dart';
 
+/// Defines a theme for the `FilesystemPicker`, allowing you to set colors, fonts, and icons for it.
+///
+/// You can set a common theme for all picker instances using `FilesystemPickerDefaultOptions` or pass
+/// the `theme` directly when opening the picker using the `open`, `openDialog`,
+/// `openBottomSheet` methods.
+///
+/// When passing a theme to the `open`, `openDialog`, `openBottomSheet` methods, you can set
+/// only some of the parameters, the rest will be used from the theme in
+/// `FilesystemPickerDefaultOptions` or the default theme (this behavior can be changed
+/// using the `inherit` parameter).
+///
+/// You can use `FilesystemPickerAutoSystemTheme` to set a theme that will adapt to the light
+/// and dark presentation of the application (and the operating system).
 @immutable
 class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerThemeBase {
   static const bool _kDefaultInherit = true;
 
+  /// Create a theme that can be used to customize the `FilesystemPicker` presentation
+  ///
+  /// * [inherit] whether to use unspecified values from `FilesystemPickerDefaultOptions`; default value is true.
+  /// * [backgroundColor] specifies the background color of the picker; if this property is null, then the `scaffoldBackgroundColor` from the current
+  /// application theme is used.
+  /// * [topBar] specifies the theme for the `AppBar` widget used in the picker.
+  /// * [messageTextStyle] specifies the text style for messages in the center of the picker (for example,
+  /// message about lack of access permissions).
+  /// * [fileList] specifies the theme for the FilesystemList widget used in the picker.
+  /// * [pickerAction] specifies the theme for the picker action.
   const FilesystemPickerTheme({
     this.inherit = _kDefaultInherit,
     Color? backgroundColor,
@@ -29,70 +52,64 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
         _fileList = fileList,
         _pickerAction = pickerAction;
 
-  factory FilesystemPickerTheme.light({
-    bool inherit = _kDefaultInherit,
-    Color? backgroundColor,
-    FilesystemPickerTopBarThemeData? topBar,
-    TextStyle? messageTextStyle,
-    FilesystemPickerFileListThemeData? fileList,
-    FilesystemPickerActionThemeData? pickerAction,
-  }) {
-    return FilesystemPickerTheme(
-      inherit: inherit,
-      backgroundColor: backgroundColor,
-      topBar: topBar,
-      messageTextStyle: messageTextStyle,
-      fileList: fileList,
-      pickerAction: pickerAction,
-    );
-  }
-
-  factory FilesystemPickerTheme.dark({
-    bool inherit = _kDefaultInherit,
-    Color? backgroundColor,
-    FilesystemPickerTopBarThemeData? topBar,
-    TextStyle? messageTextStyle,
-    FilesystemPickerFileListThemeData? fileList,
-    FilesystemPickerActionThemeData? pickerAction,
-  }) {
-    return FilesystemPickerTheme(
-      inherit: inherit,
-      backgroundColor: backgroundColor,
-      topBar: topBar,
-      messageTextStyle: messageTextStyle,
-      fileList: fileList,
-      pickerAction: pickerAction,
-    );
-  }
-
+  /// Whether to use unspecified values from `FilesystemPickerDefaultOptions`.
   final bool inherit;
+
+  /// Specifies the background color of the picker.
+  ///
+  /// If this property is null, then the `scaffoldBackgroundColor` from the current
+  /// application theme is used.
   final Color? _backgroundColor;
+
+  /// Specifies the theme for the `AppBar` widget used in the picker.
   final FilesystemPickerTopBarThemeData? _topBar;
+
+  /// Specifies the text style for messages in the center of the picker (for example,
+  /// message about lack of access permissions).
   final TextStyle? _messageTextStyle;
+
+  /// Specifies the theme for the FilesystemList widget used in the picker.
   final FilesystemPickerFileListThemeData? _fileList;
+
+  /// Specifies the theme for the picker action.
   final FilesystemPickerActionThemeData? _pickerAction;
 
+  /// Returns the background color of the picker using the `context` to get the default
+  /// background color.
+  ///
+  /// If no value is set in the theme, then the `scaffoldBackgroundColor` from the
+  /// current app theme is returned (the app theme is taken from the `context`).
   Color getBackgroundColor(BuildContext context, [Color? color]) {
     final effectiveValue = color ?? _backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
     return effectiveValue;
   }
 
+  /// Returns the theme for the Picker's `AppBar` using the `context` to get the defaults.
   FilesystemPickerTopBarThemeData getTopBar(BuildContext context) {
     return _topBar ?? FilesystemPickerTopBarThemeData();
   }
 
+  /// Returns the text style for messages in the center of the picker,
+  /// using the `context` to get the default values.
   TextStyle getMessageTextStyle(BuildContext context) {
     return _messageTextStyle ?? TextStyle();
   }
 
+  /// Returns the theme for the FilesystemList widget used in the picker,
+  /// using `context` to get the defaults.
   FilesystemPickerFileListThemeData getFileList(BuildContext context) {
     return _fileList ?? FilesystemPickerFileListThemeData();
   }
 
+  /// Returns the theme for the picker action, using `context` to get the defaults.
   FilesystemPickerActionThemeData getPickerAction(BuildContext context) {
     return _pickerAction ?? FilesystemPickerActionThemeData();
   }
 
+  /// Returns a new picker theme that matches this picker theme but with some values
+  /// replaced by the non-null parameters of the given picker theme.
+  ///
+  /// If the given picker theme is null, simply returns this picker theme.
   FilesystemPickerThemeBase merge(BuildContext context, FilesystemPickerThemeBase? base) {
     if (!inherit || base == null) return this;
 
@@ -106,6 +123,7 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
     );
   }
 
+  /// The hash code for this object.
   @override
   int get hashCode {
     return hashValues(
@@ -116,6 +134,7 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
     );
   }
 
+  /// The equality operator.
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -127,6 +146,7 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
         other._pickerAction == _pickerAction;
   }
 
+  /// Add additional properties associated with the node.
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);

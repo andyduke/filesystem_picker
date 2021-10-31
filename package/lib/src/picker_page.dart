@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as Path;
 import 'common.dart';
 import 'filesystem_list.dart';
-import 'package:path/path.dart' as Path;
 import 'breadcrumbs.dart';
 import 'picker_dialog.dart';
 import 'options/picker_options.dart';
@@ -11,29 +11,39 @@ import 'options/theme/theme.dart';
 import 'options/theme/theme_base.dart';
 import 'progress_indicator.dart';
 
-/// FileSystem file or folder picker dialog.
+/// FileSystem file or folder picker dialog
 ///
 /// Allows the user to browse the file system and pick a folder or file.
 ///
 /// See also:
-///
-///  * [FilesystemPicker.open]
+///  * [FilesystemPicker.open], which allows you to open a fullscreen FileSystemPicker dialog.
+///  * [FilesystemPicker.openDialog], which allows you to open a modal FileSystemPicker dialog above the current contents of the app.
+///  * [FilesystemPicker.openBottomSheet], which allows you to open a modal FileSystemPicker bottom sheet above the current contents of the app.
 class FilesystemPicker extends StatefulWidget {
-  /// Open FileSystemPicker dialog
+  /// Open fullscreen FileSystemPicker dialog
   ///
   /// Returns null if nothing was selected.
   ///
-  /// * [rootName] specifies the name of the filesystem view root in breadcrumbs, by default "Storage".
+  /// * [context] specifies the context in which the picker should be opened.
   /// * [rootDirectory] specifies the root of the filesystem view.
-  /// * [directory] TODO:
+  /// * [rootName] specifies the name of the filesystem view root in breadcrumbs, by default "Storage".
+  /// * [directory] specifies the current path, which should be opened in the filesystem view by default (if not specified, the `rootDirectory` is used); **attention:** this path must be inside `rootDirectory`.
   /// * [fsType] specifies the type of filesystem view (folder and files, folder only or files only), by default `FilesystemType.all`.
   /// * [pickText] specifies the text for the folder selection button (only for [fsType] = FilesystemType.folder).
   /// * [permissionText] specifies the text of the message that there is no permission to access the storage, by default: "Access to the storage was not granted.".
   /// * [title] specifies the text of the dialog title.
+  /// * [showGoUp] specifies the option to display the go to the previous level of the file system in the filesystem view; the default is true.
   /// * [allowedExtensions] specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`
-  /// * [fileTileSelectMode] specifies how to files can be selected (either tapping on the whole tile or only on trailing button). (default depends on [fsType])
+  /// * [caseSensitiveFileExtensionComparison] specifies the mode of comparing extensions with the `allowedExtensions` list, case-sensitive or case-insensitive; the default is false (case-insensitive).
+  /// * [fileTileSelectMode] specifies how to files can be selected (either tapping on the whole tile or only on trailing button). by default depends on [fsType]
   /// * [requestPermission] if specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
-  /// * [theme] TODO:
+  /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
+  /// * [theme] specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.
+  ///
+  /// See also:
+  /// * [FilesystemPickerDefaultOptions], which provides the ability to set the default picker options.
+  /// * [FilesystemPickerTheme], which provides the ability to customize the visual properties of the picker, such as colors, fonts, and icons.
+  /// * [FilesystemPickerAutoSystemTheme], which provides an adaptive theme that matches the light or dark theme of the application.
   static Future<String?> open({
     required BuildContext context,
     required Directory rootDirectory,
@@ -78,7 +88,31 @@ class FilesystemPicker extends StatefulWidget {
     );
   }
 
-  // TODO: documentation
+  /// Open a modal FileSystemPicker dialog above the current contents of the app
+  ///
+  /// Returns null if nothing was selected.
+  ///
+  /// * [context] specifies the context in which the picker should be opened.
+  /// * [rootDirectory] specifies the root of the filesystem view.
+  /// * [rootName] specifies the name of the filesystem view root in breadcrumbs, by default "Storage".
+  /// * [directory] specifies the current path, which should be opened in the filesystem view by default (if not specified, the `rootDirectory` is used); **attention:** this path must be inside `rootDirectory`.
+  /// * [fsType] specifies the type of filesystem view (folder and files, folder only or files only), by default `FilesystemType.all`.
+  /// * [pickText] specifies the text for the folder selection button (only for [fsType] = FilesystemType.folder).
+  /// * [permissionText] specifies the text of the message that there is no permission to access the storage, by default: "Access to the storage was not granted.".
+  /// * [title] specifies the text of the dialog title.
+  /// * [showGoUp] specifies the option to display the go to the previous level of the file system in the filesystem view; the default is true.
+  /// * [allowedExtensions] specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`
+  /// * [caseSensitiveFileExtensionComparison] specifies the mode of comparing extensions with the `allowedExtensions` list, case-sensitive or case-insensitive; the default is false (case-insensitive).
+  /// * [fileTileSelectMode] specifies how to files can be selected (either tapping on the whole tile or only on trailing button). by default depends on [fsType]
+  /// * [requestPermission] if specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
+  /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
+  /// * [theme] specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.
+  /// * [constraints] specifies the size constraints to apply to the dialog.
+  ///
+  /// See also:
+  /// * [FilesystemPickerDefaultOptions], which provides the ability to set the default picker options.
+  /// * [FilesystemPickerTheme], which provides the ability to customize the visual properties of the picker, such as colors, fonts, and icons.
+  /// * [FilesystemPickerAutoSystemTheme], which provides an adaptive theme that matches the light or dark theme of the application.
   static Future<String?> openDialog({
     required BuildContext context,
     required Directory rootDirectory,
@@ -126,7 +160,38 @@ class FilesystemPicker extends StatefulWidget {
     );
   }
 
-  // TODO: documentation
+  /// Open a modal FileSystemPicker bottom sheet above the current contents of the app
+  ///
+  /// Returns null if nothing was selected.
+  ///
+  /// * [context] specifies the context in which the picker should be opened.
+  /// * [rootDirectory] specifies the root of the filesystem view.
+  /// * [rootName] specifies the name of the filesystem view root in breadcrumbs, by default "Storage".
+  /// * [directory] specifies the current path, which should be opened in the filesystem view by default (if not specified, the `rootDirectory` is used); **attention:** this path must be inside `rootDirectory`.
+  /// * [fsType] specifies the type of filesystem view (folder and files, folder only or files only), by default `FilesystemType.all`.
+  /// * [pickText] specifies the text for the folder selection button (only for [fsType] = FilesystemType.folder).
+  /// * [permissionText] specifies the text of the message that there is no permission to access the storage, by default: "Access to the storage was not granted.".
+  /// * [title] specifies the text of the dialog title.
+  /// * [showGoUp] specifies the option to display the go to the previous level of the file system in the filesystem view; the default is true.
+  /// * [allowedExtensions] specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`
+  /// * [caseSensitiveFileExtensionComparison] specifies the mode of comparing extensions with the `allowedExtensions` list, case-sensitive or case-insensitive; the default is false (case-insensitive).
+  /// * [fileTileSelectMode] specifies how to files can be selected (either tapping on the whole tile or only on trailing button). by default depends on [fsType]
+  /// * [requestPermission] if specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
+  /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
+  /// * [theme] specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.
+  /// * [constraints] specifies the size constraints to apply to the bottom sheet.
+  /// * [barrierColor] specifies the color of the modal barrier that darkens everything below the bottom sheet; if null the default transparent color is used.
+  /// * [shape] specifies the shape of the bottom sheet; the default is an 8dp top rounded shape.
+  /// * [elevation] specifies the z-coordinate at which to place this material relative to its parent; the default value is 24.
+  /// * [initialChildSize] specifies the initial fractional value of the parent container's height to use when displaying the widget; the default value is 0.8.
+  /// * [minChildSize] specifies the minimum fractional value of the parent container's height to use when displaying the widget; the default value is 0.6.
+  /// * [maxChildSize] specifies the maximum fractional value of the parent container's height to use when displaying the widget; the default value is 0.96.
+  ///
+  /// See also:
+  /// * [FilesystemPickerDefaultOptions], which provides the ability to set the default picker options.
+  /// * [FilesystemPickerTheme], which provides the ability to customize the visual properties of the picker, such as colors, fonts, and icons.
+  /// * [DraggableScrollableSheet], which allows you to create a bottom sheet that grows and then becomes scrollable once it reaches its maximum size.
+  /// * [FilesystemPickerAutoSystemTheme], which provides an adaptive theme that matches the light or dark theme of the application.
   static Future<String?> openBottomSheet({
     required BuildContext context,
     required Directory rootDirectory,
@@ -224,6 +289,7 @@ class FilesystemPicker extends StatefulWidget {
   /// Specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`
   final List<String>? allowedExtensions;
 
+  /// Specifies the mode of comparing extensions with the `allowedExtensions` list, case-sensitive or case-insensitive; the default is false (case-insensitive).
   final bool? caseSensitiveFileExtensionComparison;
 
   /// Specifies how to files can be selected (either tapping on the whole tile or only on trailing button). (default depends on [fsType])
@@ -232,12 +298,16 @@ class FilesystemPicker extends StatefulWidget {
   /// If specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
   final RequestPermission? requestPermission;
 
+  /// Specifies a callback to filter the displayed files in the filesystem view (not set by default); the path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
   final FilesystemListFilter? itemFilter;
 
+  /// Specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.
   final FilesystemPickerThemeBase? theme;
 
+  /// Specifies the option to display the go to the previous level of the file system in the filesystem view; the default is true.
   final bool? showGoUp;
 
+  /// An object that can be used to control the position to which this scroll view is scrolled.
   final ScrollController? scrollController;
 
   /// Creates a file system item selection widget.
@@ -302,12 +372,18 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   late FilesystemPickerOptions options;
 
   String? get rootName => widget.rootName ?? options.rootName;
+
   FilesystemType get fsType => widget.fsType ?? options.fsType;
+
   String? get permissionText => widget.permissionText ?? options.permissionText;
+
   FileTileSelectMode get fileTileSelectMode => widget.fileTileSelectMode ?? options.fileTileSelectMode;
+
   bool get showGoUp => widget.showGoUp ?? options.showGoUp;
+
   bool get caseSensitiveFileExtensionComparison =>
       widget.caseSensitiveFileExtensionComparison ?? options.caseSensitiveFileExtensionComparison;
+
   FilesystemPickerThemeBase get theme => (widget.theme?.merge(context, options.theme) ?? options.theme);
 
   @override
@@ -376,14 +452,6 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         ? rootName
         : Path.basename(directory.path);
   }
-
-  // void _changeDirectory(Directory value) {
-  //   if (directory != value) {
-  //     setState(() {
-  //       _setDirectory(value);
-  //     });
-  //   }
-  // }
 
   void _changeDirectory(Directory value) {
     if (directory != value) {

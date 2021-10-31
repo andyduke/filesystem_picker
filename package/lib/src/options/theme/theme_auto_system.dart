@@ -4,18 +4,26 @@ import 'package:flutter/material.dart';
 import 'theme.dart';
 import 'theme_base.dart';
 
+/// Defines a theme for the `FilesystemPicker`, which adapts to the light or dark
+/// theme of the application.
 @immutable
 class FilesystemPickerAutoSystemTheme with Diagnosticable implements FilesystemPickerThemeBase {
   static const bool _kDefaultInherit = true;
 
+  /// Create an adaptive theme that can be used to customize the `FilesystemPicker` presentation
   const FilesystemPickerAutoSystemTheme({
     this.inherit = _kDefaultInherit,
     this.lightTheme,
     this.darkTheme,
   });
 
+  /// Whether to use unspecified values from `FilesystemPickerDefaultOptions`.
   final bool inherit;
+
+  /// Specifies the light theme for the `FilesystemPicker`.
   final FilesystemPickerTheme? lightTheme;
+
+  /// Specifies the dark theme for the `FilesystemPicker`.
   final FilesystemPickerTheme? darkTheme;
 
   @protected
@@ -28,32 +36,38 @@ class FilesystemPickerAutoSystemTheme with Diagnosticable implements FilesystemP
     final brightness = getBrightness(context);
 
     final FilesystemPickerThemeBase effectiveTheme = (brightness == Brightness.light)
-        ? (lightTheme ?? FilesystemPickerTheme.light())
-        : (darkTheme ?? FilesystemPickerTheme.dark());
+        ? (lightTheme ?? FilesystemPickerTheme())
+        : (darkTheme ?? FilesystemPickerTheme());
 
     return effectiveTheme;
   }
 
+  /// See [FilesystemPickerTheme.getBackgroundColor].
   Color getBackgroundColor(BuildContext context, [Color? color]) {
     return getEffectiveTheme(context).getBackgroundColor(context, color);
   }
 
+  /// See [FilesystemPickerTheme.getTopBar].
   FilesystemPickerTopBarThemeData getTopBar(BuildContext context) {
     return getEffectiveTheme(context).getTopBar(context);
   }
 
+  /// See [FilesystemPickerTheme.getMessageTextStyle].
   TextStyle getMessageTextStyle(BuildContext context) {
     return getEffectiveTheme(context).getMessageTextStyle(context);
   }
 
+  /// See [FilesystemPickerTheme.getFileList].
   FilesystemPickerFileListThemeData getFileList(BuildContext context) {
     return getEffectiveTheme(context).getFileList(context);
   }
 
+  /// See [FilesystemPickerTheme.getPickerAction].
   FilesystemPickerActionThemeData getPickerAction(BuildContext context) {
     return getEffectiveTheme(context).getPickerAction(context);
   }
 
+  /// See [FilesystemPickerTheme.merge].
   FilesystemPickerThemeBase merge(BuildContext context, FilesystemPickerThemeBase? base) {
     if (inherit && base is FilesystemPickerAutoSystemTheme) {
       return FilesystemPickerAutoSystemTheme(
