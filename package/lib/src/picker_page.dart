@@ -40,6 +40,8 @@ class FilesystemPicker extends StatefulWidget {
   /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
   /// * [theme] specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.
   ///
+  /// The default parameter values are taken from the [FilesystemPickerDefaultOptions].
+  ///
   /// See also:
   /// * [FilesystemPickerDefaultOptions], which provides the ability to set the default picker options.
   /// * [FilesystemPickerTheme], which provides the ability to customize the visual properties of the picker, such as colors, fonts, and icons.
@@ -108,6 +110,8 @@ class FilesystemPicker extends StatefulWidget {
   /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
   /// * [theme] specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.
   /// * [constraints] specifies the size constraints to apply to the dialog.
+  ///
+  /// The default parameter values are taken from the [FilesystemPickerDefaultOptions].
   ///
   /// See also:
   /// * [FilesystemPickerDefaultOptions], which provides the ability to set the default picker options.
@@ -186,6 +190,8 @@ class FilesystemPicker extends StatefulWidget {
   /// * [initialChildSize] specifies the initial fractional value of the parent container's height to use when displaying the widget; the default value is 0.8.
   /// * [minChildSize] specifies the minimum fractional value of the parent container's height to use when displaying the widget; the default value is 0.6.
   /// * [maxChildSize] specifies the maximum fractional value of the parent container's height to use when displaying the widget; the default value is 0.96.
+  ///
+  /// The default parameter values are taken from the [FilesystemPickerDefaultOptions].
   ///
   /// See also:
   /// * [FilesystemPickerDefaultOptions], which provides the ability to set the default picker options.
