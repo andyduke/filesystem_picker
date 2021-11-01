@@ -61,7 +61,7 @@ class _FilesystemListState extends State<FilesystemList> {
   void didUpdateWidget(covariant FilesystemList oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.rootDirectory != widget.rootDirectory) {
+    if (!Path.equals(oldWidget.rootDirectory.absolute.path, widget.rootDirectory.absolute.path)) {
       rootDirectory = widget.rootDirectory;
       _loadDirContents();
     }

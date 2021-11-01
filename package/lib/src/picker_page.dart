@@ -596,7 +596,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         ? FilesystemProgressIndicator(theme: effectiveTheme.getFileList(context))
         : (!hasMessage
             ? FilesystemList(
-                isRoot: (directory.absolute.path == widget.rootDirectory.absolute.path),
+                isRoot: (Path.equals(directory.absolute.path, widget.rootDirectory.absolute.path)),
                 rootDirectory: directory,
                 fsType: fsType,
                 folderIconColor: widget.folderIconColor,
