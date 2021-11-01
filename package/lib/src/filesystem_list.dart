@@ -7,7 +7,7 @@ import 'filesystem_list_tile.dart';
 import 'options/theme/_filelist_theme.dart';
 import 'progress_indicator.dart';
 
-typedef FilesystemListFilter = bool Function(String path, String name);
+typedef FilesystemListFilter = bool Function(FileSystemEntity fsEntity, String path, String name);
 
 class FilesystemList extends StatefulWidget {
   final bool isRoot;
@@ -86,7 +86,7 @@ class _FilesystemListState extends State<FilesystemList> {
       (file) {
         if (widget.itemFilter != null) {
           final localPath = Path.relative(file.path, from: rootDirectory.path);
-          if (!widget.itemFilter!.call(rootDirectory.path, localPath)) return;
+          if (!widget.itemFilter!.call(file, rootDirectory.path, localPath)) return;
         }
 
         if ((widget.fsType != FilesystemType.folder) || (file is Directory)) {

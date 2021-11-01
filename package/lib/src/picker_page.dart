@@ -37,7 +37,7 @@ class FilesystemPicker extends StatefulWidget {
   /// * [caseSensitiveFileExtensionComparison] specifies the mode of comparing extensions with the `allowedExtensions` list, case-sensitive or case-insensitive; the default is false (case-insensitive).
   /// * [fileTileSelectMode] specifies how to files can be selected (either tapping on the whole tile or only on trailing button). by default depends on [fsType]
   /// * [requestPermission] if specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
-  /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
+  /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the filesystem entity, path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
   /// * [theme] specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.
   ///
   /// The default parameter values are taken from the [FilesystemPickerDefaultOptions].
@@ -107,7 +107,7 @@ class FilesystemPicker extends StatefulWidget {
   /// * [caseSensitiveFileExtensionComparison] specifies the mode of comparing extensions with the `allowedExtensions` list, case-sensitive or case-insensitive; the default is false (case-insensitive).
   /// * [fileTileSelectMode] specifies how to files can be selected (either tapping on the whole tile or only on trailing button). by default depends on [fsType]
   /// * [requestPermission] if specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
-  /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
+  /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the filesystem entity, path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
   /// * [theme] specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.
   /// * [constraints] specifies the size constraints to apply to the dialog.
   ///
@@ -181,7 +181,7 @@ class FilesystemPicker extends StatefulWidget {
   /// * [caseSensitiveFileExtensionComparison] specifies the mode of comparing extensions with the `allowedExtensions` list, case-sensitive or case-insensitive; the default is false (case-insensitive).
   /// * [fileTileSelectMode] specifies how to files can be selected (either tapping on the whole tile or only on trailing button). by default depends on [fsType]
   /// * [requestPermission] if specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
-  /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
+  /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the filesystem entity, path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
   /// * [theme] specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.
   /// * [constraints] specifies the size constraints to apply to the bottom sheet.
   /// * [barrierColor] specifies the color of the modal barrier that darkens everything below the bottom sheet; if null the default transparent color is used.
