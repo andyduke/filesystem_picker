@@ -1,22 +1,25 @@
 name: filesystem_picker_example
 description: Demonstrates how to use 'FileSystemPicker'.
-publish_to: none
-version: 1.0.3
+publish_to: 'none'
+version: 3.0.0
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  path_provider: ^2.0.1
-  permission_handler: ^9.2.0
+  cupertino_icons: ^1.0.2
   filesystem_picker:
     path: ../
+  path_provider: ^2.0.1
+  path: ^1.8.0
+  permission_handler: ^9.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true
