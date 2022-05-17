@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'theme.dart';
-import 'theme_base.dart';
 
 /// Defines a theme for the `FilesystemPicker`, which adapts to the light or dark
 /// theme of the application.

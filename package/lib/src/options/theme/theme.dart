@@ -10,6 +10,7 @@ export '_topbar_theme.dart';
 export '_breadcrumbs_theme.dart';
 export '_filelist_theme.dart';
 export '_picker_action_theme.dart';
+export 'theme_base.dart';
 export 'theme_auto_system.dart';
 
 /// Defines a theme for the `FilesystemPicker`, allowing you to set colors, fonts, and icons for it.
