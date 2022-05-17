@@ -1,3 +1,7 @@
+## 2.0.1
+
+* Flutter 3.0 compatibility
+
 ## 2.0.0
 
 * Deprecated theme properties have been replaced with their current counterpart.

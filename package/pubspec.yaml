@@ -1,12 +1,13 @@
 name: filesystem_picker
 description: FileSystem file or folder picker dialog. Allows the user to browse the file system and pick a folder or file.
-version: 2.0.0
+version: 2.0.1
 author: Andy Chentsov <chentsov@gmail.com>
 homepage: https://github.com/andyduke/filesystem_picker/tree/master/package
 repository: https://github.com/andyduke/filesystem_picker
 issue_tracker: https://github.com/andyduke/filesystem_picker/issues
 
 environment:
+  flutter: ">=3.0.0"
   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
