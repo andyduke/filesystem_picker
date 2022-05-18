@@ -4,18 +4,28 @@ import 'package:filesystem_picker/src/actions/action.dart';
 import 'package:filesystem_picker/src/actions/shakeable_dialogs.dart';
 import 'package:flutter/material.dart';
 
+/// The signature of the error message string interpolator when the folder being created already exists.
 typedef FilesystemPickerNewFolderMessageBuilder = String Function(String value);
 
+/// Defines the action to create a new folder.
 class FilesystemPickerNewFolderAction extends FilesystemPickerAction {
+  /// Title of the dialog for creating a new folder.
   final String? dialogTitle;
+
+  /// Message in the dialog for creating a new folder.
   final String? dialogPrompt;
+
+  /// The text of the "OK" button in the dialog for creating a new folder.
   final String? dialogOkText;
+
+  /// The text of the "Cancel" button in the dialog for creating a new folder.
   final String? dialogCancelText;
 
-  ///
-  /// Default: 'The folder with the name "<new folder name>" already exists. Please use another name.'
+  /// The interpolator of the error message string when the folder being created already exists.
+  /// Default message: 'The folder with the name "<new folder name>" already exists. Please use another name.'
   final FilesystemPickerNewFolderMessageBuilder? alreadyExistsMessage;
 
+  /// Creates an action definition.
   FilesystemPickerNewFolderAction({
     super.icon = const Icon(Icons.create_new_folder),
     super.text = 'New folder',
@@ -47,7 +57,7 @@ class FilesystemPickerNewFolderAction extends FilesystemPickerAction {
   }) async {
     final result = await showDialog<bool?>(
       context: context,
-      builder: (context) => NewFolderDialog(
+      builder: (context) => FilesystemPickerNewFolderDialog(
         title: title,
         prompt: prompt,
         okText: okText,
@@ -106,14 +116,25 @@ class FilesystemPickerNewFolderAction extends FilesystemPickerAction {
   }
 }
 
-class NewFolderDialog extends StatefulWidget {
+/// A dialog asking for a name for the new folder.
+class FilesystemPickerNewFolderDialog extends StatefulWidget {
+  /// Dialog title.
   final String? title;
+
+  /// Dialog message before the new folder name input field.
   final String? prompt;
+
+  /// The text of the "OK" button.
   final String? okText;
+
+  /// The text of the "Cancel" button.
   final String? cancelText;
+
+  /// The handler called when the user specified the name of the new folder and clicked the "OK" button.
   final ValueChanged<String?> onDone;
 
-  const NewFolderDialog({
+  /// Creates a dialog asking for a name for the new folder.
+  const FilesystemPickerNewFolderDialog({
     Key? key,
     this.title,
     this.prompt,
@@ -123,10 +144,10 @@ class NewFolderDialog extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<NewFolderDialog> createState() => _NewFolderDialogState();
+  State<FilesystemPickerNewFolderDialog> createState() => _FilesystemPickerNewFolderDialogState();
 }
 
-class _NewFolderDialogState extends State<NewFolderDialog> {
+class _FilesystemPickerNewFolderDialogState extends State<FilesystemPickerNewFolderDialog> {
   final ShakeableController _shakeController = ShakeableController();
   String? _folderName;
 
