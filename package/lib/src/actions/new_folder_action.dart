@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 typedef FilesystemPickerNewFolderMessageBuilder = String Function(String value);
 
 /// Defines the action to create a new folder.
-class FilesystemPickerNewFolderAction extends FilesystemPickerAction {
+class FilesystemPickerNewFolderContextAction extends FilesystemPickerContextAction {
   /// Title of the dialog for creating a new folder.
   final String? dialogTitle;
 
@@ -26,7 +26,7 @@ class FilesystemPickerNewFolderAction extends FilesystemPickerAction {
   final FilesystemPickerNewFolderMessageBuilder? alreadyExistsMessage;
 
   /// Creates an action definition.
-  FilesystemPickerNewFolderAction({
+  FilesystemPickerNewFolderContextAction({
     super.icon = const Icon(Icons.create_new_folder),
     super.text = 'New folder',
     this.dialogTitle,
