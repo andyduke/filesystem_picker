@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:filesystem_picker/src/actions/action.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as Path;
 import 'common.dart';
@@ -8,7 +9,6 @@ import 'breadcrumbs.dart';
 import 'picker_dialog.dart';
 import 'options/picker_options.dart';
 import 'options/theme/theme.dart';
-import 'options/theme/theme_base.dart';
 import 'progress_indicator.dart';
 
 /// FileSystem file or folder picker dialog
@@ -39,6 +39,7 @@ class FilesystemPicker extends StatefulWidget {
   /// * [requestPermission] if specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
   /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the filesystem entity, path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
   /// * [theme] specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.
+  /// * [actions] specifies a list of actions, such as "Create Folder", which are placed in the upper right corner of the picker.
   ///
   /// The default parameter values are taken from the [FilesystemPickerDefaultOptions].
   ///
@@ -63,6 +64,7 @@ class FilesystemPicker extends StatefulWidget {
     RequestPermission? requestPermission,
     FilesystemListFilter? itemFilter,
     FilesystemPickerThemeBase? theme,
+    List<FilesystemPickerAction> actions = const [],
   }) async {
     return Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (BuildContext context) {
@@ -85,6 +87,7 @@ class FilesystemPicker extends StatefulWidget {
           requestPermission: requestPermission,
           itemFilter: itemFilter,
           theme: theme,
+          actions: actions,
         );
       }),
     );
@@ -109,6 +112,7 @@ class FilesystemPicker extends StatefulWidget {
   /// * [requestPermission] if specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
   /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the filesystem entity, path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
   /// * [theme] specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.
+  /// * [actions] specifies a list of actions, such as "Create Folder", which are placed in the upper right corner of the picker.
   /// * [constraints] specifies the size constraints to apply to the dialog.
   ///
   /// The default parameter values are taken from the [FilesystemPickerDefaultOptions].
@@ -134,6 +138,7 @@ class FilesystemPicker extends StatefulWidget {
     RequestPermission? requestPermission,
     FilesystemListFilter? itemFilter,
     FilesystemPickerThemeBase? theme,
+    List<FilesystemPickerAction> actions = const [],
     BoxConstraints? constraints,
   }) async {
     return showDialog<String?>(
@@ -159,6 +164,7 @@ class FilesystemPicker extends StatefulWidget {
           requestPermission: requestPermission,
           itemFilter: itemFilter,
           theme: theme,
+          actions: actions,
         ),
       ),
     );
@@ -183,6 +189,7 @@ class FilesystemPicker extends StatefulWidget {
   /// * [requestPermission] if specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
   /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the filesystem entity, path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
   /// * [theme] specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.
+  /// * [actions] specifies a list of actions, such as "Create Folder", which are placed in the upper right corner of the picker.
   /// * [constraints] specifies the size constraints to apply to the bottom sheet.
   /// * [barrierColor] specifies the color of the modal barrier that darkens everything below the bottom sheet; if null the default transparent color is used.
   /// * [shape] specifies the shape of the bottom sheet; the default is an 8dp top rounded shape.
@@ -215,6 +222,7 @@ class FilesystemPicker extends StatefulWidget {
     RequestPermission? requestPermission,
     FilesystemListFilter? itemFilter,
     FilesystemPickerThemeBase? theme,
+    List<FilesystemPickerAction> actions = const [],
     BoxConstraints? constraints,
     Color? barrierColor,
     ShapeBorder? shape,
@@ -258,6 +266,7 @@ class FilesystemPicker extends StatefulWidget {
           requestPermission: requestPermission,
           itemFilter: itemFilter,
           theme: theme,
+          actions: actions,
         ),
       ),
     );
@@ -316,6 +325,9 @@ class FilesystemPicker extends StatefulWidget {
   /// An object that can be used to control the position to which this scroll view is scrolled.
   final ScrollController? scrollController;
 
+  /// A list of actions, such as "Create Folder", which are placed in the upper right corner of the picker.
+  final List<FilesystemPickerAction> actions;
+
   /// Creates a file system item selection widget.
   FilesystemPicker({
     Key? key,
@@ -336,6 +348,7 @@ class FilesystemPicker extends StatefulWidget {
     this.theme,
     this.showGoUp,
     this.scrollController,
+    this.actions = const [],
   }) : super(key: key);
 
   @override
@@ -392,6 +405,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   FilesystemPickerThemeBase get theme => (widget.theme?.merge(context, options.theme) ?? options.theme);
 
+  Key _fileListKey = UniqueKey();
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -400,9 +415,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       initialized = true;
 
       options = FilesystemPickerDefaultOptions.of(context);
-
       _requestPermission();
-
       _setDirectory(_validInitialDirectory);
     }
   }
@@ -477,6 +490,12 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     }
   }
 
+  void _reloadList() {
+    setState(() {
+      _fileListKey = UniqueKey();
+    });
+  }
+
   Widget _buildBar(BuildContext context, FilesystemPickerActionThemeData theme) {
     final pickerIconTheme = theme.getCheckIconTheme(context);
     final foregroundColor = (!permissionRequesting && permissionAllowed)
@@ -544,6 +563,49 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         : [];
   }
 
+  List<Widget>? _buildActions(BuildContext context) {
+    if (widget.actions.isEmpty) return null;
+
+    final hasMessage = !permissionAllowed || (errorMessage != null);
+
+    if (widget.actions.length == 1) {
+      return [
+        IconButton(
+          icon: widget.actions.first.icon,
+          tooltip: widget.actions.first.text,
+          onPressed: !hasMessage ? () => _callAction(widget.actions.first.action, context, directory) : null,
+        ),
+      ];
+    } else {
+      return [
+        PopupMenuButton<FilesystemPickerAction>(
+          offset: Offset(0, 48),
+          onSelected: (action) => _callAction(action.action, context, directory),
+          enabled: !hasMessage,
+          itemBuilder: (context) => widget.actions
+              .map((e) => PopupMenuItem<FilesystemPickerAction>(
+                    value: e,
+                    child: Row(
+                      children: [
+                        e.icon,
+                        const SizedBox(width: 16),
+                        Text(e.text),
+                      ],
+                    ),
+                  ))
+              .toList(),
+        ),
+      ];
+    }
+  }
+
+  Future<void> _callAction(FilesystemPickerActionCallback action, BuildContext context, Directory path) async {
+    final result = await action.call(context, path);
+    if (result) {
+      _reloadList();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final effectiveTheme = theme;
@@ -577,6 +639,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         icon: Icon(Icons.close),
         onPressed: () => Navigator.of(context).pop(),
       ),
+      actions: _buildActions(context),
       bottom: PreferredSize(
         child: Breadcrumbs<String>(
           theme: breadcrumbsTheme,
@@ -596,6 +659,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         ? FilesystemProgressIndicator(theme: effectiveTheme.getFileList(context))
         : (!hasMessage
             ? FilesystemList(
+                key: _fileListKey,
                 isRoot: (Path.equals(directory.absolute.path, widget.rootDirectory.absolute.path)),
                 rootDirectory: directory,
                 fsType: fsType,
