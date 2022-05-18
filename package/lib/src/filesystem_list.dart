@@ -101,7 +101,17 @@ class _FilesystemListState extends State<FilesystemList> {
         }
       },
       onDone: () {
-        files.sort((a, b) => a.path.compareTo(b.path));
+        files.sort((a, b) {
+          if (a.runtimeType == b.runtimeType) {
+            return a.path.compareTo(b.path);
+          } else {
+            if (a is Directory) {
+              return -1;
+            } else {
+              return 1;
+            }
+          }
+        });
         completer.complete(files);
       },
     );
