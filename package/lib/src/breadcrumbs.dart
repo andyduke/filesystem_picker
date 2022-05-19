@@ -21,7 +21,7 @@ class BreadcrumbItem<T> {
   });
 }
 
-/// Scrolling horizontal breadcrumbs with `Icons.chevron_right` separator and fade on the right.
+/// Horizontally scrollable breadcrumbs with `Icons.chevron_right` separator and fade on the right.
 class Breadcrumbs<T> extends StatelessWidget {
   static const double defaultHeight = 50;
 
@@ -37,10 +37,12 @@ class Breadcrumbs<T> extends StatelessWidget {
   /// Called when an item is selected
   final ValueChanged<T?>? onSelect;
 
+  /// The theme for Breadcrumbs.
   final BreadcrumbsThemeData? theme;
 
   final ScrollController _scrollController = ScrollController();
 
+  /// Creates horizontally scrollable breadcrumbs with `Icons.chevron_right` separator and fade on the right.
   Breadcrumbs({
     Key? key,
     required this.items,

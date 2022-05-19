@@ -4,31 +4,67 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../common.dart';
 import 'theme/theme.dart';
-import 'theme/theme_base.dart';
 
+/// Defines the options for the `FilesystemPicker`, such as the theme, the name of the root element, etc.
+///
+/// It is used together with `FilesystemPickerDefaultOptions` to set global picker settings.
+///
+/// See also:
+/// * [FilesystemPickerDefaultOptions] for an example of usage.
 @immutable
 class FilesystemPickerOptions with Diagnosticable {
+  /// The default value of the name of the filesystem view root in breadcrumbs.
   static const String defaultRootName = 'Storage';
+
+  /// The default value of the type of filesystem view (folder and files, folder only or files only).
   static const FilesystemType defaultFsType = FilesystemType.all;
+
+  /// The default value of the text of the message that there is no permission to access the storage.
   static const String defaultPermissionText = 'Access to the storage was not granted.';
+
+  /// The default value of the file selection mode (either tapping on the whole tile or only on trailing button).
   static const FileTileSelectMode defaultFileTileSelectMode = FileTileSelectMode.checkButton;
+
+  /// The default value of the option to display the go to the previous level of the file system in the filesystem view.
   static const bool defaultShowGoUp = true;
+
+  /// The default value of the mode of comparing extensions with the `allowedExtensions` list, case-sensitive or case-insensitive.
   static const bool defaultCaseSensitiveFileExtensionComparison = false;
+
+  /// The default dialog options values.
   static const FilesystemPickerDialogOptions defaultDialogOptions = const FilesystemPickerDialogOptions();
+
+  /// The default bottom sheet options values.
   static const FilesystemPickerBottomSheetOptions defaultBottomSheetOptions =
       const FilesystemPickerBottomSheetOptions();
 
   final FilesystemPickerThemeBase? _theme;
+
+  /// The value of the name of the filesystem view root in breadcrumbs.
   final String? rootName;
+
+  /// The value of the type of filesystem view (folder and files, folder only or files only).
   final FilesystemType fsType;
+
+  /// The value of the text of the message that there is no permission to access the storage.
   final String permissionText;
+
+  /// The value of the file selection mode (either tapping on the whole tile or only on trailing button).
   final FileTileSelectMode fileTileSelectMode;
+
+  /// The value of the option to display the go to the previous level of the file system in the filesystem view.
   final bool showGoUp;
+
+  /// The value of the mode of comparing extensions with the `allowedExtensions` list, case-sensitive or case-insensitive.
   final bool caseSensitiveFileExtensionComparison;
 
+  /// The dialog options values.
   final FilesystemPickerDialogOptions dialog;
+
+  /// The bottom sheet options values.
   final FilesystemPickerBottomSheetOptions bottomSheet;
 
+  /// Creates the options for the `FilesystemPicker`, such as the theme, the name of the root element, etc.
   const FilesystemPickerOptions({
     FilesystemPickerThemeBase? theme,
     this.rootName = defaultRootName,
@@ -45,8 +81,10 @@ class FilesystemPickerOptions with Diagnosticable {
     return FilesystemPickerOptions();
   }
 
+  /// Returns the current theme.
   FilesystemPickerThemeBase get theme => _theme ?? FilesystemPickerTheme();
 
+  /// The hash code for this object.
   @override
   int get hashCode {
     return hashValues(
@@ -62,6 +100,7 @@ class FilesystemPickerOptions with Diagnosticable {
     );
   }
 
+  /// The equality operator.
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -78,6 +117,7 @@ class FilesystemPickerOptions with Diagnosticable {
         other.bottomSheet == bottomSheet;
   }
 
+  /// Add additional properties associated with the node.
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
@@ -98,18 +138,40 @@ class FilesystemPickerOptions with Diagnosticable {
   }
 }
 
+/// Sets global default values for the picker options and the default theme.
+///
+/// This widget must be placed above the `Navigator` widget so that its context
+/// is accessible to the picker's dialog/bottom sheet.
+///
+/// Usually it should be placed above the `MaterialApp` or `CupertinoApp` widget.
+///
+/// Example:
+/// ```dart
+/// class MyApp extends StatelessWidget {
+///
+///   @override
+///   Widget build(BuildContext context) {
+///     return FilesystemPickerDefaultOptions(
+///       fileTileSelectMode: FileTileSelectMode.wholeTile,
+///       theme: FilesystemPickerAutoSystemTheme(
+///         ...
+///       ),
+///       child: MaterialApp(
+///         ...
+///       ),
+///     );
+///   }
+///
+/// }
+/// ```
 class FilesystemPickerDefaultOptions extends StatefulWidget {
-  final Widget child;
+  /// Default FilesystemPicker options.
   final FilesystemPickerOptions options;
 
-  /*
-  FilesystemPickerDefaultOptions({
-    Key? key,
-    required this.child,
-    required this.options,
-  }) : super(key: key);
-  */
+  /// The widget below this widget in the tree.
+  final Widget child;
 
+  /// Creates a default picker options widget.
   FilesystemPickerDefaultOptions({
     Key? key,
     required this.child,
@@ -136,15 +198,17 @@ class FilesystemPickerDefaultOptions extends StatefulWidget {
   @override
   State<FilesystemPickerDefaultOptions> createState() => FilesystemPickerDefaultOptionsState();
 
-  @deprecated
-  static FilesystemPickerDefaultOptionsState? maybeOf(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<_FilesystemPickerOptionsScope>()?.options;
+  // @deprecated
+  // static FilesystemPickerDefaultOptionsState? maybeOf(BuildContext context) =>
+  //     context.dependOnInheritedWidgetOfExactType<_FilesystemPickerOptionsScope>()?.options;
 
+  /// Returns the closest [FilesystemPickerOptions] which encloses the given context.
   static FilesystemPickerOptions of(BuildContext context) =>
       (context.dependOnInheritedWidgetOfExactType<_FilesystemPickerOptionsScope>()?.options.defaultOptions.options ??
           FilesystemPickerOptions._defaultOptions(context));
 }
 
+/// State associated with a [FilesystemPickerDefaultOptions] widget.
 class FilesystemPickerDefaultOptionsState extends State<FilesystemPickerDefaultOptions> {
   FilesystemPickerDefaultOptions get defaultOptions => widget;
 

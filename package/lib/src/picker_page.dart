@@ -108,7 +108,7 @@ class FilesystemPicker extends StatefulWidget {
   /// * [showGoUp] specifies the option to display the go to the previous level of the file system in the filesystem view; the default is true.
   /// * [allowedExtensions] specifies a list of file extensions that will be displayed for selection, if empty - files with any extension are displayed. Example: `['.jpg', '.jpeg']`
   /// * [caseSensitiveFileExtensionComparison] specifies the mode of comparing extensions with the `allowedExtensions` list, case-sensitive or case-insensitive; the default is false (case-insensitive).
-  /// * [fileTileSelectMode] specifies how to files can be selected (either tapping on the whole tile or only on trailing button). by default depends on [fsType]
+  /// * [fileTileSelectMode] specifies how to files can be selected (either tapping on the whole tile or only on trailing button), by default depends on [fsType].
   /// * [requestPermission] if specified will be called on initialization to request storage permission. callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler).
   /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the filesystem entity, path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
   /// * [theme] specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.

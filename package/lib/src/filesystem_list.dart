@@ -7,23 +7,59 @@ import 'filesystem_list_tile.dart';
 import 'options/theme/_filelist_theme.dart';
 import 'progress_indicator.dart';
 
+/// The signature of the folder and file list widget filter.
 typedef FilesystemListFilter = bool Function(FileSystemEntity fsEntity, String path, String name);
 
+/// A widget that displays a list of folders and files of the file system.
 class FilesystemList extends StatefulWidget {
+  /// Is the displayed directory the root directory?
+  /// If yes, then the item ".." will not be displayed
+  /// at the beginning of the list to go to the parent directory.
   final bool isRoot;
+
+  /// The displayed directory.
   final Directory rootDirectory;
+
+  /// The type of filesystem view (folder and files, folder only or files only), by default `FilesystemType.all`.
   final FilesystemType fsType;
+
+  /// The color of the folder icon in the list.
   final Color? folderIconColor;
+
+  /// A list of file extensions, only files with the specified extensions will be
+  /// displayed in the list. If the list is not specified or an empty list is specified,
+  /// all files will be displayed. Does not affect the display of subfolders.
   final List<String>? allowedExtensions;
+
+  /// Called when the user has touched a subfolder list item.
   final ValueChanged<Directory> onChange;
+
+  /// Called when a file system item is selected.
   final ValueSelected onSelect;
+
+  /// Specifies how to files can be selected (either tapping on the whole tile or only on trailing button).
   final FileTileSelectMode fileTileSelectMode;
+
+  /// Specifies a list theme in which colors, fonts, icons, etc. can be customized.
   final FilesystemPickerFileListThemeData? theme;
+
+  /// Specifies the option to display the go to the previous level of the file system in
+  /// the filesystem view, the default is true.
   final bool showGoUp;
+
+  /// Specifies the mode of comparing extensions with the `allowedExtensions` list,
+  /// case-sensitive or case-insensitive, by default it is insensitive.
   final bool caseSensitiveFileExtensionComparison;
+
+  /// An object that can be used to control the position to which this list is scrolled.
   final ScrollController? scrollController;
+
+  /// Specifies a callback to filter the displayed folders and files in the list;
+  /// the filesystem entity, path to the file/directory and its name are passed to the callback,
+  /// the callback should return a boolean value - to display the file/directory or not.
   final FilesystemListFilter? itemFilter;
 
+  /// Creates a list widget that displays a list of folders and files of the file system.
   FilesystemList({
     Key? key,
     this.isRoot = false,
@@ -46,14 +82,14 @@ class FilesystemList extends StatefulWidget {
 }
 
 class _FilesystemListState extends State<FilesystemList> {
-  late Directory rootDirectory;
+  late Directory _rootDirectory;
   Future<List<FileSystemEntity>>? _dirContents;
 
   @override
   void initState() {
     super.initState();
 
-    rootDirectory = widget.rootDirectory;
+    _rootDirectory = widget.rootDirectory;
     _loadDirContents();
   }
 
@@ -62,15 +98,15 @@ class _FilesystemListState extends State<FilesystemList> {
     super.didUpdateWidget(oldWidget);
 
     if (!Path.equals(oldWidget.rootDirectory.absolute.path, widget.rootDirectory.absolute.path)) {
-      rootDirectory = widget.rootDirectory;
+      _rootDirectory = widget.rootDirectory;
       _loadDirContents();
     }
   }
 
   void _loadDirContents() async {
-    if (!await rootDirectory.exists()) {
+    if (!await _rootDirectory.exists()) {
       setState(() {
-        _dirContents = Future.error('The "${rootDirectory.path} path does not exist.');
+        _dirContents = Future.error('The "${_rootDirectory.path} path does not exist.');
       });
       return;
     }
@@ -81,12 +117,12 @@ class _FilesystemListState extends State<FilesystemList> {
 
     var files = <FileSystemEntity>[];
     var completer = new Completer<List<FileSystemEntity>>();
-    var lister = rootDirectory.list(recursive: false);
+    var lister = _rootDirectory.list(recursive: false);
     lister.listen(
       (file) {
         if (widget.itemFilter != null) {
-          final localPath = Path.relative(file.path, from: rootDirectory.path);
-          if (!widget.itemFilter!.call(file, rootDirectory.path, localPath)) return;
+          final localPath = Path.relative(file.path, from: _rootDirectory.path);
+          if (!widget.itemFilter!.call(file, _rootDirectory.path, localPath)) return;
         }
 
         if ((widget.fsType != FilesystemType.folder) || (file is Directory)) {

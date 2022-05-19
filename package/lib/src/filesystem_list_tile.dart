@@ -1,22 +1,40 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'common.dart';
 import 'package:path/path.dart' as Path;
-
+import 'common.dart';
 import 'options/theme/_filelist_theme.dart';
 
+/// A single row displaying a folder or file, the corresponding icon and the trailing
+/// selection button for the file (configured in the `fileTileSelectMode` parameter).
+///
+/// Used in conjunction with the `FilesystemList` widget.
 class FilesystemListTile extends StatelessWidget {
-  // static double iconSize = 32;
-
+  /// The type of view (folder and files, folder only or files only), by default `FilesystemType.all`.
   final FilesystemType fsType;
+
+  /// The entity of the file system that should be displayed by the widget.
   final FileSystemEntity item;
+
+  /// The color of the folder icon in the list.
   final Color? folderIconColor;
+
+  /// Called when the user has touched a subfolder list item.
   final ValueChanged<Directory> onChange;
+
+  /// Called when a file system item is selected.
   final ValueSelected onSelect;
+
+  /// Specifies how to files can be selected (either tapping on the whole tile or only on trailing button).
   final FileTileSelectMode fileTileSelectMode;
+
+  /// Specifies a list theme in which colors, fonts, icons, etc. can be customized.
   final FilesystemPickerFileListThemeData? theme;
+
+  /// Specifies the extension comparison mode to determine the icon specified for the file types in the theme,
+  /// case-sensitive or case-insensitive, by default it is insensitive.
   final bool caseSensitiveFileExtensionComparison;
 
+  /// Creates a file system entity list tile.
   FilesystemListTile({
     Key? key,
     this.fsType = FilesystemType.all,
