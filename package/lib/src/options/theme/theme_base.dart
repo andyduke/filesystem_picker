@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import '_context_actions_menu_theme.dart';
 import '_filelist_theme.dart';
 import '_picker_action_theme.dart';
 import '_topbar_theme.dart';
@@ -21,6 +22,8 @@ abstract class FilesystemPickerThemeBase with Diagnosticable {
 
   /// Returns the theme for the picker action.
   FilesystemPickerActionThemeData getPickerAction(BuildContext context);
+
+  FilesystemPickerContextActionsMenuThemeData getContextActionsMenu(BuildContext context);
 
   /// Returns a new picker theme that matches this picker theme but with some values
   /// replaced by the non-null parameters of the given picker theme.

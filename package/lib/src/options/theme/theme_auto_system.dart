@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '_context_actions_menu_theme.dart';
 import 'theme.dart';
 
 /// Defines a theme for the `FilesystemPicker`, which adapts to the light or dark
@@ -64,6 +65,10 @@ class FilesystemPickerAutoSystemTheme with Diagnosticable implements FilesystemP
   /// See [FilesystemPickerTheme.getPickerAction].
   FilesystemPickerActionThemeData getPickerAction(BuildContext context) {
     return getEffectiveTheme(context).getPickerAction(context);
+  }
+
+  FilesystemPickerContextActionsMenuThemeData getContextActionsMenu(BuildContext context) {
+    return getEffectiveTheme(context).getContextActionsMenu(context);
   }
 
   /// See [FilesystemPickerTheme.merge].

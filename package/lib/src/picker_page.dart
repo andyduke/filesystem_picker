@@ -570,6 +570,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
     if (widget.contextActions.length == 1) {
       return [
+        // TODO: wrap with Theme(iconTheme: ContextActionButtonTheme)
         IconButton(
           icon: widget.contextActions.first.icon,
           tooltip: widget.contextActions.first.text,
@@ -577,23 +578,41 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         ),
       ];
     } else {
+      final menuTheme = theme.getContextActionsMenu(context);
       return [
-        PopupMenuButton<FilesystemPickerContextAction>(
-          offset: Offset(0, 48),
-          onSelected: (action) => _callAction(action.action, context, directory),
-          enabled: !hasMessage,
-          itemBuilder: (context) => widget.contextActions
-              .map((e) => PopupMenuItem<FilesystemPickerContextAction>(
-                    value: e,
-                    child: Row(
-                      children: [
-                        e.icon,
-                        const SizedBox(width: 16),
-                        Text(e.text),
-                      ],
-                    ),
-                  ))
-              .toList(),
+        Theme(
+          data: ThemeData(
+            highlightColor: menuTheme.getSelectedBackgroundColor(context), // Selected item background
+            popupMenuTheme: PopupMenuThemeData(
+              color: menuTheme.getBackgroundColor(context), // Menu background
+              textStyle: menuTheme.getTextStyle(context),
+              shape: menuTheme.getShape(context),
+              elevation: menuTheme.getElevation(context),
+            ),
+            // iconTheme: // TODO: ContextActionButtonTheme
+          ),
+          child: PopupMenuButton<FilesystemPickerContextAction>(
+            offset: Offset(0, 48),
+            onSelected: (action) => _callAction(action.action, context, directory),
+            enabled: !hasMessage,
+            itemBuilder: (context) => widget.contextActions
+                .map((e) => PopupMenuItem<FilesystemPickerContextAction>(
+                      value: e,
+                      child: Row(
+                        children: [
+                          Theme(
+                            data: ThemeData(
+                              iconTheme: menuTheme.getIconTheme(context),
+                            ),
+                            child: e.icon,
+                          ),
+                          const SizedBox(width: 16),
+                          Text(e.text),
+                        ],
+                      ),
+                    ))
+                .toList(),
+          ),
         ),
       ];
     }

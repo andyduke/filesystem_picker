@@ -57,31 +57,37 @@ class FilesystemPickerNewFolderContextAction extends FilesystemPickerContextActi
   }) async {
     final result = await showDialog<bool?>(
       context: context,
-      builder: (context) => FilesystemPickerNewFolderDialog(
-        title: title,
-        prompt: prompt,
-        okText: okText,
-        cancelText: cancelText,
-        onDone: (value) async {
-          if (value != null) {
-            try {
-              if (!await _createFolder(path, value)) {
-                final message = (alreadyExistsMessage != null)
-                    ? alreadyExistsMessage.call(value)
-                    : 'The folder with the name "$value" already exists. Please use another name.';
+      builder: (context) => Theme(
+        data: Theme.of(context).copyWith(
+          // TODO: ContextActionsDialogTheme
+          dialogBackgroundColor: Colors.blueGrey.shade100,
+        ),
+        child: FilesystemPickerNewFolderDialog(
+          title: title,
+          prompt: prompt,
+          okText: okText,
+          cancelText: cancelText,
+          onDone: (value) async {
+            if (value != null) {
+              try {
+                if (!await _createFolder(path, value)) {
+                  final message = (alreadyExistsMessage != null)
+                      ? alreadyExistsMessage.call(value)
+                      : 'The folder with the name "$value" already exists. Please use another name.';
 
-                await _showError(context, message);
+                  await _showError(context, message);
+                  return;
+                }
+              } catch (e) {
+                // debugPrint('Error: ${e.runtimeType}');
+
+                await _showError(context, '$e');
                 return;
               }
-            } catch (e) {
-              // debugPrint('Error: ${e.runtimeType}');
-
-              await _showError(context, '$e');
-              return;
             }
-          }
-          Navigator.maybeOf(context)?.pop(true);
-        },
+            Navigator.maybeOf(context)?.pop(true);
+          },
+        ),
       ),
     );
     return (result == true);

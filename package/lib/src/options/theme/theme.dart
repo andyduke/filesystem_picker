@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '_context_actions_menu_theme.dart';
 import '_filelist_theme.dart';
 import '_picker_action_theme.dart';
 import '_topbar_theme.dart';
@@ -10,6 +11,7 @@ export '_topbar_theme.dart';
 export '_breadcrumbs_theme.dart';
 export '_filelist_theme.dart';
 export '_picker_action_theme.dart';
+export '_context_actions_menu_theme.dart';
 export 'theme_base.dart';
 export 'theme_auto_system.dart';
 
@@ -47,11 +49,13 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
     TextStyle? messageTextStyle,
     FilesystemPickerFileListThemeData? fileList,
     FilesystemPickerActionThemeData? pickerAction,
+    FilesystemPickerContextActionsMenuThemeData? contextActionsMenu,
   })  : _backgroundColor = backgroundColor,
         _topBar = topBar,
         _messageTextStyle = messageTextStyle,
         _fileList = fileList,
-        _pickerAction = pickerAction;
+        _pickerAction = pickerAction,
+        _contextActionsMenu = contextActionsMenu;
 
   /// Whether to use unspecified values from `FilesystemPickerDefaultOptions`.
   final bool inherit;
@@ -74,6 +78,8 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
 
   /// Specifies the theme for the picker action.
   final FilesystemPickerActionThemeData? _pickerAction;
+
+  final FilesystemPickerContextActionsMenuThemeData? _contextActionsMenu;
 
   /// Returns the background color of the picker using the `context` to get the default
   /// background color.
@@ -107,6 +113,10 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
     return _pickerAction ?? FilesystemPickerActionThemeData();
   }
 
+  FilesystemPickerContextActionsMenuThemeData getContextActionsMenu(BuildContext context) {
+    return _contextActionsMenu ?? FilesystemPickerContextActionsMenuThemeData();
+  }
+
   /// Returns a new picker theme that matches this picker theme but with some values
   /// replaced by the non-null parameters of the given picker theme.
   ///
@@ -121,6 +131,8 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
       messageTextStyle: base.getMessageTextStyle(context).merge(_messageTextStyle),
       fileList: _fileList?.merge(base.getFileList(context)) ?? base.getFileList(context),
       pickerAction: _pickerAction?.merge(base.getPickerAction(context)) ?? base.getPickerAction(context),
+      contextActionsMenu:
+          _contextActionsMenu?.merge(base.getContextActionsMenu(context)) ?? base.getContextActionsMenu(context),
     );
   }
 
@@ -132,6 +144,7 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
       _messageTextStyle,
       _fileList,
       _pickerAction,
+      _contextActionsMenu,
     );
   }
 
@@ -144,7 +157,8 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
         other._topBar == _topBar &&
         other._messageTextStyle == _messageTextStyle &&
         other._fileList == _fileList &&
-        other._pickerAction == _pickerAction;
+        other._pickerAction == _pickerAction &&
+        other._contextActionsMenu == _contextActionsMenu;
   }
 
   /// Add additional properties associated with the node.
@@ -156,5 +170,8 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
     properties.add(DiagnosticsProperty<FilesystemPickerFileListThemeData>('list', _fileList, defaultValue: null));
     properties
         .add(DiagnosticsProperty<FilesystemPickerActionThemeData>('pickerAction', _pickerAction, defaultValue: null));
+    properties.add(DiagnosticsProperty<FilesystemPickerContextActionsMenuThemeData>(
+        'contextActionsMenu', _contextActionsMenu,
+        defaultValue: null));
   }
 }
