@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '_breadcrumbs_theme.dart';
 
-/// Defines a theme for the `AppBar` widget used in the picker.
+/// Defines a theme for the [AppBar] widget used in the picker.
 ///
 /// Here you can set the color and style of the header, close button and breadcrumbs.
 ///

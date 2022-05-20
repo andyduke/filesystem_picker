@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import '../common.dart';
 import 'theme/theme.dart';
 
-/// Defines the options for the `FilesystemPicker`, such as the theme, the name of the root element, etc.
+/// Defines the options for the [FilesystemPicker], such as the theme, the name of the root element, etc.
 ///
-/// It is used together with `FilesystemPickerDefaultOptions` to set global picker settings.
+/// It is used together with [FilesystemPickerDefaultOptions] to set global picker settings.
 ///
 /// See also:
 /// * [FilesystemPickerDefaultOptions] for an example of usage.
@@ -64,7 +64,7 @@ class FilesystemPickerOptions with Diagnosticable {
   /// The bottom sheet options values.
   final FilesystemPickerBottomSheetOptions bottomSheet;
 
-  /// Creates the options for the `FilesystemPicker`, such as the theme, the name of the root element, etc.
+  /// Creates the options for the [FilesystemPicker], such as the theme, the name of the root element, etc.
   const FilesystemPickerOptions({
     FilesystemPickerThemeBase? theme,
     this.rootName = defaultRootName,

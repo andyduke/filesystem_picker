@@ -13,7 +13,7 @@ typedef FilesystemListFilter = bool Function(FileSystemEntity fsEntity, String p
 /// A widget that displays a list of folders and files of the file system.
 class FilesystemList extends StatefulWidget {
   /// Is the displayed directory the root directory?
-  /// If yes, then the item ".." will not be displayed
+  /// If yes, then the item `..` will not be displayed
   /// at the beginning of the list to go to the parent directory.
   final bool isRoot;
 

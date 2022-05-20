@@ -22,7 +22,7 @@ class FilesystemPickerNewFolderContextAction extends FilesystemPickerContextActi
   final String? dialogCancelText;
 
   /// The interpolator of the error message string when the folder being created already exists.
-  /// Default message: 'The folder with the name "<new folder name>" already exists. Please use another name.'
+  /// Default message: 'The folder with the name "&lt;new folder name&gt;" already exists. Please use another name.'
   final FilesystemPickerNewFolderMessageBuilder? alreadyExistsMessage;
 
   /// Creates an action definition.

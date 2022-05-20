@@ -13,24 +13,24 @@ export '_picker_action_theme.dart';
 export 'theme_base.dart';
 export 'theme_auto_system.dart';
 
-/// Defines a theme for the `FilesystemPicker`, allowing you to set colors, fonts, and icons for it.
+/// Defines a theme for the [FilesystemPicker], allowing you to set colors, fonts, and icons for it.
 ///
-/// You can set a common theme for all picker instances using `FilesystemPickerDefaultOptions` or pass
+/// You can set a common theme for all picker instances using [FilesystemPickerDefaultOptions] or pass
 /// the `theme` directly when opening the picker using the `open`, `openDialog`,
 /// `openBottomSheet` methods.
 ///
 /// When passing a theme to the `open`, `openDialog`, `openBottomSheet` methods, you can set
 /// only some of the parameters, the rest will be used from the theme in
-/// `FilesystemPickerDefaultOptions` or the default theme (this behavior can be changed
+/// [FilesystemPickerDefaultOptions] or the default theme (this behavior can be changed
 /// using the `inherit` parameter).
 ///
-/// You can use `FilesystemPickerAutoSystemTheme` to set a theme that will adapt to the light
+/// You can use [FilesystemPickerAutoSystemTheme] to set a theme that will adapt to the light
 /// and dark presentation of the application (and the operating system).
 @immutable
 class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerThemeBase {
   static const bool _kDefaultInherit = true;
 
-  /// Create a theme that can be used to customize the `FilesystemPicker` presentation
+  /// Create a theme that can be used to customize the [FilesystemPicker] presentation
   ///
   /// * [inherit] whether to use unspecified values from `FilesystemPickerDefaultOptions`; default value is true.
   /// * [backgroundColor] specifies the background color of the picker; if this property is null, then the `scaffoldBackgroundColor` from the current

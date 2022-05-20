@@ -1,7 +1,12 @@
 /// Enumeration with options for display types of the file system.
 enum FilesystemType {
+  /// Folders and files
   all,
+
+  /// Folders only
   folder,
+
+  /// Files only
   file,
 }
 
@@ -14,6 +19,9 @@ typedef RequestPermission = Future<bool> Function();
 /// Mode for selecting files. Either only the button in the trailing
 /// of ListTile, or onTap of the whole ListTile.
 enum FileTileSelectMode {
+  /// The file is selected only by tapping the button to the right of the file name.
   checkButton,
+
+  /// The file is selected by tapping on the entire row of the list.
   wholeTile,
 }
