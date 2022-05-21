@@ -7,6 +7,10 @@
 * Added a theme definition that allows you to customize each part of the picker.
 * The `FilesystemPickerDefaultOptions` widget has been added, which allows you to set the default settings and theme for all pickers.
 
+## 2.0.1
+
+* Flutter 3.0 compatibility
+
 ## 2.0.0
 
 * Deprecated theme properties have been replaced with their current counterpart.
