@@ -23,6 +23,8 @@ import 'package:filesystem_picker/filesystem_picker.dart';
 
 You can open picker in three different ways: a fullscreen dialog, a popup dialog, and a bottom sheet dialog.
 
+![](https://github.com/andyduke/filesystem_picker/raw/master/screenshots/types_of_picker.png)
+
 ### Fullscreen Dialog
 
 To open the dialog, use the asynchronous `FilesystemPicker.open` method. The method returns the path to the selected folder or file as a string.
@@ -69,7 +71,13 @@ Additional parameters:
 
 The appearance and behavior of the picker can be highly customized. This can be done by configuring using the parameters of the `open`, `openDialog`, `openBottomSheet` methods, as well as passing the `FilesystemPickerTheme` object to the `theme` parameter.
 
+![](https://github.com/andyduke/filesystem_picker/raw/master/screenshots/picker_customization.png)
+
 Also, using the `FilesystemPickerDefaultOptions` widget, you can set the default settings and theme that will be used when using the `open`, `openDialog`, `openBottomSheet` methods (except for those settings that are set directly in the parameters of these methods).
+
+**Attention**! This widget must be placed above the `Navigator` widget so that its context is accessible to the picker's dialog/bottom sheet.
+
+Usually it should be placed above the `MaterialApp` or `CupertinoApp` widget.
 
 ```dart
 class PickerApp extends StatelessWidget {
@@ -92,7 +100,7 @@ class PickerApp extends StatelessWidget {
 }
 ```
 
-To set up a light and dark theme with automatic switching depending on the `MaterialApp` settings, you can use the `FilesystemPickerAutoSystemTheme` widget.
+To set up a light and dark theme with automatic switching depending on the `MaterialApp` or `CupertinoApp` settings, you can use the `FilesystemPickerAutoSystemTheme` widget.
 
 ```dart
 class PickerApp extends StatelessWidget {
