@@ -1,3 +1,3 @@
 
-[ ] ContextActions Menu Theme
-[ ] ContextActions Dialog Theme
+[+] ContextActions Menu Theme
+[+] ContextActions Dialog Theme
