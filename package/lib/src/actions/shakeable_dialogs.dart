@@ -29,7 +29,8 @@ class ShakeableAnimation extends StatefulWidget {
   State<ShakeableAnimation> createState() => _ShakeableAnimationState();
 }
 
-class _ShakeableAnimationState extends State<ShakeableAnimation> with SingleTickerProviderStateMixin {
+class _ShakeableAnimationState extends State<ShakeableAnimation>
+    with SingleTickerProviderStateMixin {
   late final _controller = AnimationController(
     vsync: this,
     duration: widget.duration,

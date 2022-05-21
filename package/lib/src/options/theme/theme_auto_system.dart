@@ -7,7 +7,9 @@ import 'theme.dart';
 /// Defines a theme for the `FilesystemPicker`, which adapts to the light or dark
 /// theme of the application.
 @immutable
-class FilesystemPickerAutoSystemTheme with Diagnosticable implements FilesystemPickerThemeBase {
+class FilesystemPickerAutoSystemTheme
+    with Diagnosticable
+    implements FilesystemPickerThemeBase {
   static const bool _kDefaultInherit = true;
 
   /// Create an adaptive theme that can be used to customize the `FilesystemPicker` presentation
@@ -35,9 +37,10 @@ class FilesystemPickerAutoSystemTheme with Diagnosticable implements FilesystemP
   FilesystemPickerThemeBase getEffectiveTheme(BuildContext context) {
     final brightness = getBrightness(context);
 
-    final FilesystemPickerThemeBase effectiveTheme = (brightness == Brightness.light)
-        ? (lightTheme ?? FilesystemPickerTheme())
-        : (darkTheme ?? FilesystemPickerTheme());
+    final FilesystemPickerThemeBase effectiveTheme =
+        (brightness == Brightness.light)
+            ? (lightTheme ?? FilesystemPickerTheme())
+            : (darkTheme ?? FilesystemPickerTheme());
 
     return effectiveTheme;
   }
@@ -67,16 +70,22 @@ class FilesystemPickerAutoSystemTheme with Diagnosticable implements FilesystemP
     return getEffectiveTheme(context).getPickerAction(context);
   }
 
-  FilesystemPickerContextActionsThemeData getContextActions(BuildContext context) {
+  FilesystemPickerContextActionsThemeData getContextActions(
+      BuildContext context) {
     return getEffectiveTheme(context).getContextActions(context);
   }
 
   /// See [FilesystemPickerTheme.merge].
-  FilesystemPickerThemeBase merge(BuildContext context, FilesystemPickerThemeBase? base) {
+  FilesystemPickerThemeBase merge(
+      BuildContext context, FilesystemPickerThemeBase? base) {
     if (inherit && base is FilesystemPickerAutoSystemTheme) {
       return FilesystemPickerAutoSystemTheme(
-        lightTheme: (lightTheme?.merge(context, base.lightTheme) as FilesystemPickerTheme?) ?? base.lightTheme,
-        darkTheme: (darkTheme?.merge(context, base.darkTheme) as FilesystemPickerTheme?) ?? base.darkTheme,
+        lightTheme: (lightTheme?.merge(context, base.lightTheme)
+                as FilesystemPickerTheme?) ??
+            base.lightTheme,
+        darkTheme: (darkTheme?.merge(context, base.darkTheme)
+                as FilesystemPickerTheme?) ??
+            base.darkTheme,
       );
     }
 

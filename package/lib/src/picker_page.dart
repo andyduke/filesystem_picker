@@ -79,7 +79,8 @@ class FilesystemPicker extends StatefulWidget {
           title: title,
           folderIconColor: folderIconColor,
           allowedExtensions: allowedExtensions,
-          caseSensitiveFileExtensionComparison: caseSensitiveFileExtensionComparison,
+          caseSensitiveFileExtensionComparison:
+              caseSensitiveFileExtensionComparison,
           onSelect: (String value) {
             Navigator.of(context).pop<String>(value);
           },
@@ -157,7 +158,8 @@ class FilesystemPicker extends StatefulWidget {
           title: title,
           folderIconColor: folderIconColor,
           allowedExtensions: allowedExtensions,
-          caseSensitiveFileExtensionComparison: caseSensitiveFileExtensionComparison,
+          caseSensitiveFileExtensionComparison:
+              caseSensitiveFileExtensionComparison,
           onSelect: (String value) {
             Navigator.of(context).pop<String>(value);
           },
@@ -245,7 +247,8 @@ class FilesystemPicker extends StatefulWidget {
       isScrollControlled: true,
       constraints: constraints ?? options.bottomSheet.constraints,
       builder: (context) => DraggableScrollableSheet(
-        initialChildSize: initialChildSize ?? options.bottomSheet.initialChildSize,
+        initialChildSize:
+            initialChildSize ?? options.bottomSheet.initialChildSize,
         minChildSize: minChildSize ?? options.bottomSheet.minChildSize,
         maxChildSize: maxChildSize ?? options.bottomSheet.maxChildSize,
         expand: false,
@@ -260,7 +263,8 @@ class FilesystemPicker extends StatefulWidget {
           title: title,
           folderIconColor: folderIconColor,
           allowedExtensions: allowedExtensions,
-          caseSensitiveFileExtensionComparison: caseSensitiveFileExtensionComparison,
+          caseSensitiveFileExtensionComparison:
+              caseSensitiveFileExtensionComparison,
           onSelect: (String value) {
             Navigator.of(context).pop<String>(value);
           },
@@ -399,14 +403,17 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   String? get permissionText => widget.permissionText ?? options.permissionText;
 
-  FileTileSelectMode get fileTileSelectMode => widget.fileTileSelectMode ?? options.fileTileSelectMode;
+  FileTileSelectMode get fileTileSelectMode =>
+      widget.fileTileSelectMode ?? options.fileTileSelectMode;
 
   bool get showGoUp => widget.showGoUp ?? options.showGoUp;
 
   bool get caseSensitiveFileExtensionComparison =>
-      widget.caseSensitiveFileExtensionComparison ?? options.caseSensitiveFileExtensionComparison;
+      widget.caseSensitiveFileExtensionComparison ??
+      options.caseSensitiveFileExtensionComparison;
 
-  FilesystemPickerThemeBase get theme => (widget.theme?.merge(context, options.theme) ?? options.theme);
+  FilesystemPickerThemeBase get theme =>
+      (widget.theme?.merge(context, options.theme) ?? options.theme);
 
   Key _fileListKey = UniqueKey();
 
@@ -454,12 +461,15 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   void _setDirectory(Directory value) {
     directory = value;
 
-    String dirPath = Path.relative(directory.path, from: Path.dirname(widget.rootDirectory.path));
+    String dirPath = Path.relative(directory.path,
+        from: Path.dirname(widget.rootDirectory.path));
     final List<String> items = dirPath.split(Platform.pathSeparator);
     pathItems = [];
 
     String rootItem = items.first;
-    String rootPath = Path.dirname(widget.rootDirectory.path) + Platform.pathSeparator + rootItem;
+    String rootPath = Path.dirname(widget.rootDirectory.path) +
+        Platform.pathSeparator +
+        rootItem;
     pathItems.add(_PathItem(path: rootPath, text: rootName ?? rootItem));
     items.removeAt(0);
 
@@ -470,9 +480,10 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       pathItems.add(_PathItem(path: path, text: item));
     }
 
-    directoryName = ((directory.path == widget.rootDirectory.path) && (rootName != null))
-        ? rootName
-        : Path.basename(directory.path);
+    directoryName =
+        ((directory.path == widget.rootDirectory.path) && (rootName != null))
+            ? rootName
+            : Path.basename(directory.path);
   }
 
   void _changeDirectory(Directory value) {
@@ -499,7 +510,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     });
   }
 
-  Widget _buildBar(BuildContext context, FilesystemPickerActionThemeData theme) {
+  Widget _buildBar(
+      BuildContext context, FilesystemPickerActionThemeData theme) {
     final pickerIconTheme = theme.getCheckIconTheme(context);
     final foregroundColor = (!permissionRequesting && permissionAllowed)
         ? theme.getForegroundColor(context)
@@ -525,20 +537,24 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
               size: pickerIconTheme.size,
             ),
             label: (widget.pickText != null)
-                ? Text(widget.pickText!, style: theme.getTextStyle(context, foregroundColor))
+                ? Text(widget.pickText!,
+                    style: theme.getTextStyle(context, foregroundColor))
                 : const SizedBox(),
-            onPressed: (!permissionRequesting && permissionAllowed && isValidDirectory)
-                ? () => widget.onSelect(directory.absolute.path)
-                : null,
+            onPressed:
+                (!permissionRequesting && permissionAllowed && isValidDirectory)
+                    ? () => widget.onSelect(directory.absolute.path)
+                    : null,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildFAB(BuildContext context, FilesystemPickerActionThemeData theme) {
-    final onPressed =
-        (!permissionRequesting && permissionAllowed) ? () => widget.onSelect(directory.absolute.path) : null;
+  Widget _buildFAB(
+      BuildContext context, FilesystemPickerActionThemeData theme) {
+    final onPressed = (!permissionRequesting && permissionAllowed)
+        ? () => widget.onSelect(directory.absolute.path)
+        : null;
 
     if (widget.pickText != null) {
       return FloatingActionButton.extended(
@@ -562,7 +578,10 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   List<BreadcrumbItem<String>> _getBreadcrumbs() {
     return (!permissionRequesting && permissionAllowed)
-        ? pathItems.map((path) => BreadcrumbItem<String>(text: path.text, data: path.path)).toList(growable: false)
+        ? pathItems
+            .map((path) =>
+                BreadcrumbItem<String>(text: path.text, data: path.path))
+            .toList(growable: false)
         : [];
   }
 
@@ -584,7 +603,10 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
           child: IconButton(
             icon: widget.contextActions.first.icon,
             tooltip: widget.contextActions.first.text,
-            onPressed: !hasMessage ? () => _callAction(widget.contextActions.first, context, directory) : null,
+            onPressed: !hasMessage
+                ? () =>
+                    _callAction(widget.contextActions.first, context, directory)
+                : null,
           ),
         ),
       ];
@@ -592,7 +614,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       return [
         Theme(
           data: ThemeData(
-            highlightColor: menuTheme.getHighlightBackgroundColor(context), // Selected item background
+            highlightColor: menuTheme.getHighlightBackgroundColor(
+                context), // Selected item background
             popupMenuTheme: PopupMenuThemeData(
               color: menuTheme.getBackgroundColor(context), // Menu background
               textStyle: menuTheme.getTextStyle(context),
@@ -628,7 +651,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     }
   }
 
-  Future<void> _callAction(FilesystemPickerContextAction action, BuildContext context, Directory path) async {
+  Future<void> _callAction(FilesystemPickerContextAction action,
+      BuildContext context, Directory path) async {
     final result = await action.call(context, path);
     if (result) {
       _reloadList();
@@ -662,7 +686,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       systemOverlayStyle: systemOverlayStyle,
 
       // Props
-      title: Text(widget.title ?? directoryName ?? '', style: titleTextStyle?.copyWith(color: foregroundColor)),
+      title: Text(widget.title ?? directoryName ?? '',
+          style: titleTextStyle?.copyWith(color: foregroundColor)),
       leading: IconButton(
         iconSize: iconTheme?.size ?? _defaultTopBarIconSize,
         icon: Icon(Icons.close),
@@ -685,11 +710,13 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     final hasMessage = !permissionAllowed || (errorMessage != null);
 
     final Widget body = (!initialized || permissionRequesting || loading)
-        ? FilesystemProgressIndicator(theme: effectiveTheme.getFileList(context))
+        ? FilesystemProgressIndicator(
+            theme: effectiveTheme.getFileList(context))
         : (!hasMessage
             ? FilesystemList(
                 key: _fileListKey,
-                isRoot: (Path.equals(directory.absolute.path, widget.rootDirectory.absolute.path)),
+                isRoot: (Path.equals(directory.absolute.path,
+                    widget.rootDirectory.absolute.path)),
                 rootDirectory: directory,
                 fsType: fsType,
                 folderIconColor: widget.folderIconColor,
@@ -700,14 +727,18 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                 itemFilter: widget.itemFilter,
                 theme: effectiveTheme.getFileList(context),
                 showGoUp: showGoUp,
-                caseSensitiveFileExtensionComparison: caseSensitiveFileExtensionComparison,
+                caseSensitiveFileExtensionComparison:
+                    caseSensitiveFileExtensionComparison,
                 scrollController: widget.scrollController,
               )
             : Container(
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(20),
-                child: Text(errorMessage ?? permissionText ?? options.permissionText,
-                    textScaleFactor: effectiveTheme.getFileList(context).getTextScaleFactor(context, true)),
+                child: Text(
+                    errorMessage ?? permissionText ?? options.permissionText,
+                    textScaleFactor: effectiveTheme
+                        .getFileList(context)
+                        .getTextScaleFactor(context, true)),
               ));
 
     return Scaffold(
@@ -718,13 +749,16 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       body: SizedBox.expand(child: body),
 
       // Picker Action
-      floatingActionButton: (pickerActionTheme.isFABMode && (fsType == FilesystemType.folder))
-          ? _buildFAB(context, pickerActionTheme)
-          : null,
-      floatingActionButtonLocation: pickerActionTheme.getFloatingButtonLocation(context),
-      bottomNavigationBar: (pickerActionTheme.isBarMode && (fsType == FilesystemType.folder))
-          ? _buildBar(context, pickerActionTheme)
-          : null,
+      floatingActionButton:
+          (pickerActionTheme.isFABMode && (fsType == FilesystemType.folder))
+              ? _buildFAB(context, pickerActionTheme)
+              : null,
+      floatingActionButtonLocation:
+          pickerActionTheme.getFloatingButtonLocation(context),
+      bottomNavigationBar:
+          (pickerActionTheme.isBarMode && (fsType == FilesystemType.folder))
+              ? _buildBar(context, pickerActionTheme)
+              : null,
     );
   }
 }

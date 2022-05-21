@@ -22,7 +22,8 @@ enum FilesystemPickerActionLocation {
 @immutable
 class FilesystemPickerActionThemeData with Diagnosticable {
   /// The default type and location of the button.
-  static const FilesystemPickerActionLocation defaultLocation = FilesystemPickerActionLocation.barCenter;
+  static const FilesystemPickerActionLocation defaultLocation =
+      FilesystemPickerActionLocation.barCenter;
 
   /// The default icon size.
   static const double defaultCheckIconSize = 24;
@@ -82,7 +83,8 @@ class FilesystemPickerActionThemeData with Diagnosticable {
   /// If no value is set in the theme, then the [colorScheme.onBackground] from the
   /// current [Theme] is returned (the app theme is taken from the `context`).
   Color? getForegroundColor(BuildContext context, [Color? color]) {
-    final effectiveValue = color ?? foregroundColor ?? Theme.of(context).colorScheme.onBackground;
+    final effectiveValue =
+        color ?? foregroundColor ?? Theme.of(context).colorScheme.onBackground;
     return effectiveValue;
   }
 
@@ -91,7 +93,9 @@ class FilesystemPickerActionThemeData with Diagnosticable {
   /// If no value is set in the theme, the [foregroundColor] is returned with opacity 0.6
   /// (the app theme is taken from the `context`).
   Color? getDisabledForegroundColor(BuildContext context, [Color? color]) {
-    final effectiveValue = color ?? disabledForegroundColor ?? getForegroundColor(context)?.withOpacity(0.6);
+    final effectiveValue = color ??
+        disabledForegroundColor ??
+        getForegroundColor(context)?.withOpacity(0.6);
     return effectiveValue;
   }
 
@@ -100,7 +104,8 @@ class FilesystemPickerActionThemeData with Diagnosticable {
   /// If no value is set in the theme, then the [primaryColor] from the
   /// current [Theme] is returned (the app theme is taken from the `context`).
   Color getBackgroundColor(BuildContext context, [Color? color]) {
-    final effectiveValue = color ?? backgroundColor ?? Theme.of(context).primaryColor;
+    final effectiveValue =
+        color ?? backgroundColor ?? Theme.of(context).primaryColor;
     return effectiveValue;
   }
 
@@ -128,14 +133,18 @@ class FilesystemPickerActionThemeData with Diagnosticable {
   /// (the app theme is taken from the `context`).
   TextStyle? getTextStyle(BuildContext context, [Color? color]) {
     final theme = Theme.of(context);
-    final effectiveTextStyle = (theme.textTheme.bodyText1 ?? TextStyle()).copyWith(color: color).merge(textStyle);
+    final effectiveTextStyle = (theme.textTheme.bodyText1 ?? TextStyle())
+        .copyWith(color: color)
+        .merge(textStyle);
     return effectiveTextStyle;
   }
 
   /// Returns the icon to display in the button.
   IconData getCheckIcon(BuildContext context) {
-    final effectiveValue =
-        checkIcon ?? ((location == FilesystemPickerActionLocation.barCenter) ? Icons.check_circle : Icons.check);
+    final effectiveValue = checkIcon ??
+        ((location == FilesystemPickerActionLocation.barCenter)
+            ? Icons.check_circle
+            : Icons.check);
     return effectiveValue;
   }
 
@@ -149,7 +158,8 @@ class FilesystemPickerActionThemeData with Diagnosticable {
 
   /// Returns the location of the floating button, depending on the [location] parameter.
   /// If `barCenter` is set in [location], it returns `null`.
-  FloatingActionButtonLocation? getFloatingButtonLocation(BuildContext context) {
+  FloatingActionButtonLocation? getFloatingButtonLocation(
+      BuildContext context) {
     switch (location) {
       case FilesystemPickerActionLocation.barCenter:
         return null;
@@ -179,7 +189,8 @@ class FilesystemPickerActionThemeData with Diagnosticable {
     return FilesystemPickerActionThemeData(
       location: _location ?? base.location,
       foregroundColor: foregroundColor ?? base.foregroundColor,
-      disabledForegroundColor: disabledForegroundColor ?? base.disabledForegroundColor,
+      disabledForegroundColor:
+          disabledForegroundColor ?? base.disabledForegroundColor,
       backgroundColor: backgroundColor ?? base.backgroundColor,
       elevation: elevation ?? base.elevation,
       shape: shape ?? base.shape,

@@ -8,7 +8,8 @@ import 'options/theme/_filelist_theme.dart';
 import 'progress_indicator.dart';
 
 /// The signature of the folder and file list widget filter.
-typedef FilesystemListFilter = bool Function(FileSystemEntity fsEntity, String path, String name);
+typedef FilesystemListFilter = bool Function(
+    FileSystemEntity fsEntity, String path, String name);
 
 /// A widget that displays a list of folders and files of the file system.
 class FilesystemList extends StatefulWidget {
@@ -97,7 +98,8 @@ class _FilesystemListState extends State<FilesystemList> {
   void didUpdateWidget(covariant FilesystemList oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (!Path.equals(oldWidget.rootDirectory.absolute.path, widget.rootDirectory.absolute.path)) {
+    if (!Path.equals(oldWidget.rootDirectory.absolute.path,
+        widget.rootDirectory.absolute.path)) {
       _rootDirectory = widget.rootDirectory;
       _loadDirContents();
     }
@@ -106,14 +108,18 @@ class _FilesystemListState extends State<FilesystemList> {
   void _loadDirContents() async {
     if (!await _rootDirectory.exists()) {
       setState(() {
-        _dirContents = Future.error('The "${_rootDirectory.path} path does not exist.');
+        _dirContents =
+            Future.error('The "${_rootDirectory.path} path does not exist.');
       });
       return;
     }
 
-    final List<String>? allowedExtensions = widget.caseSensitiveFileExtensionComparison
-        ? widget.allowedExtensions
-        : widget.allowedExtensions?.map((e) => e.toLowerCase()).toList(growable: false);
+    final List<String>? allowedExtensions =
+        widget.caseSensitiveFileExtensionComparison
+            ? widget.allowedExtensions
+            : widget.allowedExtensions
+                ?.map((e) => e.toLowerCase())
+                .toList(growable: false);
 
     var files = <FileSystemEntity>[];
     var completer = new Completer<List<FileSystemEntity>>();
@@ -122,11 +128,14 @@ class _FilesystemListState extends State<FilesystemList> {
       (file) {
         if (widget.itemFilter != null) {
           final localPath = Path.relative(file.path, from: _rootDirectory.path);
-          if (!widget.itemFilter!.call(file, _rootDirectory.path, localPath)) return;
+          if (!widget.itemFilter!.call(file, _rootDirectory.path, localPath))
+            return;
         }
 
         if ((widget.fsType != FilesystemType.folder) || (file is Directory)) {
-          if ((file is File) && (allowedExtensions != null) && (allowedExtensions.length > 0)) {
+          if ((file is File) &&
+              (allowedExtensions != null) &&
+              (allowedExtensions.length > 0)) {
             String ext = Path.extension(file.path);
             if (!widget.caseSensitiveFileExtensionComparison) {
               ext = ext.toLowerCase();
@@ -157,7 +166,8 @@ class _FilesystemListState extends State<FilesystemList> {
     });
   }
 
-  InkWell _upNavigation(BuildContext context, FilesystemPickerFileListThemeData theme) {
+  InkWell _upNavigation(
+      BuildContext context, FilesystemPickerFileListThemeData theme) {
     final iconTheme = theme.getUpIconTheme(context);
 
     return InkWell(
@@ -174,7 +184,8 @@ class _FilesystemListState extends State<FilesystemList> {
         ),
       ),
       onTap: () {
-        final li = this.widget.rootDirectory.path.split(Platform.pathSeparator)..removeLast();
+        final li = this.widget.rootDirectory.path.split(Platform.pathSeparator)
+          ..removeLast();
         widget.onChange(Directory(li.join(Platform.pathSeparator)));
       },
     );
@@ -184,8 +195,10 @@ class _FilesystemListState extends State<FilesystemList> {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: _dirContents,
-      builder: (BuildContext context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
-        final effectiveTheme = widget.theme ?? FilesystemPickerFileListThemeData();
+      builder: (BuildContext context,
+          AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+        final effectiveTheme =
+            widget.theme ?? FilesystemPickerFileListThemeData();
 
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
@@ -193,20 +206,23 @@ class _FilesystemListState extends State<FilesystemList> {
               padding: const EdgeInsets.all(16.0),
               child: Center(
                 child: Text('Error loading file list: ${snapshot.error}',
-                    textScaleFactor: effectiveTheme.getTextScaleFactor(context, true)),
+                    textScaleFactor:
+                        effectiveTheme.getTextScaleFactor(context, true)),
               ),
             );
           } else if (snapshot.hasData) {
             return ListView.builder(
               controller: widget.scrollController,
               shrinkWrap: true,
-              itemCount: snapshot.data!.length + (widget.showGoUp ? (widget.isRoot ? 0 : 1) : 0),
+              itemCount: snapshot.data!.length +
+                  (widget.showGoUp ? (widget.isRoot ? 0 : 1) : 0),
               itemBuilder: (BuildContext context, int index) {
                 if (widget.showGoUp && !widget.isRoot && index == 0) {
                   return _upNavigation(context, effectiveTheme);
                 }
 
-                final item = snapshot.data![index - (widget.showGoUp ? (widget.isRoot ? 0 : 1) : 0)];
+                final item = snapshot.data![
+                    index - (widget.showGoUp ? (widget.isRoot ? 0 : 1) : 0)];
                 return FilesystemListTile(
                   fsType: widget.fsType,
                   item: item,
@@ -215,7 +231,8 @@ class _FilesystemListState extends State<FilesystemList> {
                   onSelect: widget.onSelect,
                   fileTileSelectMode: widget.fileTileSelectMode,
                   theme: effectiveTheme,
-                  caseSensitiveFileExtensionComparison: widget.caseSensitiveFileExtensionComparison,
+                  caseSensitiveFileExtensionComparison:
+                      widget.caseSensitiveFileExtensionComparison,
                 );
               },
             );

@@ -11,10 +11,12 @@ class FilesystemProgressIndicator extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<FilesystemProgressIndicator> createState() => _FilesystemProgressIndicatorState();
+  State<FilesystemProgressIndicator> createState() =>
+      _FilesystemProgressIndicatorState();
 }
 
-class _FilesystemProgressIndicatorState extends State<FilesystemProgressIndicator> {
+class _FilesystemProgressIndicatorState
+    extends State<FilesystemProgressIndicator> {
   static const double _defaultSize = 32;
   static const double _defaultPadding = 8;
   static const Duration _delay = const Duration(milliseconds: 100);

@@ -17,7 +17,8 @@ class FilesystemPickerContextActionsButtonThemeData with Diagnosticable {
   /// Returns the theme for the button icon.
   IconThemeData getIconTheme(BuildContext context) {
     final effectiveValue = IconThemeData(
-      color: Theme.of(context).appBarTheme.foregroundColor ?? Theme.of(context).primaryTextTheme.headline6?.color,
+      color: Theme.of(context).appBarTheme.foregroundColor ??
+          Theme.of(context).primaryTextTheme.headline6?.color,
     ).merge(iconTheme);
     return effectiveValue;
   }
@@ -26,7 +27,8 @@ class FilesystemPickerContextActionsButtonThemeData with Diagnosticable {
   /// replaced by the non-null parameters of the given theme.
   ///
   /// If the given theme is null, simply returns this theme.
-  FilesystemPickerContextActionsButtonThemeData merge(FilesystemPickerContextActionsButtonThemeData? base) {
+  FilesystemPickerContextActionsButtonThemeData merge(
+      FilesystemPickerContextActionsButtonThemeData? base) {
     if (base == null) return this;
 
     return FilesystemPickerContextActionsButtonThemeData(

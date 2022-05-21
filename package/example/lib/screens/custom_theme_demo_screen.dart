@@ -55,7 +55,10 @@ class CustomThemeDemoScreen extends StatelessWidget {
           iconSize: 32,
           folderIcon: Icons.folder_open,
           folderIconColor: Colors.orange,
-          folderTextStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: 18, color: Colors.blueGrey.shade700),
+          folderTextStyle: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 18,
+              color: Colors.blueGrey.shade700),
           fileIcon: Icons.description_outlined,
           fileIconColor: Colors.deepOrange,
           fileTextStyle: TextStyle(fontSize: 18, color: Colors.grey.shade700),
@@ -98,7 +101,8 @@ class CustomThemeDemoScreen extends StatelessWidget {
       rootDirectory: rootPath,
       fsType: FilesystemType.folder,
       pickText: 'Select folder',
-      requestPermission: () async => await Permission.storage.request().isGranted,
+      requestPermission: () async =>
+          await Permission.storage.request().isGranted,
       theme: _buildTheme(),
     );
 
@@ -117,7 +121,8 @@ class CustomThemeDemoScreen extends StatelessWidget {
       context: context,
       rootDirectory: rootPath,
       fsType: FilesystemType.file,
-      requestPermission: () async => await Permission.storage.request().isGranted,
+      requestPermission: () async =>
+          await Permission.storage.request().isGranted,
       theme: _buildTheme(),
     );
 
@@ -139,7 +144,8 @@ class CustomThemeDemoScreen extends StatelessWidget {
       rootDirectory: rootPath,
       fsType: FilesystemType.folder,
       pickText: 'Select folder',
-      requestPermission: () async => await Permission.storage.request().isGranted,
+      requestPermission: () async =>
+          await Permission.storage.request().isGranted,
       constraints: const BoxConstraints(
         maxWidth: 280,
         maxHeight: 460,
@@ -162,7 +168,8 @@ class CustomThemeDemoScreen extends StatelessWidget {
       context: context,
       rootDirectory: rootPath,
       fsType: FilesystemType.file,
-      requestPermission: () async => await Permission.storage.request().isGranted,
+      requestPermission: () async =>
+          await Permission.storage.request().isGranted,
       theme: _buildTheme(),
     );
 
@@ -184,7 +191,8 @@ class CustomThemeDemoScreen extends StatelessWidget {
       rootDirectory: rootPath,
       fsType: FilesystemType.folder,
       pickText: 'Select folder',
-      requestPermission: () async => await Permission.storage.request().isGranted,
+      requestPermission: () async =>
+          await Permission.storage.request().isGranted,
       constraints: const BoxConstraints(
         maxWidth: 280,
         maxHeight: 460,
@@ -207,7 +215,8 @@ class CustomThemeDemoScreen extends StatelessWidget {
       context: context,
       rootDirectory: rootPath,
       fsType: FilesystemType.file,
-      requestPermission: () async => await Permission.storage.request().isGranted,
+      requestPermission: () async =>
+          await Permission.storage.request().isGranted,
       theme: _buildTheme(),
     );
 
@@ -220,7 +229,8 @@ class CustomThemeDemoScreen extends StatelessWidget {
       title: 'Custom Theme Demo',
       bottom: ValueListenableBuilder(
         valueListenable: selectedPath,
-        builder: (context, value, child) => Text('Selected: ${value ?? 'none'}'),
+        builder: (context, value, child) =>
+            Text('Selected: ${value ?? 'none'}'),
       ),
       children: [
         const Heading(text: 'Fullscreen Dialog'),

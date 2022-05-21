@@ -45,13 +45,17 @@ class FilesystemPickerContextActionsMenuThemeData with Diagnosticable {
 
   /// Returns the theme for the menu item icon.
   IconThemeData getIconTheme(BuildContext context) {
-    final effectiveValue = IconThemeData().copyWith(color: getForegroundColor(context)).merge(iconTheme);
+    final effectiveValue = IconThemeData()
+        .copyWith(color: getForegroundColor(context))
+        .merge(iconTheme);
     return effectiveValue;
   }
 
   /// Returns the text style for the menu item.
   TextStyle getTextStyle(BuildContext context) {
-    final effectiveValue = TextStyle().copyWith(color: getForegroundColor(context)).merge(textStyle);
+    final effectiveValue = TextStyle()
+        .copyWith(color: getForegroundColor(context))
+        .merge(textStyle);
     return effectiveValue;
   }
 
@@ -79,7 +83,8 @@ class FilesystemPickerContextActionsMenuThemeData with Diagnosticable {
   /// replaced by the non-null parameters of the given theme.
   ///
   /// If the given theme is null, simply returns this theme.
-  FilesystemPickerContextActionsMenuThemeData merge(FilesystemPickerContextActionsMenuThemeData? base) {
+  FilesystemPickerContextActionsMenuThemeData merge(
+      FilesystemPickerContextActionsMenuThemeData? base) {
     if (base == null) return this;
 
     return FilesystemPickerContextActionsMenuThemeData(
@@ -88,7 +93,8 @@ class FilesystemPickerContextActionsMenuThemeData with Diagnosticable {
       elevation: elevation ?? base.elevation,
       shape: shape ?? base.shape,
       foregroundColor: foregroundColor ?? base.foregroundColor,
-      highlightBackgroundColor: highlightBackgroundColor ?? base.highlightBackgroundColor,
+      highlightBackgroundColor:
+          highlightBackgroundColor ?? base.highlightBackgroundColor,
       backgroundColor: backgroundColor ?? base.backgroundColor,
     );
   }

@@ -28,7 +28,8 @@ class DemoScaffold extends StatelessWidget {
               children: [
                 const BackButton(),
                 Expanded(
-                  child: Text(title, style: Theme.of(context).textTheme.headline6),
+                  child:
+                      Text(title, style: Theme.of(context).textTheme.headline6),
                 ),
               ],
             ),
@@ -40,7 +41,8 @@ class DemoScaffold extends StatelessWidget {
           thumbVisibility: true,
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: sidePadding) + const EdgeInsets.symmetric(vertical: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: sidePadding) +
+                  const EdgeInsets.symmetric(vertical: 16.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: children,
@@ -55,7 +57,8 @@ class DemoScaffold extends StatelessWidget {
                 border: Border(top: BorderSide(color: Colors.black12)),
               ),
               child: Padding(
-                padding: const EdgeInsets.only(top: 16, bottom: 16) + EdgeInsets.symmetric(horizontal: sidePadding),
+                padding: const EdgeInsets.only(top: 16, bottom: 16) +
+                    EdgeInsets.symmetric(horizontal: sidePadding),
                 child: bottom,
               ),
             )

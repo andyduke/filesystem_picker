@@ -25,12 +25,15 @@ class FilesystemPickerDialogOptions with Diagnosticable {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
-    return other is FilesystemPickerDialogOptions && other.constraints == constraints;
+    return other is FilesystemPickerDialogOptions &&
+        other.constraints == constraints;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<BoxConstraints>('constraints', constraints, defaultValue: defaultConstraints));
+    properties.add(DiagnosticsProperty<BoxConstraints>(
+        'constraints', constraints,
+        defaultValue: defaultConstraints));
   }
 }

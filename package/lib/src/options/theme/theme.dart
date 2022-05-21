@@ -31,7 +31,9 @@ export 'theme_auto_system.dart';
 /// You can use [FilesystemPickerAutoSystemTheme] to set a theme that will adapt to the light
 /// and dark presentation of the application (and the operating system).
 @immutable
-class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerThemeBase {
+class FilesystemPickerTheme
+    with Diagnosticable
+    implements FilesystemPickerThemeBase {
   static const bool _kDefaultInherit = true;
 
   /// Create a theme that can be used to customize the [FilesystemPicker] presentation
@@ -91,7 +93,8 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
   /// If no value is set in the theme, then the `scaffoldBackgroundColor` from the
   /// current app theme is returned (the app theme is taken from the `context`).
   Color getBackgroundColor(BuildContext context, [Color? color]) {
-    final effectiveValue = color ?? _backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
+    final effectiveValue =
+        color ?? _backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
     return effectiveValue;
   }
 
@@ -118,7 +121,8 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
   }
 
   /// Returns the theme for the context actions, using `context` to get the defaults.
-  FilesystemPickerContextActionsThemeData getContextActions(BuildContext context) {
+  FilesystemPickerContextActionsThemeData getContextActions(
+      BuildContext context) {
     return _contextActions ?? FilesystemPickerContextActionsThemeData();
   }
 
@@ -126,17 +130,23 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
   /// replaced by the non-null parameters of the given picker theme.
   ///
   /// If the given picker theme is null, simply returns this picker theme.
-  FilesystemPickerThemeBase merge(BuildContext context, FilesystemPickerThemeBase? base) {
+  FilesystemPickerThemeBase merge(
+      BuildContext context, FilesystemPickerThemeBase? base) {
     if (!inherit || base == null) return this;
 
     return FilesystemPickerTheme(
       inherit: false,
       backgroundColor: _backgroundColor ?? base.getBackgroundColor(context),
-      topBar: _topBar?.merge(base.getTopBar(context)) ?? base.getTopBar(context),
-      messageTextStyle: base.getMessageTextStyle(context).merge(_messageTextStyle),
-      fileList: _fileList?.merge(base.getFileList(context)) ?? base.getFileList(context),
-      pickerAction: _pickerAction?.merge(base.getPickerAction(context)) ?? base.getPickerAction(context),
-      contextActions: _contextActions?.merge(base.getContextActions(context)) ?? base.getContextActions(context),
+      topBar:
+          _topBar?.merge(base.getTopBar(context)) ?? base.getTopBar(context),
+      messageTextStyle:
+          base.getMessageTextStyle(context).merge(_messageTextStyle),
+      fileList: _fileList?.merge(base.getFileList(context)) ??
+          base.getFileList(context),
+      pickerAction: _pickerAction?.merge(base.getPickerAction(context)) ??
+          base.getPickerAction(context),
+      contextActions: _contextActions?.merge(base.getContextActions(context)) ??
+          base.getContextActions(context),
     );
   }
 
@@ -169,12 +179,20 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<FilesystemPickerTopBarThemeData>('topBar', _topBar, defaultValue: null));
-    properties.add(DiagnosticsProperty<TextStyle>('permissionMessageTextStyle', _messageTextStyle, defaultValue: null));
-    properties.add(DiagnosticsProperty<FilesystemPickerFileListThemeData>('list', _fileList, defaultValue: null));
-    properties
-        .add(DiagnosticsProperty<FilesystemPickerActionThemeData>('pickerAction', _pickerAction, defaultValue: null));
-    properties.add(DiagnosticsProperty<FilesystemPickerContextActionsThemeData>('contextActions', _contextActions,
+    properties.add(DiagnosticsProperty<FilesystemPickerTopBarThemeData>(
+        'topBar', _topBar,
+        defaultValue: null));
+    properties.add(DiagnosticsProperty<TextStyle>(
+        'permissionMessageTextStyle', _messageTextStyle,
+        defaultValue: null));
+    properties.add(DiagnosticsProperty<FilesystemPickerFileListThemeData>(
+        'list', _fileList,
+        defaultValue: null));
+    properties.add(DiagnosticsProperty<FilesystemPickerActionThemeData>(
+        'pickerAction', _pickerAction,
+        defaultValue: null));
+    properties.add(DiagnosticsProperty<FilesystemPickerContextActionsThemeData>(
+        'contextActions', _contextActions,
         defaultValue: null));
   }
 }

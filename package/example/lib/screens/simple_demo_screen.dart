@@ -26,7 +26,8 @@ class SimpleDemoScreen extends StatelessWidget {
       rootDirectory: rootPath,
       fsType: FilesystemType.folder,
       pickText: 'Select folder',
-      requestPermission: () async => await Permission.storage.request().isGranted,
+      requestPermission: () async =>
+          await Permission.storage.request().isGranted,
     );
 
     selectedPath.value = path;
@@ -44,7 +45,8 @@ class SimpleDemoScreen extends StatelessWidget {
       context: context,
       rootDirectory: rootPath,
       fsType: FilesystemType.file,
-      requestPermission: () async => await Permission.storage.request().isGranted,
+      requestPermission: () async =>
+          await Permission.storage.request().isGranted,
     );
 
     selectedPath.value = path;
@@ -65,7 +67,8 @@ class SimpleDemoScreen extends StatelessWidget {
       rootDirectory: rootPath,
       fsType: FilesystemType.folder,
       pickText: 'Select folder',
-      requestPermission: () async => await Permission.storage.request().isGranted,
+      requestPermission: () async =>
+          await Permission.storage.request().isGranted,
       constraints: const BoxConstraints(
         maxWidth: 280,
         maxHeight: 460,
@@ -87,7 +90,8 @@ class SimpleDemoScreen extends StatelessWidget {
       context: context,
       rootDirectory: rootPath,
       fsType: FilesystemType.file,
-      requestPermission: () async => await Permission.storage.request().isGranted,
+      requestPermission: () async =>
+          await Permission.storage.request().isGranted,
     );
 
     selectedPath.value = path;
@@ -108,7 +112,8 @@ class SimpleDemoScreen extends StatelessWidget {
       rootDirectory: rootPath,
       fsType: FilesystemType.folder,
       pickText: 'Select folder',
-      requestPermission: () async => await Permission.storage.request().isGranted,
+      requestPermission: () async =>
+          await Permission.storage.request().isGranted,
       constraints: const BoxConstraints(
         maxWidth: 280,
         maxHeight: 460,
@@ -130,7 +135,8 @@ class SimpleDemoScreen extends StatelessWidget {
       context: context,
       rootDirectory: rootPath,
       fsType: FilesystemType.file,
-      requestPermission: () async => await Permission.storage.request().isGranted,
+      requestPermission: () async =>
+          await Permission.storage.request().isGranted,
     );
 
     selectedPath.value = path;
@@ -142,7 +148,8 @@ class SimpleDemoScreen extends StatelessWidget {
       title: 'Simple Demo',
       bottom: ValueListenableBuilder(
         valueListenable: selectedPath,
-        builder: (context, value, child) => Text('Selected: ${value ?? 'none'}'),
+        builder: (context, value, child) =>
+            Text('Selected: ${value ?? 'none'}'),
       ),
       children: [
         const Heading(text: 'Fullscreen Dialog'),

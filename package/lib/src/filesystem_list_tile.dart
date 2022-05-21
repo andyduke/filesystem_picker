@@ -47,7 +47,8 @@ class FilesystemListTile extends StatelessWidget {
     this.caseSensitiveFileExtensionComparison = false,
   }) : super(key: key);
 
-  Widget _leading(BuildContext context, FilesystemPickerFileListThemeData theme, bool isFile) {
+  Widget _leading(BuildContext context, FilesystemPickerFileListThemeData theme,
+      bool isFile) {
     if (item is Directory) {
       return Icon(
         theme.getFolderIcon(context),
@@ -60,10 +61,12 @@ class FilesystemListTile extends StatelessWidget {
   }
 
   /// Set the icon for a file
-  Icon _fileIcon(BuildContext context, FilesystemPickerFileListThemeData theme, String filename, bool isFile,
+  Icon _fileIcon(BuildContext context, FilesystemPickerFileListThemeData theme,
+      String filename, bool isFile,
       [Color? color]) {
     final _extension = filename.split(".").last;
-    IconData icon = theme.getFileIcon(context, _extension, caseSensitiveFileExtensionComparison);
+    IconData icon = theme.getFileIcon(
+        context, _extension, caseSensitiveFileExtensionComparison);
 
     return Icon(
       icon,
@@ -72,9 +75,12 @@ class FilesystemListTile extends StatelessWidget {
     );
   }
 
-  Widget? _trailing(BuildContext context, FilesystemPickerFileListThemeData theme, bool isFile) {
+  Widget? _trailing(BuildContext context,
+      FilesystemPickerFileListThemeData theme, bool isFile) {
     final isCheckable = ((fsType == FilesystemType.all) ||
-        ((fsType == FilesystemType.file) && (item is File) && (fileTileSelectMode != FileTileSelectMode.wholeTile)));
+        ((fsType == FilesystemType.file) &&
+            (item is File) &&
+            (fileTileSelectMode != FileTileSelectMode.wholeTile)));
 
     if (isCheckable) {
       final iconTheme = theme.getCheckIconTheme(context);
@@ -95,17 +101,21 @@ class FilesystemListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveTheme = theme ?? FilesystemPickerFileListThemeData();
     final isFile = (fsType == FilesystemType.file) && (item is File);
-    final style = !isFile ? effectiveTheme.getFolderTextStyle(context) : effectiveTheme.getFileTextStyle(context);
+    final style = !isFile
+        ? effectiveTheme.getFolderTextStyle(context)
+        : effectiveTheme.getFileTextStyle(context);
 
     return ListTile(
       key: Key(item.absolute.path),
       leading: _leading(context, effectiveTheme, isFile),
       trailing: _trailing(context, effectiveTheme, isFile),
       title: Text(Path.basename(item.path),
-          style: style, textScaleFactor: effectiveTheme.getTextScaleFactor(context, isFile)),
+          style: style,
+          textScaleFactor: effectiveTheme.getTextScaleFactor(context, isFile)),
       onTap: (item is Directory)
           ? () => onChange(item as Directory)
-          : ((fsType == FilesystemType.file && fileTileSelectMode == FileTileSelectMode.wholeTile)
+          : ((fsType == FilesystemType.file &&
+                  fileTileSelectMode == FileTileSelectMode.wholeTile)
               ? () => onSelect(item.absolute.path)
               : null),
     );

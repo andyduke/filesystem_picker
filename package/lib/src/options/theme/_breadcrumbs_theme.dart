@@ -19,7 +19,8 @@ class BreadcrumbsThemeData with Diagnosticable {
   static const double defaultTrailingSpacing = 70;
 
   /// The default minimum size of the area within which the button may be pressed.
-  static const MaterialTapTargetSize defaultItemTapTargetSize = MaterialTapTargetSize.padded;
+  static const MaterialTapTargetSize defaultItemTapTargetSize =
+      MaterialTapTargetSize.padded;
 
   /// The color of the last (active) item.
   final Color? itemColor;
@@ -86,7 +87,10 @@ class BreadcrumbsThemeData with Diagnosticable {
   /// If no value is set in the theme, the color of the [textTheme] button is returned
   /// (the app theme is taken from the `context`).
   Color getItemColor(BuildContext context, [Color? color]) {
-    final effectiveItemColor = color ?? itemColor ?? Theme.of(context).textTheme.button?.color ?? Color(0xFF000000);
+    final effectiveItemColor = color ??
+        itemColor ??
+        Theme.of(context).textTheme.button?.color ??
+        Color(0xFF000000);
     return effectiveItemColor;
   }
 
@@ -95,7 +99,8 @@ class BreadcrumbsThemeData with Diagnosticable {
   /// If no value is set in the theme, the color of the item is returned with opacity 0.75
   /// (the app theme is taken from the `context`).
   Color getInactiveItemColor(BuildContext context, [Color? color]) {
-    return inactiveItemColor ?? (color ?? getItemColor(context, color)).withOpacity(0.75);
+    return inactiveItemColor ??
+        (color ?? getItemColor(context, color)).withOpacity(0.75);
   }
 
   /// Returns the color of the [separatorIcon].
@@ -103,7 +108,8 @@ class BreadcrumbsThemeData with Diagnosticable {
   /// If no value is set in the theme, the color of the item is returned with opacity 0.45
   /// (the app theme is taken from the `context`).
   Color getSeparatorColor(BuildContext context, [Color? color]) {
-    return separatorColor ?? (color ?? getItemColor(context, color)).withOpacity(0.45);
+    return separatorColor ??
+        (color ?? getItemColor(context, color)).withOpacity(0.45);
   }
 
   /// Returns the minimum size of the area within which the item may be pressed.
@@ -117,7 +123,8 @@ class BreadcrumbsThemeData with Diagnosticable {
   /// If no value is set in the theme, the color of the item is returned with opacity 0.12
   /// (the app theme is taken from the `context`).
   Color getOverlayColor(BuildContext context, [Color? color]) {
-    return overlayColor ?? (color ?? getItemColor(context, color)).withOpacity(0.12);
+    return overlayColor ??
+        (color ?? getItemColor(context, color)).withOpacity(0.12);
   }
 
   /// Returns the separator icon that is placed between the breadcrumb items.

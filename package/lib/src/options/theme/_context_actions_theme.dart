@@ -22,13 +22,15 @@ class FilesystemPickerContextActionsThemeData with Diagnosticable {
   });
 
   /// Returns the theme for the popup menu with a list of actions if more than one action is specified.
-  FilesystemPickerContextActionsMenuThemeData getMenuTheme(BuildContext context) {
+  FilesystemPickerContextActionsMenuThemeData getMenuTheme(
+      BuildContext context) {
     return menuTheme ?? FilesystemPickerContextActionsMenuThemeData();
   }
 
   /// Returns the theme for the action button or the button that opens the popup menu
   /// if more than one action is specified.
-  FilesystemPickerContextActionsButtonThemeData getButtonTheme(BuildContext context) {
+  FilesystemPickerContextActionsButtonThemeData getButtonTheme(
+      BuildContext context) {
     return buttonTheme ?? FilesystemPickerContextActionsButtonThemeData();
   }
 
@@ -36,7 +38,8 @@ class FilesystemPickerContextActionsThemeData with Diagnosticable {
   /// replaced by the non-null parameters of the given theme.
   ///
   /// If the given theme is null, simply returns this theme.
-  FilesystemPickerContextActionsThemeData merge(FilesystemPickerContextActionsThemeData? base) {
+  FilesystemPickerContextActionsThemeData merge(
+      FilesystemPickerContextActionsThemeData? base) {
     if (base == null) return this;
 
     return FilesystemPickerContextActionsThemeData(

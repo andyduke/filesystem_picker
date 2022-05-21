@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 typedef FilesystemPickerNewFolderMessageBuilder = String Function(String value);
 
 /// Defines the action to create a new folder.
-class FilesystemPickerNewFolderContextAction extends FilesystemPickerContextAction {
+class FilesystemPickerNewFolderContextAction
+    extends FilesystemPickerContextAction {
   /// Title of the dialog for creating a new folder.
   final String? dialogTitle;
 
@@ -141,10 +142,12 @@ class FilesystemPickerNewFolderDialog extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<FilesystemPickerNewFolderDialog> createState() => _FilesystemPickerNewFolderDialogState();
+  State<FilesystemPickerNewFolderDialog> createState() =>
+      _FilesystemPickerNewFolderDialogState();
 }
 
-class _FilesystemPickerNewFolderDialogState extends State<FilesystemPickerNewFolderDialog> {
+class _FilesystemPickerNewFolderDialogState
+    extends State<FilesystemPickerNewFolderDialog> {
   final ShakeableController _shakeController = ShakeableController();
   String? _folderName;
 

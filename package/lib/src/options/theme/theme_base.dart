@@ -24,11 +24,13 @@ abstract class FilesystemPickerThemeBase with Diagnosticable {
   /// Returns the theme for the picker action.
   FilesystemPickerActionThemeData getPickerAction(BuildContext context);
 
-  FilesystemPickerContextActionsThemeData getContextActions(BuildContext context);
+  FilesystemPickerContextActionsThemeData getContextActions(
+      BuildContext context);
 
   /// Returns a new picker theme that matches this picker theme but with some values
   /// replaced by the non-null parameters of the given picker theme.
   ///
   /// If the given picker theme is null, simply returns this picker theme.
-  FilesystemPickerThemeBase merge(BuildContext context, FilesystemPickerThemeBase? base);
+  FilesystemPickerThemeBase merge(
+      BuildContext context, FilesystemPickerThemeBase? base);
 }

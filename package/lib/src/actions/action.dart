@@ -2,7 +2,8 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 
 /// Handler of the specified action signature.
-typedef FilesystemPickerContextActionCallback = Future<bool> Function(BuildContext context, Directory path);
+typedef FilesystemPickerContextActionCallback = Future<bool> Function(
+    BuildContext context, Directory path);
 
 /// Defines an action that can be called for the current path, such as "Create Folder".
 class FilesystemPickerContextAction {
