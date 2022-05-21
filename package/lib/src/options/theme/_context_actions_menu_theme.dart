@@ -36,15 +36,22 @@ class FilesystemPickerContextActionsMenuThemeData with Diagnosticable {
     this.backgroundColor,
   });
 
+  Color? getForegroundColor(BuildContext context) {
+    final effectiveColor = foregroundColor ??
+        Theme.of(context).popupMenuTheme.textStyle?.color ??
+        Theme.of(context).textTheme.bodyMedium?.color;
+    return effectiveColor;
+  }
+
   /// Returns the theme for the menu item icon.
   IconThemeData getIconTheme(BuildContext context) {
-    final effectiveValue = IconThemeData().copyWith(color: foregroundColor).merge(iconTheme);
+    final effectiveValue = IconThemeData().copyWith(color: getForegroundColor(context)).merge(iconTheme);
     return effectiveValue;
   }
 
   /// Returns the text style for the menu item.
   TextStyle getTextStyle(BuildContext context) {
-    final effectiveValue = TextStyle().copyWith(color: foregroundColor).merge(textStyle);
+    final effectiveValue = TextStyle().copyWith(color: getForegroundColor(context)).merge(textStyle);
     return effectiveValue;
   }
 

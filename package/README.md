@@ -75,7 +75,7 @@ The appearance and behavior of the picker can be highly customized. This can be 
 
 Also, using the `FilesystemPickerDefaultOptions` widget, you can set the default settings and theme that will be used when using the `open`, `openDialog`, `openBottomSheet` methods (except for those settings that are set directly in the parameters of these methods).
 
-**Attention**! This widget must be placed above the `Navigator` widget so that its context is accessible to the picker's dialog/bottom sheet.
+**Attention!** This widget must be placed above the `Navigator` widget so that its context is accessible to the picker's dialog/bottom sheet.
 
 Usually it should be placed above the `MaterialApp` or `CupertinoApp` widget.
 
@@ -125,6 +125,23 @@ class PickerApp extends StatelessWidget {
   }
 }
 ```
+
+### Context Actions
+
+Using the `contextActions` parameter, you can set actions for the currently displayed folder, for example, "Create Folder".
+
+If there is only one action, then a button for calling this action will be displayed in the upper right corner of the picker. If several actions are set, a pop-up menu button will be displayed.
+
+```dart
+String? path = await FilesystemPicker.open(
+  ...
+  contextActions: [
+    FilesystemPickerNewFolderContextAction(),
+  ],
+);
+```
+
+![](https://github.com/andyduke/filesystem_picker/raw/master/screenshots/context_actions.png)
 
 ### Android permissions
 
