@@ -44,6 +44,7 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
   /// message about lack of access permissions).
   /// * [fileList] specifies the theme for the FilesystemList widget used in the picker.
   /// * [pickerAction] specifies the theme for the picker action.
+  /// * [contextActions] specifies the theme for the context actions.
   const FilesystemPickerTheme({
     this.inherit = _kDefaultInherit,
     Color? backgroundColor,
@@ -81,6 +82,7 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
   /// Specifies the theme for the picker action.
   final FilesystemPickerActionThemeData? _pickerAction;
 
+  /// Specifies the theme for the context actions.
   final FilesystemPickerContextActionsThemeData? _contextActions;
 
   /// Returns the background color of the picker using the `context` to get the default
@@ -115,6 +117,7 @@ class FilesystemPickerTheme with Diagnosticable implements FilesystemPickerTheme
     return _pickerAction ?? FilesystemPickerActionThemeData();
   }
 
+  /// Returns the theme for the context actions, using `context` to get the defaults.
   FilesystemPickerContextActionsThemeData getContextActions(BuildContext context) {
     return _contextActions ?? FilesystemPickerContextActionsThemeData();
   }

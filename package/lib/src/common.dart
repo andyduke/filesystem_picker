@@ -17,7 +17,7 @@ typedef ValueSelected = void Function(String value);
 typedef RequestPermission = Future<bool> Function();
 
 /// Mode for selecting files. Either only the button in the trailing
-/// of ListTile, or onTap of the whole ListTile.
+/// of row, or onTap of the whole row.
 enum FileTileSelectMode {
   /// The file is selected only by tapping the button to the right of the file name.
   checkButton,

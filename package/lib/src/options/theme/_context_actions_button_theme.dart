@@ -1,14 +1,20 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+/// Defines the theme for the action button or the button that opens the popup menu
+/// if more than one action is specified.
 @immutable
 class FilesystemPickerContextActionsButtonThemeData with Diagnosticable {
+  /// The theme for the button icon.
   final IconThemeData? iconTheme;
 
+  /// Creates a theme for the action button or the button that opens the popup menu
+  /// if more than one action is specified.
   const FilesystemPickerContextActionsButtonThemeData({
     this.iconTheme,
   });
 
+  /// Returns the theme for the button icon.
   IconThemeData getIconTheme(BuildContext context) {
     final effectiveValue = IconThemeData(
       color: Theme.of(context).appBarTheme.foregroundColor ?? Theme.of(context).primaryTextTheme.headline6?.color,

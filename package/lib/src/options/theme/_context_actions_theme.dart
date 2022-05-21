@@ -8,18 +8,26 @@ import '_context_actions_menu_theme.dart';
 /// called from the upper-right corner of the picker.
 @immutable
 class FilesystemPickerContextActionsThemeData with Diagnosticable {
+  /// Sets the theme for the popup menu with a list of actions if more than one action is specified.
   final FilesystemPickerContextActionsMenuThemeData? menuTheme;
+
+  /// Sets the theme for the action button or the button that opens the popup menu
+  /// if more than one action is specified.
   final FilesystemPickerContextActionsButtonThemeData? buttonTheme;
 
+  /// Creates a theme that can be used to customize the contextual actions button and popup menu.
   const FilesystemPickerContextActionsThemeData({
     this.menuTheme,
     this.buttonTheme,
   });
 
+  /// Returns the theme for the popup menu with a list of actions if more than one action is specified.
   FilesystemPickerContextActionsMenuThemeData getMenuTheme(BuildContext context) {
     return menuTheme ?? FilesystemPickerContextActionsMenuThemeData();
   }
 
+  /// Returns the theme for the action button or the button that opens the popup menu
+  /// if more than one action is specified.
   FilesystemPickerContextActionsButtonThemeData getButtonTheme(BuildContext context) {
     return buttonTheme ?? FilesystemPickerContextActionsButtonThemeData();
   }

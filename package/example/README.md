@@ -1,16 +1,56 @@
-# filesystem_picker_example
+# FilesystemPicker example
 
-A new Flutter project.
+```dart
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:filesystem_picker/filesystem_picker.dart';
 
-## Getting Started
+void main() {
+  runApp(const PickerApp());
+}
 
-This project is a starting point for a Flutter application.
+class PickerApp extends StatelessWidget {
+  const PickerApp({Key? key}) : super(key: key);
 
-A few resources to get you started if this is your first Flutter project:
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Picker Example',
+      theme: ThemeData(
+        primarySwatch: Colors.teal,
+      ),
+      home: const DemoScreen(),
+    );
+  }
+}
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+class DemoScreen extends StatelessWidget {
+  const DemoScreen({Key? key}) : super(key: key);
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          child: const Text('Pick file'),
+          onPressed: () async {
+            final Directory rootPath = await getTemporaryDirectory();
+            String? path = await FilesystemPicker.open(
+              title: 'Pick file',
+              context: context,
+              rootDirectory: rootPath,
+              fsType: FilesystemType.file,
+              requestPermission: () async => await Permission.storage.request().isGranted,
+            );
+            debugPrint('File: $path');
+          },
+        ),
+      ),
+    );
+  }
+}
+```
+
+See more examples in the `example/lib` folder.

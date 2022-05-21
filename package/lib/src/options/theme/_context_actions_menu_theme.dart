@@ -1,16 +1,31 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+/// Defines the theme for the actions popup menu.
 @immutable
 class FilesystemPickerContextActionsMenuThemeData with Diagnosticable {
+  /// The theme for the menu item icon.
   final IconThemeData? iconTheme;
+
+  /// The text style for the menu item.
   final TextStyle? textStyle;
+
+  /// The elevation of the popup menu.
   final double? elevation;
+
+  /// The shape of the popup menu.
   final ShapeBorder? shape;
+
+  /// The color of the popup menu icon and text.
   final Color? foregroundColor;
+
+  /// The color of the background selection of the popup menu item.
   final Color? highlightBackgroundColor;
+
+  /// The background color of the popup menu.
   final Color? backgroundColor;
 
+  /// Creates a theme for the actions popup menu.
   const FilesystemPickerContextActionsMenuThemeData({
     this.iconTheme,
     this.textStyle,
@@ -21,28 +36,34 @@ class FilesystemPickerContextActionsMenuThemeData with Diagnosticable {
     this.backgroundColor,
   });
 
+  /// Returns the theme for the menu item icon.
   IconThemeData getIconTheme(BuildContext context) {
     final effectiveValue = IconThemeData().copyWith(color: foregroundColor).merge(iconTheme);
     return effectiveValue;
   }
 
+  /// Returns the text style for the menu item.
   TextStyle getTextStyle(BuildContext context) {
     final effectiveValue = TextStyle().copyWith(color: foregroundColor).merge(textStyle);
     return effectiveValue;
   }
 
+  /// Returns the elevation of the popup menu.
   double? getElevation(BuildContext context) {
     return elevation;
   }
 
+  /// Returns the shape of the popup menu.
   ShapeBorder? getShape(BuildContext context) {
     return shape;
   }
 
-  Color? getSelectedBackgroundColor(BuildContext context) {
+  /// Returns the color of the background selection of the popup menu item.
+  Color? getHighlightBackgroundColor(BuildContext context) {
     return highlightBackgroundColor;
   }
 
+  /// Returns the background color of the popup menu.
   Color? getBackgroundColor(BuildContext context) {
     return backgroundColor;
   }
