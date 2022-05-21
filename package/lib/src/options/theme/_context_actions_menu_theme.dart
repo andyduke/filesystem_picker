@@ -8,7 +8,7 @@ class FilesystemPickerContextActionsMenuThemeData with Diagnosticable {
   final double? elevation;
   final ShapeBorder? shape;
   final Color? foregroundColor;
-  final Color? selectedBackgroundColor;
+  final Color? highlightBackgroundColor;
   final Color? backgroundColor;
 
   const FilesystemPickerContextActionsMenuThemeData({
@@ -17,7 +17,7 @@ class FilesystemPickerContextActionsMenuThemeData with Diagnosticable {
     this.elevation,
     this.shape,
     this.foregroundColor,
-    this.selectedBackgroundColor,
+    this.highlightBackgroundColor,
     this.backgroundColor,
   });
 
@@ -40,14 +40,14 @@ class FilesystemPickerContextActionsMenuThemeData with Diagnosticable {
   }
 
   Color? getSelectedBackgroundColor(BuildContext context) {
-    return selectedBackgroundColor;
+    return highlightBackgroundColor;
   }
 
   Color? getBackgroundColor(BuildContext context) {
     return backgroundColor;
   }
 
-  /// Returns a new breadcrumbs theme that matches this theme but with some values
+  /// Returns a new context actions menu theme that matches this theme but with some values
   /// replaced by the non-null parameters of the given theme.
   ///
   /// If the given theme is null, simply returns this theme.
@@ -60,7 +60,7 @@ class FilesystemPickerContextActionsMenuThemeData with Diagnosticable {
       elevation: elevation ?? base.elevation,
       shape: shape ?? base.shape,
       foregroundColor: foregroundColor ?? base.foregroundColor,
-      selectedBackgroundColor: selectedBackgroundColor ?? base.selectedBackgroundColor,
+      highlightBackgroundColor: highlightBackgroundColor ?? base.highlightBackgroundColor,
       backgroundColor: backgroundColor ?? base.backgroundColor,
     );
   }

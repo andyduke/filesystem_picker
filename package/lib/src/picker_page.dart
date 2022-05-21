@@ -568,17 +568,24 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
     final hasMessage = !permissionAllowed || (errorMessage != null);
 
+    final contextActionsTheme = theme.getContextActions(context);
+    final buttonTheme = contextActionsTheme.getButtonTheme(context);
+    final menuTheme = contextActionsTheme.getMenuTheme(context);
+
     if (widget.contextActions.length == 1) {
       return [
-        // TODO: wrap with Theme(iconTheme: ContextActionButtonTheme)
-        IconButton(
-          icon: widget.contextActions.first.icon,
-          tooltip: widget.contextActions.first.text,
-          onPressed: !hasMessage ? () => _callAction(widget.contextActions.first.action, context, directory) : null,
+        Theme(
+          data: ThemeData(
+            iconTheme: buttonTheme.getIconTheme(context),
+          ),
+          child: IconButton(
+            icon: widget.contextActions.first.icon,
+            tooltip: widget.contextActions.first.text,
+            onPressed: !hasMessage ? () => _callAction(widget.contextActions.first, context, directory) : null,
+          ),
         ),
       ];
     } else {
-      final menuTheme = theme.getContextActionsMenu(context);
       return [
         Theme(
           data: ThemeData(
@@ -589,11 +596,11 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
               shape: menuTheme.getShape(context),
               elevation: menuTheme.getElevation(context),
             ),
-            // iconTheme: // TODO: ContextActionButtonTheme
+            iconTheme: buttonTheme.getIconTheme(context),
           ),
           child: PopupMenuButton<FilesystemPickerContextAction>(
             offset: Offset(0, 48),
-            onSelected: (action) => _callAction(action.action, context, directory),
+            onSelected: (action) => _callAction(action, context, directory),
             enabled: !hasMessage,
             itemBuilder: (context) => widget.contextActions
                 .map((e) => PopupMenuItem<FilesystemPickerContextAction>(
@@ -618,7 +625,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     }
   }
 
-  Future<void> _callAction(FilesystemPickerContextActionCallback action, BuildContext context, Directory path) async {
+  Future<void> _callAction(FilesystemPickerContextAction action, BuildContext context, Directory path) async {
     final result = await action.call(context, path);
     if (result) {
       _reloadList();

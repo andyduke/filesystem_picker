@@ -25,6 +25,9 @@ class FilesystemPickerNewFolderContextAction extends FilesystemPickerContextActi
   /// Default message: 'The folder with the name "&lt;new folder name&gt;" already exists. Please use another name.'
   final FilesystemPickerNewFolderMessageBuilder? alreadyExistsMessage;
 
+  /// The theme that is passed to the dialog.
+  final ThemeData? theme;
+
   /// Creates an action definition.
   FilesystemPickerNewFolderContextAction({
     super.icon = const Icon(Icons.create_new_folder),
@@ -34,66 +37,54 @@ class FilesystemPickerNewFolderContextAction extends FilesystemPickerContextActi
     this.dialogOkText,
     this.dialogCancelText,
     this.alreadyExistsMessage,
-  }) : super(
-          action: (context, path) => _createNewFolder(
-            context,
-            path,
-            title: dialogTitle,
-            prompt: dialogPrompt,
-            okText: dialogOkText,
-            cancelText: dialogCancelText,
-            alreadyExistsMessage: alreadyExistsMessage,
-          ),
-        );
+    this.theme,
+  }) : super();
 
-  static Future<bool> _createNewFolder(
-    BuildContext context,
-    Directory path, {
-    String? title,
-    String? prompt,
-    String? okText,
-    String? cancelText,
-    FilesystemPickerNewFolderMessageBuilder? alreadyExistsMessage,
-  }) async {
+  /// Called when the user tapped on a button or menu item of a contextual action.
+  @override
+  Future<bool> call(BuildContext context, Directory path) async {
+    Widget dialog = FilesystemPickerNewFolderDialog(
+      title: dialogTitle,
+      prompt: dialogPrompt,
+      okText: dialogOkText,
+      cancelText: dialogCancelText,
+      onDone: (value) async {
+        if (value != null) {
+          try {
+            if (!await _createFolder(path, value)) {
+              final message = (alreadyExistsMessage != null)
+                  ? alreadyExistsMessage!.call(value)
+                  : 'The folder with the name "$value" already exists. Please use another name.';
+
+              await _showError(context, message);
+              return;
+            }
+          } catch (e) {
+            // debugPrint('Error: ${e.runtimeType}');
+
+            await _showError(context, '$e');
+            return;
+          }
+        }
+        Navigator.maybeOf(context)?.pop(true);
+      },
+    );
+
+    if (theme != null) {
+      dialog = Theme(
+        data: theme!,
+        child: dialog,
+      );
+    }
+
     final result = await showDialog<bool?>(
       context: context,
-      builder: (context) => Theme(
-        data: Theme.of(context).copyWith(
-          // TODO: ContextActionsDialogTheme
-          dialogBackgroundColor: Colors.blueGrey.shade100,
-        ),
-        child: FilesystemPickerNewFolderDialog(
-          title: title,
-          prompt: prompt,
-          okText: okText,
-          cancelText: cancelText,
-          onDone: (value) async {
-            if (value != null) {
-              try {
-                if (!await _createFolder(path, value)) {
-                  final message = (alreadyExistsMessage != null)
-                      ? alreadyExistsMessage.call(value)
-                      : 'The folder with the name "$value" already exists. Please use another name.';
-
-                  await _showError(context, message);
-                  return;
-                }
-              } catch (e) {
-                // debugPrint('Error: ${e.runtimeType}');
-
-                await _showError(context, '$e');
-                return;
-              }
-            }
-            Navigator.maybeOf(context)?.pop(true);
-          },
-        ),
-      ),
+      builder: (context) => dialog,
     );
     return (result == true);
   }
 
-  static Future<void> _showError(BuildContext context, String message) async {
+  Future<void> _showError(BuildContext context, String message) async {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -108,7 +99,7 @@ class FilesystemPickerNewFolderContextAction extends FilesystemPickerContextActi
     );
   }
 
-  static Future<bool> _createFolder(Directory parent, String folderName) async {
+  Future<bool> _createFolder(Directory parent, String folderName) async {
     // debugPrint('Create folder: "$folderName" in "$parent".');
 
     final newDirectory = Directory(p.join(parent.path, folderName));
