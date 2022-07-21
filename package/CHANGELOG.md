@@ -1,4 +1,4 @@
-## 3.0.0-beta.1
+## 3.0.0
 
 * Two new picker display modes: popup dialog and bottom sheet.
 * Added the ability to specify the directory initially displayed in the dialog (must be a child of the `rootDirectory`).
