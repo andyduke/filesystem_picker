@@ -1,3 +1,7 @@
+## 3.0.1
+
+* rootDirectory may be equal to directory. Otherwise it is impossible to select / or c:\
+
 ## 3.0.0
 
 * Two new picker display modes: popup dialog and bottom sheet.
