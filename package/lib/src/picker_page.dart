@@ -432,7 +432,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   Directory get _validInitialDirectory {
     if (widget.directory != null) {
-      if (!Path.isWithin(widget.rootDirectory.path, widget.directory!.path)) {
+      if (widget.rootDirectory.path != widget.directory!.path && !Path.isWithin(widget.rootDirectory.path, widget.directory!.path)) {
         setState(() {
           errorMessage =
               'Invalid directory "${widget.directory!.path}": not contained within the root directory "${widget.rootDirectory.path}".';
