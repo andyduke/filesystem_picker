@@ -1,6 +1,7 @@
-## 3.0.1
+## 3.1.0
 
-* rootDirectory may be equal to directory. Otherwise it is impossible to select / or c:\
+* `rootDirectory` may be equal to directory, otherwise it is impossible to select `/` or `C:\`.
+* Bredcrumbs refactor for better compatibility with desktop OS.
 
 ## 3.0.0
 

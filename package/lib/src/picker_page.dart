@@ -432,7 +432,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   Directory get _validInitialDirectory {
     if (widget.directory != null) {
-      if (widget.rootDirectory.path != widget.directory!.path && !Path.isWithin(widget.rootDirectory.path, widget.directory!.path)) {
+      if (widget.rootDirectory.path != widget.directory!.path &&
+          !Path.isWithin(widget.rootDirectory.path, widget.directory!.path)) {
         setState(() {
           errorMessage =
               'Invalid directory "${widget.directory!.path}": not contained within the root directory "${widget.rootDirectory.path}".';
@@ -461,23 +462,27 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   void _setDirectory(Directory value) {
     directory = value;
 
-    String dirPath = Path.relative(directory.path,
-        from: Path.dirname(widget.rootDirectory.path));
-    final List<String> items = dirPath.split(Platform.pathSeparator);
+    String currentPath = directory.path;
+    String dirPath =
+        Path.relative(currentPath, from: widget.rootDirectory.path);
+    final List<String> items =
+        (dirPath != '.') ? dirPath.split(Platform.pathSeparator) : [];
     pathItems = [];
 
-    String rootItem = items.first;
-    String rootPath = Path.dirname(widget.rootDirectory.path) +
-        Platform.pathSeparator +
-        rootItem;
-    pathItems.add(_PathItem(path: rootPath, text: rootName ?? rootItem));
-    items.removeAt(0);
+    if (items.isNotEmpty) {
+      String rootItem = items.first;
+      String rootPath = widget.rootDirectory.path;
+      pathItems.add(_PathItem(path: rootPath, text: rootName ?? rootItem));
 
-    String path = rootPath;
-
-    for (var item in items) {
-      path += Platform.pathSeparator + item;
-      pathItems.add(_PathItem(path: path, text: item));
+      String path = rootPath;
+      for (var item in items) {
+        path = Path.join(path, item);
+        pathItems.add(_PathItem(path: path, text: item));
+      }
+    } else {
+      pathItems.add(_PathItem(
+          path: widget.rootDirectory.path,
+          text: rootName ?? widget.rootDirectory.path));
     }
 
     directoryName =
