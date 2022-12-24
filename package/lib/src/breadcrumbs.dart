@@ -1,3 +1,5 @@
+import 'package:filesystem_picker/src/desktop_scroller.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'listview_extensions.dart';
 import 'options/theme/_breadcrumbs_theme.dart';
@@ -65,8 +67,7 @@ class Breadcrumbs<T> extends StatelessWidget {
     final effectiveTheme = theme ?? BreadcrumbsThemeData();
     final textStyle = effectiveTheme.getTextStyle(context);
     final activeColor = effectiveTheme.getItemColor(context, textColor);
-    final inactiveColor =
-        effectiveTheme.getInactiveItemColor(context, textColor);
+    final inactiveColor = effectiveTheme.getInactiveItemColor(context, textColor);
     final separatorColor = effectiveTheme.getSeparatorColor(context, textColor);
     final overlayColor = effectiveTheme.getOverlayColor(context, textColor);
 
@@ -86,50 +87,50 @@ class Breadcrumbs<T> extends StatelessWidget {
         child: Container(
           alignment: Alignment.topLeft,
           height: height,
-          child: ListViewExtended.separatedWithHeaderFooter(
-            controller: _scrollController,
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            itemCount: items.length,
-            itemBuilder: (BuildContext context, int index) {
-              final textColor =
-                  (index == (items.length - 1)) ? activeColor : inactiveColor;
+          child: DesktopScroller(
+              scrollController: _scrollController,
+              builder: (context, scrollController) {
+                return ListViewExtended.separatedWithHeaderFooter(
+                  controller: scrollController,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: items.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final textColor = (index == (items.length - 1)) ? activeColor : inactiveColor;
 
-              return TextButton(
-                style: ButtonStyle(
-                  overlayColor: MaterialStateProperty.all(overlayColor),
-                  minimumSize: (effectiveTheme.itemMinimumSize != null)
-                      ? MaterialStateProperty.all(
-                          effectiveTheme.itemMinimumSize)
-                      : null,
-                  padding: (effectiveTheme.itemPadding != null)
-                      ? MaterialStateProperty.all(effectiveTheme.itemPadding)
-                      : null,
-                  tapTargetSize: effectiveTheme.getItemTapTargetSize(context),
-                ),
-                child: Text(
-                  items[index].text,
-                  style: textStyle.copyWith(color: textColor),
-                ),
-                onPressed: () {
-                  items[index].onSelect?.call(items[index].data);
-                  onSelect?.call(items[index].data);
-                },
-              );
-            },
-            separatorBuilder: (_, __) => Align(
-              alignment: Alignment.center,
-              child: Icon(
-                effectiveTheme.getSeparatorIcon(context),
-                color: separatorColor,
-                size: effectiveTheme.getSeparatorIconSize(context),
-              ),
-            ),
-            headerBuilder: (_) =>
-                SizedBox(width: effectiveTheme.getLeadingSpacing(context)),
-            footerBuilder: (_) =>
-                SizedBox(width: effectiveTheme.getTrailingSpacing(context)),
-          ),
+                    return TextButton(
+                      style: ButtonStyle(
+                        overlayColor: MaterialStateProperty.all(overlayColor),
+                        minimumSize: (effectiveTheme.itemMinimumSize != null)
+                            ? MaterialStateProperty.all(effectiveTheme.itemMinimumSize)
+                            : null,
+                        padding: (effectiveTheme.itemPadding != null)
+                            ? MaterialStateProperty.all(effectiveTheme.itemPadding)
+                            : null,
+                        tapTargetSize: effectiveTheme.getItemTapTargetSize(context),
+                      ),
+                      child: Text(
+                        items[index].text,
+                        style: textStyle.copyWith(color: textColor),
+                      ),
+                      onPressed: () {
+                        items[index].onSelect?.call(items[index].data);
+                        onSelect?.call(items[index].data);
+                      },
+                    );
+                  },
+                  separatorBuilder: (_, __) => Align(
+                    alignment: Alignment.center,
+                    child: Icon(
+                      effectiveTheme.getSeparatorIcon(context),
+                      color: separatorColor,
+                      size: effectiveTheme.getSeparatorIconSize(context),
+                    ),
+                  ),
+                  headerBuilder: (_) => SizedBox(width: effectiveTheme.getLeadingSpacing(context)),
+                  footerBuilder: (_) => SizedBox(width: effectiveTheme.getTrailingSpacing(context)),
+                );
+              }),
         ),
       ),
     );
