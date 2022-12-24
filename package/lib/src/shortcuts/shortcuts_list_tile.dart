@@ -4,12 +4,14 @@ import '../options/theme/_filelist_theme.dart';
 
 class FilesystemShortcutListTile extends StatelessWidget {
   final FilesystemShortcut shortcut;
+  final ValueChanged<FilesystemShortcut> onChange;
   final ValueChanged<FilesystemShortcut> onSelect;
   final FilesystemPickerFileListThemeData? theme;
 
   const FilesystemShortcutListTile({
     super.key,
     required this.shortcut,
+    required this.onChange,
     required this.onSelect,
     this.theme,
   });
@@ -45,7 +47,7 @@ class FilesystemShortcutListTile extends StatelessWidget {
       trailing: _trailing(context, effectiveTheme),
       title: Text(shortcut.name,
           style: style, textScaleFactor: effectiveTheme.getTextScaleFactor(context, false /* TODO: !!! */)),
-      onTap: () => onSelect(shortcut),
+      onTap: () => onChange(shortcut),
     );
   }
 }

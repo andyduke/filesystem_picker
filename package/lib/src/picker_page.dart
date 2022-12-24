@@ -457,9 +457,9 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   Directory get _validInitialDirectory {
     assert(rootDirectory != null);
-    assert(directory != null);
 
     if (widget.directory != null) {
+      directory = widget.directory;
       if (rootDirectory!.path != directory!.path && !Path.isWithin(rootDirectory!.path, widget.directory!.path)) {
         setState(() {
           errorMessage =
@@ -471,7 +471,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       }
     }
 
-    return widget.directory ?? rootDirectory!;
+    return directory ?? rootDirectory!;
   }
 
   Future<void> _requestPermission() async {
@@ -819,38 +819,12 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         body = FilesystemShortcutsListView(
           shortcuts: widget.shortcuts,
           onChange: _setShortcut,
+          onSelect: (value) => widget.onSelect(value.path.toString()),
         );
         break;
 
       case _FilesystemPickerViewMode.filesystem:
         body = _buildFilesystemListView(effectiveTheme);
-        /*
-        body = (!initialized || permissionRequesting || loading)
-            ? FilesystemProgressIndicator(theme: effectiveTheme.getFileList(context))
-            : (!hasMessage
-                ? FilesystemList(
-                    key: _fileListKey,
-                    isRoot: (Path.equals(directory.absolute.path, rootDirectory!.absolute.path)),
-                    rootDirectory: directory,
-                    fsType: fsType,
-                    folderIconColor: widget.folderIconColor,
-                    allowedExtensions: widget.allowedExtensions,
-                    onChange: _changeDirectory,
-                    onSelect: widget.onSelect,
-                    fileTileSelectMode: fileTileSelectMode,
-                    itemFilter: widget.itemFilter,
-                    theme: effectiveTheme.getFileList(context),
-                    showGoUp: showGoUp,
-                    caseSensitiveFileExtensionComparison: caseSensitiveFileExtensionComparison,
-                    scrollController: widget.scrollController,
-                  )
-                : Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.all(20),
-                    child: Text(errorMessage ?? permissionText ?? options.permissionText,
-                        textScaleFactor: effectiveTheme.getFileList(context).getTextScaleFactor(context, true)),
-                  ));
-        */
         break;
     }
 

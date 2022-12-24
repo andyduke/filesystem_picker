@@ -8,6 +8,7 @@ class FilesystemShortcutsListView extends StatelessWidget {
   final ScrollController? scrollController;
   final FilesystemPickerFileListThemeData? theme;
   final ValueChanged<FilesystemShortcut> onChange;
+  final ValueChanged<FilesystemShortcut> onSelect;
 
   const FilesystemShortcutsListView({
     super.key,
@@ -15,6 +16,7 @@ class FilesystemShortcutsListView extends StatelessWidget {
     this.scrollController,
     this.theme,
     required this.onChange,
+    required this.onSelect,
   });
 
   @override
@@ -28,7 +30,8 @@ class FilesystemShortcutsListView extends StatelessWidget {
       itemBuilder: (context, index) => FilesystemShortcutListTile(
         shortcut: shortcuts[index],
         theme: effectiveTheme,
-        onSelect: onChange,
+        onChange: onChange,
+        onSelect: onSelect,
       ),
     );
   }
