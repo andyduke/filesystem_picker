@@ -341,6 +341,8 @@ class FilesystemPicker extends StatefulWidget {
 
   final List<FilesystemShortcut> shortcuts;
 
+  final IconButton? closeButton;
+
   /// Creates a file system item selection widget.
   FilesystemPicker({
     Key? key,
@@ -363,6 +365,7 @@ class FilesystemPicker extends StatefulWidget {
     this.scrollController,
     this.contextActions = const [],
     this.shortcuts = const [],
+    this.closeButton,
   })  : assert(rootDirectory != null || shortcuts.isNotEmpty, 'You must specify "rootDirectory" or "shortcuts".'),
         super(key: key);
 
@@ -691,13 +694,16 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
             : Container(
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(20),
-                child: Text(errorMessage ?? permissionText ?? options.permissionText,
-                    textScaleFactor: theme.getFileList(context).getTextScaleFactor(context, true)),
+                child: Text(
+                  errorMessage ?? permissionText ?? options.permissionText,
+                  textScaleFactor: theme.getFileList(context).getTextScaleFactor(context, true),
+                ),
               ));
     return result;
   }
 
   List<Widget>? _buildActions(BuildContext context) {
+    if (viewMode != _FilesystemPickerViewMode.filesystem) return null;
     if (directory == null) return null;
     if (widget.contextActions.isEmpty) return null;
 
@@ -795,10 +801,15 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
       // Props
       title: Text(widget.title ?? directoryName ?? '', style: titleTextStyle?.copyWith(color: foregroundColor)),
-      leading: IconButton(
-        iconSize: iconTheme?.size ?? _defaultTopBarIconSize,
-        icon: Icon(Icons.close),
-        onPressed: () => Navigator.of(context).pop(),
+      leading: IconTheme.merge(
+        data: IconThemeData(
+          size: iconTheme?.size ?? _defaultTopBarIconSize,
+        ),
+        child: widget.closeButton ??
+            IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
       ),
       actions: _buildActions(context),
       bottom: PreferredSize(
@@ -818,6 +829,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       case _FilesystemPickerViewMode.shortcuts:
         body = FilesystemShortcutsListView(
           shortcuts: widget.shortcuts,
+          theme: theme.getFileList(context),
+          fsType: fsType,
           onChange: _setShortcut,
           onSelect: (value) => widget.onSelect(value.path.toString()),
         );
