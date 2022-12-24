@@ -93,10 +93,7 @@ class FilesystemPicker extends StatefulWidget {
           theme: theme,
           contextActions: contextActions,
           shortcuts: shortcuts,
-          closeButton: IconButton(
-            icon: Icon(Icons.close),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+          closeButton: CloseButton(),
         );
       }),
     );
@@ -177,10 +174,7 @@ class FilesystemPicker extends StatefulWidget {
           theme: theme,
           contextActions: contextActions,
           shortcuts: shortcuts,
-          closeButton: IconButton(
-            icon: Icon(Icons.close),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+          closeButton: CloseButton(),
         ),
       ),
     );
@@ -286,10 +280,7 @@ class FilesystemPicker extends StatefulWidget {
           theme: theme,
           contextActions: contextActions,
           shortcuts: shortcuts,
-          closeButton: IconButton(
-            icon: Icon(Icons.close),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+          closeButton: CloseButton(),
         ),
       ),
     );
@@ -354,7 +345,7 @@ class FilesystemPicker extends StatefulWidget {
   final List<FilesystemShortcut> shortcuts;
 
   /// Picker close button.
-  final IconButton? closeButton;
+  final Widget? closeButton;
 
   /// Controls whether we should try to imply the leading widget if closeButton is null.
   ///
