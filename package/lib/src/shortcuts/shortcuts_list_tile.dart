@@ -28,7 +28,7 @@ class FilesystemShortcutListTile extends StatelessWidget {
   }
 
   Widget? _trailing(BuildContext context, FilesystemPickerFileListThemeData theme) {
-    if (fsType != FilesystemType.file) {
+    if (fsType != FilesystemType.file && shortcut.isSelectable) {
       final iconTheme = theme.getCheckIconTheme(context);
       return InkResponse(
         child: Icon(
