@@ -20,12 +20,10 @@ class FilesystemPickerOptions with Diagnosticable {
   static const FilesystemType defaultFsType = FilesystemType.all;
 
   /// The default value of the text of the message that there is no permission to access the storage.
-  static const String defaultPermissionText =
-      'Access to the storage was not granted.';
+  static const String defaultPermissionText = 'Access to the storage was not granted.';
 
   /// The default value of the file selection mode (either tapping on the whole tile or only on trailing button).
-  static const FileTileSelectMode defaultFileTileSelectMode =
-      FileTileSelectMode.checkButton;
+  static const FileTileSelectMode defaultFileTileSelectMode = FileTileSelectMode.checkButton;
 
   /// The default value of the option to display the go to the previous level of the file system in the filesystem view.
   static const bool defaultShowGoUp = true;
@@ -34,8 +32,7 @@ class FilesystemPickerOptions with Diagnosticable {
   static const bool defaultCaseSensitiveFileExtensionComparison = false;
 
   /// The default dialog options values.
-  static const FilesystemPickerDialogOptions defaultDialogOptions =
-      const FilesystemPickerDialogOptions();
+  static const FilesystemPickerDialogOptions defaultDialogOptions = const FilesystemPickerDialogOptions();
 
   /// The default bottom sheet options values.
   static const FilesystemPickerBottomSheetOptions defaultBottomSheetOptions =
@@ -75,8 +72,7 @@ class FilesystemPickerOptions with Diagnosticable {
     this.permissionText = defaultPermissionText,
     this.fileTileSelectMode = defaultFileTileSelectMode,
     this.showGoUp = defaultShowGoUp,
-    this.caseSensitiveFileExtensionComparison =
-        defaultCaseSensitiveFileExtensionComparison,
+    this.caseSensitiveFileExtensionComparison = defaultCaseSensitiveFileExtensionComparison,
     this.dialog = defaultDialogOptions,
     this.bottomSheet = defaultBottomSheetOptions,
   }) : _theme = theme;
@@ -91,7 +87,7 @@ class FilesystemPickerOptions with Diagnosticable {
   /// The hash code for this object.
   @override
   int get hashCode {
-    return hashValues(
+    return Object.hash(
       theme,
       rootName,
       fsType,
@@ -116,8 +112,7 @@ class FilesystemPickerOptions with Diagnosticable {
         other.permissionText == permissionText &&
         other.fileTileSelectMode == fileTileSelectMode &&
         other.showGoUp == showGoUp &&
-        other.caseSensitiveFileExtensionComparison ==
-            caseSensitiveFileExtensionComparison &&
+        other.caseSensitiveFileExtensionComparison == caseSensitiveFileExtensionComparison &&
         other.dialog == dialog &&
         other.bottomSheet == bottomSheet;
   }
@@ -126,29 +121,19 @@ class FilesystemPickerOptions with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<FilesystemPickerThemeBase>(
-        'theme', theme,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<String>('rootName', rootName,
-        defaultValue: defaultRootName));
-    properties.add(DiagnosticsProperty<FilesystemType>('fsType', fsType,
-        defaultValue: defaultFsType));
-    properties.add(DiagnosticsProperty<String>('permissionText', permissionText,
-        defaultValue: defaultPermissionText));
-    properties.add(DiagnosticsProperty<FileTileSelectMode>(
-        'fileTileSelectMode', fileTileSelectMode,
+    properties.add(DiagnosticsProperty<FilesystemPickerThemeBase>('theme', theme, defaultValue: null));
+    properties.add(DiagnosticsProperty<String>('rootName', rootName, defaultValue: defaultRootName));
+    properties.add(DiagnosticsProperty<FilesystemType>('fsType', fsType, defaultValue: defaultFsType));
+    properties.add(DiagnosticsProperty<String>('permissionText', permissionText, defaultValue: defaultPermissionText));
+    properties.add(DiagnosticsProperty<FileTileSelectMode>('fileTileSelectMode', fileTileSelectMode,
         defaultValue: defaultFileTileSelectMode));
-    properties.add(DiagnosticsProperty<bool>('showGoUp', showGoUp,
-        defaultValue: defaultShowGoUp));
+    properties.add(DiagnosticsProperty<bool>('showGoUp', showGoUp, defaultValue: defaultShowGoUp));
     properties.add(DiagnosticsProperty<bool>(
-        'caseSensitiveFileExtensionComparison',
-        caseSensitiveFileExtensionComparison,
+        'caseSensitiveFileExtensionComparison', caseSensitiveFileExtensionComparison,
         defaultValue: defaultCaseSensitiveFileExtensionComparison));
-    properties.add(DiagnosticsProperty<FilesystemPickerDialogOptions>(
-        'dialog', dialog,
-        defaultValue: defaultDialogOptions));
-    properties.add(DiagnosticsProperty<FilesystemPickerBottomSheetOptions>(
-        'bottomSheet', bottomSheet,
+    properties
+        .add(DiagnosticsProperty<FilesystemPickerDialogOptions>('dialog', dialog, defaultValue: defaultDialogOptions));
+    properties.add(DiagnosticsProperty<FilesystemPickerBottomSheetOptions>('bottomSheet', bottomSheet,
         defaultValue: defaultBottomSheetOptions));
   }
 }
@@ -194,13 +179,10 @@ class FilesystemPickerDefaultOptions extends StatefulWidget {
     String? rootName,
     FilesystemType fsType = FilesystemPickerOptions.defaultFsType,
     String permissionText = FilesystemPickerOptions.defaultPermissionText,
-    FileTileSelectMode fileTileSelectMode =
-        FilesystemPickerOptions.defaultFileTileSelectMode,
+    FileTileSelectMode fileTileSelectMode = FilesystemPickerOptions.defaultFileTileSelectMode,
     bool showGoUp = FilesystemPickerOptions.defaultShowGoUp,
-    FilesystemPickerDialogOptions dialog =
-        FilesystemPickerOptions.defaultDialogOptions,
-    FilesystemPickerBottomSheetOptions bottomSheet =
-        FilesystemPickerOptions.defaultBottomSheetOptions,
+    FilesystemPickerDialogOptions dialog = FilesystemPickerOptions.defaultDialogOptions,
+    FilesystemPickerBottomSheetOptions bottomSheet = FilesystemPickerOptions.defaultBottomSheetOptions,
   })  : options = FilesystemPickerOptions(
           theme: theme,
           rootName: rootName,
@@ -214,25 +196,20 @@ class FilesystemPickerDefaultOptions extends StatefulWidget {
         super(key: key);
 
   @override
-  State<FilesystemPickerDefaultOptions> createState() =>
-      FilesystemPickerDefaultOptionsState();
+  State<FilesystemPickerDefaultOptions> createState() => FilesystemPickerDefaultOptionsState();
 
   // @deprecated
   // static FilesystemPickerDefaultOptionsState? maybeOf(BuildContext context) =>
   //     context.dependOnInheritedWidgetOfExactType<_FilesystemPickerOptionsScope>()?.options;
 
   /// Returns the closest [FilesystemPickerOptions] which encloses the given context.
-  static FilesystemPickerOptions of(BuildContext context) => (context
-          .dependOnInheritedWidgetOfExactType<_FilesystemPickerOptionsScope>()
-          ?.options
-          .defaultOptions
-          .options ??
-      FilesystemPickerOptions._defaultOptions(context));
+  static FilesystemPickerOptions of(BuildContext context) =>
+      (context.dependOnInheritedWidgetOfExactType<_FilesystemPickerOptionsScope>()?.options.defaultOptions.options ??
+          FilesystemPickerOptions._defaultOptions(context));
 }
 
 /// State associated with a [FilesystemPickerDefaultOptions] widget.
-class FilesystemPickerDefaultOptionsState
-    extends State<FilesystemPickerDefaultOptions> {
+class FilesystemPickerDefaultOptionsState extends State<FilesystemPickerDefaultOptions> {
   FilesystemPickerDefaultOptions get defaultOptions => widget;
 
   @override
@@ -263,6 +240,5 @@ class _FilesystemPickerOptionsScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant _FilesystemPickerOptionsScope oldWidget) =>
-      oldWidget.options.defaultOptions.options !=
-      options.defaultOptions.options;
+      oldWidget.options.defaultOptions.options != options.defaultOptions.options;
 }

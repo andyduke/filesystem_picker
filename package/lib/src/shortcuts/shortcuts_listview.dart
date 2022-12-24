@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../common.dart';
 import 'shortcuts.dart';
 import 'shortcuts_list_tile.dart';
 import '../options/theme/_filelist_theme.dart';
@@ -7,6 +8,7 @@ class FilesystemShortcutsListView extends StatelessWidget {
   final List<FilesystemShortcut> shortcuts;
   final ScrollController? scrollController;
   final FilesystemPickerFileListThemeData? theme;
+  final FilesystemType fsType;
   final ValueChanged<FilesystemShortcut> onChange;
   final ValueChanged<FilesystemShortcut> onSelect;
 
@@ -15,6 +17,7 @@ class FilesystemShortcutsListView extends StatelessWidget {
     required this.shortcuts,
     this.scrollController,
     this.theme,
+    required this.fsType,
     required this.onChange,
     required this.onSelect,
   });
@@ -30,6 +33,7 @@ class FilesystemShortcutsListView extends StatelessWidget {
       itemBuilder: (context, index) => FilesystemShortcutListTile(
         shortcut: shortcuts[index],
         theme: effectiveTheme,
+        fsType: fsType,
         onChange: onChange,
         onSelect: onSelect,
       ),

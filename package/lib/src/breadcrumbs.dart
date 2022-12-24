@@ -1,11 +1,11 @@
 import 'package:filesystem_picker/src/desktop_scroller.dart';
-import 'package:flutter/gestures.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'listview_extensions.dart';
 import 'options/theme/_breadcrumbs_theme.dart';
 
 /// Path element description class for breadcrumbs
-class BreadcrumbItem<T> {
+class BreadcrumbItem<T> with Diagnosticable {
   /// Item text
   final String text;
 
@@ -21,6 +21,14 @@ class BreadcrumbItem<T> {
     this.data,
     this.onSelect,
   });
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('text', text));
+    properties.add(DiagnosticsProperty<T?>('data', data));
+    properties.add(ObjectFlagProperty<ValueChanged<T>?>.has('onSelect', onSelect));
+  }
 }
 
 /// Horizontally scrollable breadcrumbs with `Icons.chevron_right` separator and fade on the right.

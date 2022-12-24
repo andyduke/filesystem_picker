@@ -36,22 +36,18 @@ abstract class FilesystemPickerFileListFileTypesThemeBase {
 
   /// Returns a description object [FilesystemPickerFileListFileTypesThemeItem] for the passed `extension`
   /// if a description is found for it in the current set.
-  FilesystemPickerFileListFileTypesThemeItem? match(String extension,
-      {bool caseSensitive = false});
+  FilesystemPickerFileListFileTypesThemeItem? match(String extension, {bool caseSensitive = false});
 
   /// Returns a new set that combines descriptions for extensions with those passed as a parameter.
-  FilesystemPickerFileListFileTypesThemeBase merge(
-      FilesystemPickerFileListFileTypesThemeBase? base);
+  FilesystemPickerFileListFileTypesThemeBase merge(FilesystemPickerFileListFileTypesThemeBase? base);
 }
 
 /// An object that defines a set of icons for file types by extensions in the picker file list.
 /// Used in [FilesystemPickerFileListThemeData].
 @immutable
-class FilesystemPickerFileListFileTypesTheme
-    extends FilesystemPickerFileListFileTypesThemeBase {
+class FilesystemPickerFileListFileTypesTheme extends FilesystemPickerFileListFileTypesThemeBase {
   /// Default icons for image files (jpeg, jpg, png) and databases (db, sqlite, sqlite3).
-  static const FilesystemPickerFileListFileTypesTheme defaultFileTypes =
-      const FilesystemPickerFileListFileTypesTheme([
+  static const FilesystemPickerFileListFileTypesTheme defaultFileTypes = const FilesystemPickerFileListFileTypesTheme([
     // Databases
     FilesystemPickerFileListFileTypesThemeItem(
       extensions: ['db', 'sqlite', 'sqlite3'],
@@ -73,8 +69,7 @@ class FilesystemPickerFileListFileTypesTheme
 
   /// Returns a description object [FilesystemPickerFileListFileTypesThemeItem] for the passed `extension`
   /// if a description is found for it in the current set.
-  FilesystemPickerFileListFileTypesThemeItem? match(String extension,
-      {bool caseSensitive = false}) {
+  FilesystemPickerFileListFileTypesThemeItem? match(String extension, {bool caseSensitive = false}) {
     final String ext = !caseSensitive ? extension.toLowerCase() : extension;
     return types.firstWhereOrNull((type) {
       if (!caseSensitive) {
@@ -86,8 +81,7 @@ class FilesystemPickerFileListFileTypesTheme
   }
 
   /// Returns a new set that combines descriptions for extensions with those passed as a parameter.
-  FilesystemPickerFileListFileTypesThemeBase merge(
-      FilesystemPickerFileListFileTypesThemeBase? base) {
+  FilesystemPickerFileListFileTypesThemeBase merge(FilesystemPickerFileListFileTypesThemeBase? base) {
     if (base is FilesystemPickerFileListFileTypesTheme) {
       return FilesystemPickerFileListFileTypesTheme([...types, ...base.types]);
     } else {
@@ -137,6 +131,15 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
   /// The text style of the list row, for going up to the parent folder.
   final TextStyle? upTextStyle;
 
+  /// The shortcut icon in the picker list row.
+  final IconData? shortcutIcon;
+
+  /// The color of the shortcut icon in the picker list row.
+  final Color? shortcutIconColor;
+
+  /// The text style of the shortcut name in the picker list row.
+  final TextStyle? shortcutTextStyle;
+
   /// The folder icon in the picker list row.
   final IconData? folderIcon;
 
@@ -185,6 +188,9 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
     this.upIconColor,
     this.upText,
     this.upTextStyle,
+    this.shortcutIcon,
+    this.shortcutIconColor,
+    this.shortcutTextStyle,
     this.folderIcon,
     this.folderIconColor,
     this.folderTextStyle,
@@ -236,6 +242,24 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
     return (upTextStyle == null) ? 1.5 : 1.0;
   }
 
+  /// Returns the shortcut icon in the picker list row.
+  IconData getShortcutIcon(BuildContext context) {
+    final effectiveValue = shortcutIcon ?? Icons.folder_special;
+    return effectiveValue;
+  }
+
+  /// Returns the color of the shortcut icon in the picker list row.
+  Color getShortcutIconColor(BuildContext context, [Color? color]) {
+    final effectiveValue = color ?? shortcutIconColor ?? Theme.of(context).unselectedWidgetColor;
+    return effectiveValue;
+  }
+
+  /// Returns the text style of the shortcut name in the picker list row.
+  TextStyle getShortcutTextStyle(BuildContext context) {
+    final effectiveValue = shortcutTextStyle ?? TextStyle();
+    return effectiveValue;
+  }
+
   /// Returns the folder icon in the picker list row.
   IconData getFolderIcon(BuildContext context) {
     final effectiveValue = folderIcon ?? Icons.folder;
@@ -244,8 +268,7 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
 
   /// Returns the color of the folder icon in the picker list row.
   Color getFolderIconColor(BuildContext context, [Color? color]) {
-    final effectiveValue =
-        color ?? folderIconColor ?? Theme.of(context).unselectedWidgetColor;
+    final effectiveValue = color ?? folderIconColor ?? Theme.of(context).unselectedWidgetColor;
     return effectiveValue;
   }
 
@@ -256,20 +279,16 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
   }
 
   /// Returns the file icon in the picker list row.
-  IconData getFileIcon(BuildContext context,
-      [String? extension, bool caseSensitive = false]) {
+  IconData getFileIcon(BuildContext context, [String? extension, bool caseSensitive = false]) {
     final FilesystemPickerFileListFileTypesThemeItem? fileType =
-        (extension != null)
-            ? fileTypes.match(extension, caseSensitive: caseSensitive)
-            : null;
+        (extension != null) ? fileTypes.match(extension, caseSensitive: caseSensitive) : null;
     final effectiveValue = fileType?.icon ?? fileIcon ?? Icons.description;
     return effectiveValue;
   }
 
   /// Returns the color of the file icon in the picker list row.
   Color getFileIconColor(BuildContext context, [Color? color]) {
-    final effectiveValue =
-        color ?? fileIconColor ?? Theme.of(context).unselectedWidgetColor;
+    final effectiveValue = color ?? fileIconColor ?? Theme.of(context).unselectedWidgetColor;
     return effectiveValue;
   }
 
@@ -315,8 +334,7 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
   /// but with some values replaced by the non-null parameters of the given theme.
   ///
   /// If the given theme is null, simply returns this theme.
-  FilesystemPickerFileListThemeData merge(
-      FilesystemPickerFileListThemeData base) {
+  FilesystemPickerFileListThemeData merge(FilesystemPickerFileListThemeData base) {
     return FilesystemPickerFileListThemeData(
       iconSize: iconSize ?? base.iconSize,
       upIcon: upIcon ?? base.upIcon,
@@ -326,8 +344,7 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
       upTextStyle: base.upTextStyle?.merge(upTextStyle) ?? upTextStyle,
       folderIcon: folderIcon ?? base.folderIcon,
       folderIconColor: folderIconColor ?? base.folderIconColor,
-      folderTextStyle:
-          base.folderTextStyle?.merge(folderTextStyle) ?? folderTextStyle,
+      folderTextStyle: base.folderTextStyle?.merge(folderTextStyle) ?? folderTextStyle,
       fileIcon: fileIcon ?? base.fileIcon,
       fileIconColor: fileIconColor ?? base.fileIconColor,
       fileTextStyle: base.fileTextStyle?.merge(fileTextStyle) ?? fileTextStyle,
@@ -335,8 +352,7 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
       checkIconColor: checkIconColor ?? base.checkIconColor,
       checkIconSize: checkIconSize ?? base.checkIconSize,
       textScaleFactor: textScaleFactor ?? base.textScaleFactor,
-      progressIndicatorColor:
-          progressIndicatorColor ?? base.progressIndicatorColor,
+      progressIndicatorColor: progressIndicatorColor ?? base.progressIndicatorColor,
       fileTypes: _fileTypes?.merge(base._fileTypes) ?? base._fileTypes,
     );
   }
