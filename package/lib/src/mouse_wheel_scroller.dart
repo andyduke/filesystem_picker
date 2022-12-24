@@ -20,8 +20,6 @@ class MouseWheelScroller extends StatefulWidget {
 }
 
 class _MouseWheelScrollerState extends State<MouseWheelScroller> {
-  // final scrollController = ScrollController();
-
   ScrollController? _scrollController;
   ScrollController get scrollController => widget.scrollController ?? (_scrollController ??= ScrollController());
 
@@ -32,8 +30,6 @@ class _MouseWheelScrollerState extends State<MouseWheelScroller> {
 
   late final Throttler mouseWheelForwardThrottler;
   late final Throttler mouseWheelBackwardThrottler;
-
-  // Widget? body;
 
   @override
   void initState() {
@@ -49,7 +45,6 @@ class _MouseWheelScrollerState extends State<MouseWheelScroller> {
 
   @override
   Widget build(BuildContext context) {
-    // final child = body ??= widget.builder(context, scrollController);
     final child = widget.builder(context, scrollController);
 
     final isMobile = (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android);
@@ -57,8 +52,6 @@ class _MouseWheelScrollerState extends State<MouseWheelScroller> {
 
     return Listener(
       onPointerSignal: (event) {
-        // debugPrint('$event');
-
         if (event is PointerScrollEvent && event.kind == PointerDeviceKind.mouse) {
           final scrollDelta = event.scrollDelta.dy;
 

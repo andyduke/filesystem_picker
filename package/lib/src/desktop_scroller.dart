@@ -21,24 +21,13 @@ class DesktopScroller extends StatefulWidget {
 }
 
 class _DesktopScrollerState extends State<DesktopScroller> {
-  // final scrollController = ScrollController();
-
   ScrollController? _scrollController;
   ScrollController get scrollController => widget.scrollController ?? (_scrollController ??= ScrollController());
-
-  // Widget? child;
-
-  Widget buildBody(ScrollController controller) {
-    // final body = child ??= widget.builder(context, controller);
-    // return body;
-    final body = widget.builder(context, controller);
-    return body;
-  }
 
   @override
   Widget build(BuildContext context) {
     final isMobile = (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android);
-    if (isMobile) return buildBody(scrollController);
+    if (isMobile) return widget.builder(context, scrollController);
 
     return ScrollConfiguration(
       behavior: ScrollConfiguration.of(context).copyWith(dragDevices: {
@@ -49,7 +38,7 @@ class _DesktopScrollerState extends State<DesktopScroller> {
       child: MouseWheelScroller(
         scrollController: scrollController,
         builder: (context, controller) {
-          return buildBody(controller);
+          return widget.builder(context, controller);
         },
       ),
     );
