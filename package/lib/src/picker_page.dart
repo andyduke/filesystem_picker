@@ -93,6 +93,10 @@ class FilesystemPicker extends StatefulWidget {
           theme: theme,
           contextActions: contextActions,
           shortcuts: shortcuts,
+          closeButton: IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         );
       }),
     );
@@ -173,6 +177,10 @@ class FilesystemPicker extends StatefulWidget {
           theme: theme,
           contextActions: contextActions,
           shortcuts: shortcuts,
+          closeButton: IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
       ),
     );
@@ -278,6 +286,10 @@ class FilesystemPicker extends StatefulWidget {
           theme: theme,
           contextActions: contextActions,
           shortcuts: shortcuts,
+          closeButton: IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
       ),
     );
@@ -341,7 +353,15 @@ class FilesystemPicker extends StatefulWidget {
 
   final List<FilesystemShortcut> shortcuts;
 
+  /// Picker close button.
   final IconButton? closeButton;
+
+  /// Controls whether we should try to imply the leading widget if closeButton is null.
+  ///
+  /// If true and [closeButton] is null, automatically try to deduce what the leading
+  /// widget should be. If false and [closeButton] is null, leading space is given to [title].
+  /// If leading widget is not null, this parameter has no effect.
+  final bool automaticallyImplyLeading;
 
   /// Creates a file system item selection widget.
   FilesystemPicker({
@@ -357,7 +377,7 @@ class FilesystemPicker extends StatefulWidget {
     this.allowedExtensions,
     this.caseSensitiveFileExtensionComparison,
     required this.onSelect,
-    required this.fileTileSelectMode,
+    this.fileTileSelectMode,
     this.itemFilter,
     this.requestPermission,
     this.theme,
@@ -366,6 +386,7 @@ class FilesystemPicker extends StatefulWidget {
     this.contextActions = const [],
     this.shortcuts = const [],
     this.closeButton,
+    this.automaticallyImplyLeading = true,
   })  : assert(rootDirectory != null || shortcuts.isNotEmpty, 'You must specify "rootDirectory" or "shortcuts".'),
         super(key: key);
 
@@ -620,7 +641,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     }
   }
 
-  List<BreadcrumbItem<_BreadcrumbPath>> _getBreadcrumbs() {
+  List<BreadcrumbItem<_BreadcrumbPath>> _buildBreadcrumbs() {
     List<BreadcrumbItem<_BreadcrumbPath>> result = [];
 
     if (viewMode == _FilesystemPickerViewMode.filesystem) {
@@ -801,22 +822,21 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
       // Props
       title: Text(widget.title ?? directoryName ?? '', style: titleTextStyle?.copyWith(color: foregroundColor)),
-      leading: IconTheme.merge(
-        data: IconThemeData(
-          size: iconTheme?.size ?? _defaultTopBarIconSize,
-        ),
-        child: widget.closeButton ??
-            IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-      ),
+      automaticallyImplyLeading: widget.automaticallyImplyLeading,
+      leading: (widget.closeButton != null)
+          ? IconTheme.merge(
+              data: IconThemeData(
+                size: iconTheme?.size ?? _defaultTopBarIconSize,
+              ),
+              child: widget.closeButton!,
+            )
+          : null,
       actions: _buildActions(context),
       bottom: PreferredSize(
         child: Breadcrumbs<_BreadcrumbPath>(
           theme: breadcrumbsTheme,
           textColor: foregroundColor,
-          items: _getBreadcrumbs(),
+          items: _buildBreadcrumbs(),
           onSelect: _breadcrumbSelect,
         ),
         preferredSize: const Size.fromHeight(_defaultTopBarHeight),
@@ -889,4 +909,9 @@ class _BreadcrumbPath {
         path = null;
 
   _BreadcrumbPath.filesystem(String this.path) : type = _BreadcrumbPathType.filesystem;
+
+  @override
+  String toString() {
+    return '_BreadcrumbPath(${type}${(type == _BreadcrumbPathType.filesystem) ? ': $path' : ''})';
+  }
 }
