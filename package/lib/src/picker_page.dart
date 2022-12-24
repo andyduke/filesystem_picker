@@ -532,8 +532,9 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: TextButton.icon(
             style: TextButton.styleFrom(
-              primary: theme.getForegroundColor(context),
-              onSurface: theme.getDisabledForegroundColor(context),
+              foregroundColor: theme.getForegroundColor(context),
+              disabledForegroundColor:
+                  theme.getDisabledForegroundColor(context),
             ),
             icon: Icon(
               theme.getCheckIcon(context),
