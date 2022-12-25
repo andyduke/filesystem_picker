@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import '../common.dart';
-import 'shortcuts.dart';
+import 'shortcut.dart';
 import 'shortcuts_list_tile.dart';
 import '../options/theme/_filelist_theme.dart';
 
+/// A widget that displays a list of file system shortcuts.
 class FilesystemShortcutsListView extends StatelessWidget {
-  final List<FilesystemShortcut> shortcuts;
+  final List<FilesystemPickerShortcut> shortcuts;
   final ScrollController? scrollController;
   final FilesystemPickerFileListThemeData? theme;
   final FilesystemType fsType;
-  final ValueChanged<FilesystemShortcut> onChange;
-  final ValueChanged<FilesystemShortcut> onSelect;
+  final ValueChanged<FilesystemPickerShortcut> onChange;
+  final ValueChanged<FilesystemPickerShortcut> onSelect;
 
   const FilesystemShortcutsListView({
     super.key,

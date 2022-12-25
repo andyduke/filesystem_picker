@@ -14,4 +14,4 @@ export 'src/breadcrumbs.dart';
 export 'src/filesystem_list.dart';
 export 'src/filesystem_list_tile.dart';
 
-export 'src/shortcuts/shortcuts.dart';
+export 'src/shortcuts/shortcut.dart';

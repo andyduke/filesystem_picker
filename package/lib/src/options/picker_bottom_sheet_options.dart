@@ -68,13 +68,21 @@ class FilesystemPickerBottomSheetOptions with Diagnosticable {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<BoxConstraints>('constraints', constraints, defaultValue: defaultConstraints));
-    properties.add(DiagnosticsProperty<Color>('barrierColor', barrierColor, defaultValue: defaultBarrierColor));
-    properties.add(DiagnosticsProperty<ShapeBorder>('shape', shape, defaultValue: defaultShape));
-    properties.add(DiagnosticsProperty<double>('elevation', elevation, defaultValue: defaultElevation));
-    properties
-        .add(DiagnosticsProperty<double>('initialChildSize', initialChildSize, defaultValue: defaultInitialChildSize));
-    properties.add(DiagnosticsProperty<double>('minChildSize', minChildSize, defaultValue: defaultMinChildSize));
-    properties.add(DiagnosticsProperty<double>('maxChildSize', maxChildSize, defaultValue: defaultMaxChildSize));
+    properties.add(DiagnosticsProperty<BoxConstraints>(
+        'constraints', constraints,
+        defaultValue: defaultConstraints));
+    properties.add(DiagnosticsProperty<Color>('barrierColor', barrierColor,
+        defaultValue: defaultBarrierColor));
+    properties.add(DiagnosticsProperty<ShapeBorder>('shape', shape,
+        defaultValue: defaultShape));
+    properties.add(DiagnosticsProperty<double>('elevation', elevation,
+        defaultValue: defaultElevation));
+    properties.add(DiagnosticsProperty<double>(
+        'initialChildSize', initialChildSize,
+        defaultValue: defaultInitialChildSize));
+    properties.add(DiagnosticsProperty<double>('minChildSize', minChildSize,
+        defaultValue: defaultMinChildSize));
+    properties.add(DiagnosticsProperty<double>('maxChildSize', maxChildSize,
+        defaultValue: defaultMaxChildSize));
   }
 }

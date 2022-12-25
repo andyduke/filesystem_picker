@@ -10,12 +10,14 @@ import 'picker_dialog.dart';
 import 'options/picker_options.dart';
 import 'options/theme/theme.dart';
 import 'progress_indicator.dart';
-import 'shortcuts/shortcuts.dart';
+import 'shortcuts/shortcut.dart';
 import 'shortcuts/shortcuts_listview.dart';
 
-/// FileSystem file or folder picker dialog
+/// FileSystem file or folder picker dialog/bottom sheet
 ///
 /// Allows the user to browse the file system and pick a folder or file.
+///
+/// Be sure to specify either the `rootDirectory` or a non-empty list of `shortcuts`.
 ///
 /// See also:
 ///  * [FilesystemPicker.open], which allows you to open a fullscreen FileSystemPicker dialog.
@@ -43,6 +45,7 @@ class FilesystemPicker extends StatefulWidget {
   /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the filesystem entity, path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
   /// * [theme] specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.
   /// * [contextActions] specifies a list of actions, such as "Create Folder", which are placed in the upper right corner of the picker.
+  /// * [shortcuts] specifies a list of shortcuts that allow you to specify multiple root drives (for example, in Windows) or favorite paths (as in Linux/MacOS).
   ///
   /// The default parameter values are taken from the [FilesystemPickerDefaultOptions].
   ///
@@ -68,7 +71,7 @@ class FilesystemPicker extends StatefulWidget {
     FilesystemListFilter? itemFilter,
     FilesystemPickerThemeBase? theme,
     List<FilesystemPickerContextAction> contextActions = const [],
-    List<FilesystemShortcut> shortcuts = const [],
+    List<FilesystemPickerShortcut> shortcuts = const [],
   }) async {
     return Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (BuildContext context) {
@@ -82,7 +85,8 @@ class FilesystemPicker extends StatefulWidget {
           title: title,
           folderIconColor: folderIconColor,
           allowedExtensions: allowedExtensions,
-          caseSensitiveFileExtensionComparison: caseSensitiveFileExtensionComparison,
+          caseSensitiveFileExtensionComparison:
+              caseSensitiveFileExtensionComparison,
           onSelect: (String value) {
             Navigator.of(context).pop<String>(value);
           },
@@ -120,6 +124,7 @@ class FilesystemPicker extends StatefulWidget {
   /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the filesystem entity, path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
   /// * [theme] specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.
   /// * [contextActions] specifies a list of actions, such as "Create Folder", which are placed in the upper right corner of the picker.
+  /// * [shortcuts] specifies a list of shortcuts that allow you to specify multiple root drives (for example, in Windows) or favorite paths (as in Linux/MacOS).
   /// * [constraints] specifies the size constraints to apply to the dialog.
   ///
   /// The default parameter values are taken from the [FilesystemPickerDefaultOptions].
@@ -146,7 +151,7 @@ class FilesystemPicker extends StatefulWidget {
     FilesystemListFilter? itemFilter,
     FilesystemPickerThemeBase? theme,
     List<FilesystemPickerContextAction> contextActions = const [],
-    List<FilesystemShortcut> shortcuts = const [],
+    List<FilesystemPickerShortcut> shortcuts = const [],
     BoxConstraints? constraints,
   }) async {
     return showDialog<String?>(
@@ -163,7 +168,8 @@ class FilesystemPicker extends StatefulWidget {
           title: title,
           folderIconColor: folderIconColor,
           allowedExtensions: allowedExtensions,
-          caseSensitiveFileExtensionComparison: caseSensitiveFileExtensionComparison,
+          caseSensitiveFileExtensionComparison:
+              caseSensitiveFileExtensionComparison,
           onSelect: (String value) {
             Navigator.of(context).pop<String>(value);
           },
@@ -201,6 +207,7 @@ class FilesystemPicker extends StatefulWidget {
   /// * [itemFilter] specifies a callback to filter the displayed files in the filesystem view (not set by default); the filesystem entity, path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not.
   /// * [theme] specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree.
   /// * [contextActions] specifies a list of actions, such as "Create Folder", which are placed in the upper right corner of the picker.
+  /// * [shortcuts] specifies a list of shortcuts that allow you to specify multiple root drives (for example, in Windows) or favorite paths (as in Linux/MacOS).
   /// * [constraints] specifies the size constraints to apply to the bottom sheet.
   /// * [barrierColor] specifies the color of the modal barrier that darkens everything below the bottom sheet; if null the default transparent color is used.
   /// * [shape] specifies the shape of the bottom sheet; the default is an 8dp top rounded shape.
@@ -234,7 +241,7 @@ class FilesystemPicker extends StatefulWidget {
     FilesystemListFilter? itemFilter,
     FilesystemPickerThemeBase? theme,
     List<FilesystemPickerContextAction> contextActions = const [],
-    List<FilesystemShortcut> shortcuts = const [],
+    List<FilesystemPickerShortcut> shortcuts = const [],
     BoxConstraints? constraints,
     Color? barrierColor,
     ShapeBorder? shape,
@@ -254,7 +261,8 @@ class FilesystemPicker extends StatefulWidget {
       isScrollControlled: true,
       constraints: constraints ?? options.bottomSheet.constraints,
       builder: (context) => DraggableScrollableSheet(
-        initialChildSize: initialChildSize ?? options.bottomSheet.initialChildSize,
+        initialChildSize:
+            initialChildSize ?? options.bottomSheet.initialChildSize,
         minChildSize: minChildSize ?? options.bottomSheet.minChildSize,
         maxChildSize: maxChildSize ?? options.bottomSheet.maxChildSize,
         expand: false,
@@ -269,7 +277,8 @@ class FilesystemPicker extends StatefulWidget {
           title: title,
           folderIconColor: folderIconColor,
           allowedExtensions: allowedExtensions,
-          caseSensitiveFileExtensionComparison: caseSensitiveFileExtensionComparison,
+          caseSensitiveFileExtensionComparison:
+              caseSensitiveFileExtensionComparison,
           onSelect: (String value) {
             Navigator.of(context).pop<String>(value);
           },
@@ -342,7 +351,8 @@ class FilesystemPicker extends StatefulWidget {
   /// A list of actions, such as "Create Folder", which are placed in the upper right corner of the picker.
   final List<FilesystemPickerContextAction> contextActions;
 
-  final List<FilesystemShortcut> shortcuts;
+  /// A list of shortcuts that allow you to specify multiple root drives (for example, in Windows) or favorite paths (as in Linux/MacOS).
+  final List<FilesystemPickerShortcut> shortcuts;
 
   /// Picker close button.
   final Widget? closeButton;
@@ -378,7 +388,8 @@ class FilesystemPicker extends StatefulWidget {
     this.shortcuts = const [],
     this.closeButton,
     this.automaticallyImplyLeading = true,
-  })  : assert(rootDirectory != null || shortcuts.isNotEmpty, 'You must specify "rootDirectory" or "shortcuts".'),
+  })  : assert(rootDirectory != null || shortcuts.isNotEmpty,
+            'You must specify "rootDirectory" or "shortcuts".'),
         super(key: key);
 
   @override
@@ -426,7 +437,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   late FilesystemPickerOptions options;
 
   @protected
-  FilesystemShortcut? shortcut;
+  FilesystemPickerShortcut? shortcut;
 
   @protected
   late Directory? rootDirectory = widget.rootDirectory;
@@ -440,14 +451,17 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   String? get permissionText => widget.permissionText ?? options.permissionText;
 
-  FileTileSelectMode get fileTileSelectMode => widget.fileTileSelectMode ?? options.fileTileSelectMode;
+  FileTileSelectMode get fileTileSelectMode =>
+      widget.fileTileSelectMode ?? options.fileTileSelectMode;
 
   bool get showGoUp => widget.showGoUp ?? options.showGoUp;
 
   bool get caseSensitiveFileExtensionComparison =>
-      widget.caseSensitiveFileExtensionComparison ?? options.caseSensitiveFileExtensionComparison;
+      widget.caseSensitiveFileExtensionComparison ??
+      options.caseSensitiveFileExtensionComparison;
 
-  FilesystemPickerThemeBase get theme => (widget.theme?.merge(context, options.theme) ?? options.theme);
+  FilesystemPickerThemeBase get theme =>
+      (widget.theme?.merge(context, options.theme) ?? options.theme);
 
   Key _fileListKey = UniqueKey();
 
@@ -475,7 +489,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
     if (widget.directory != null) {
       directory = widget.directory;
-      if (rootDirectory!.path != directory!.path && !Path.isWithin(rootDirectory!.path, widget.directory!.path)) {
+      if (rootDirectory!.path != directory!.path &&
+          !Path.isWithin(rootDirectory!.path, widget.directory!.path)) {
         setState(() {
           errorMessage =
               'Invalid directory "${widget.directory!.path}": not contained within the root directory "${rootDirectory!.path}".';
@@ -508,13 +523,15 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
     String currentPath = directory!.path;
     String dirPath = Path.relative(currentPath, from: rootDirectory!.path);
-    final List<String> items = (dirPath != '.') ? dirPath.split(Platform.pathSeparator) : [];
+    final List<String> items =
+        (dirPath != '.') ? dirPath.split(Platform.pathSeparator) : [];
     pathItems = [];
 
     if (items.isNotEmpty) {
       String rootItem = items.first;
       String rootPath = rootDirectory!.path;
-      pathItems.add(_PathItem(path: rootPath, text: shortcut?.name ?? rootName ?? rootItem));
+      pathItems.add(_PathItem(
+          path: rootPath, text: shortcut?.name ?? rootName ?? rootItem));
 
       String path = rootPath;
       for (var item in items) {
@@ -522,15 +539,18 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         pathItems.add(_PathItem(path: path, text: item));
       }
     } else {
-      pathItems.add(_PathItem(path: rootDirectory!.path, text: shortcut?.name ?? rootName ?? rootDirectory!.path));
+      pathItems.add(_PathItem(
+          path: rootDirectory!.path,
+          text: shortcut?.name ?? rootName ?? rootDirectory!.path));
     }
 
-    directoryName = ((directory!.path == rootDirectory!.path) && (rootName != null))
-        ? (shortcut?.name ?? rootName)
-        : Path.basename(directory!.path);
+    directoryName =
+        ((directory!.path == rootDirectory!.path) && (rootName != null))
+            ? (shortcut?.name ?? rootName)
+            : Path.basename(directory!.path);
   }
 
-  void _setShortcut(FilesystemShortcut newShortcut) {
+  void _setShortcut(FilesystemPickerShortcut newShortcut) {
     if (shortcut != newShortcut) {
       viewMode = _FilesystemPickerViewMode.filesystem;
       shortcut = newShortcut;
@@ -566,8 +586,10 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     });
   }
 
-  Widget _buildBar(BuildContext context, FilesystemPickerActionThemeData theme) {
-    if (viewMode != _FilesystemPickerViewMode.filesystem) return const SizedBox();
+  Widget _buildBar(
+      BuildContext context, FilesystemPickerActionThemeData theme) {
+    if (viewMode != _FilesystemPickerViewMode.filesystem)
+      return const SizedBox();
     if (directory == null) return const SizedBox();
 
     final pickerIconTheme = theme.getCheckIconTheme(context);
@@ -586,7 +608,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
           child: TextButton.icon(
             style: TextButton.styleFrom(
               foregroundColor: theme.getForegroundColor(context),
-              disabledForegroundColor: theme.getDisabledForegroundColor(context),
+              disabledForegroundColor:
+                  theme.getDisabledForegroundColor(context),
             ),
             icon: Icon(
               theme.getCheckIcon(context),
@@ -594,23 +617,28 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
               size: pickerIconTheme.size,
             ),
             label: (widget.pickText != null)
-                ? Text(widget.pickText!, style: theme.getTextStyle(context, foregroundColor))
+                ? Text(widget.pickText!,
+                    style: theme.getTextStyle(context, foregroundColor))
                 : const SizedBox(),
-            onPressed: (!permissionRequesting && permissionAllowed && isValidDirectory)
-                ? () => widget.onSelect(directory!.absolute.path)
-                : null,
+            onPressed:
+                (!permissionRequesting && permissionAllowed && isValidDirectory)
+                    ? () => widget.onSelect(directory!.absolute.path)
+                    : null,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildFAB(BuildContext context, FilesystemPickerActionThemeData theme) {
-    if (viewMode != _FilesystemPickerViewMode.filesystem) return const SizedBox();
+  Widget _buildFAB(
+      BuildContext context, FilesystemPickerActionThemeData theme) {
+    if (viewMode != _FilesystemPickerViewMode.filesystem)
+      return const SizedBox();
     if (directory == null) return const SizedBox();
 
-    final onPressed =
-        (!permissionRequesting && permissionAllowed) ? () => widget.onSelect(directory!.absolute.path) : null;
+    final onPressed = (!permissionRequesting && permissionAllowed)
+        ? () => widget.onSelect(directory!.absolute.path)
+        : null;
 
     if (widget.pickText != null) {
       return FloatingActionButton.extended(
@@ -689,7 +717,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         : (!hasMessage
             ? FilesystemList(
                 key: _fileListKey,
-                isRoot: (Path.equals(directory!.absolute.path, rootDirectory!.absolute.path)),
+                isRoot: (Path.equals(
+                    directory!.absolute.path, rootDirectory!.absolute.path)),
                 rootDirectory: directory!,
                 fsType: fsType,
                 folderIconColor: widget.folderIconColor,
@@ -700,7 +729,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                 itemFilter: widget.itemFilter,
                 theme: theme.getFileList(context),
                 showGoUp: showGoUp,
-                caseSensitiveFileExtensionComparison: caseSensitiveFileExtensionComparison,
+                caseSensitiveFileExtensionComparison:
+                    caseSensitiveFileExtensionComparison,
                 scrollController: widget.scrollController,
               )
             : Container(
@@ -708,7 +738,9 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
                 padding: const EdgeInsets.all(20),
                 child: Text(
                   errorMessage ?? permissionText ?? options.permissionText,
-                  textScaleFactor: theme.getFileList(context).getTextScaleFactor(context, true),
+                  textScaleFactor: theme
+                      .getFileList(context)
+                      .getTextScaleFactor(context, true),
                 ),
               ));
     return result;
@@ -734,7 +766,10 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
           child: IconButton(
             icon: widget.contextActions.first.icon,
             tooltip: widget.contextActions.first.text,
-            onPressed: !hasMessage ? () => _callAction(widget.contextActions.first, context, directory!) : null,
+            onPressed: !hasMessage
+                ? () => _callAction(
+                    widget.contextActions.first, context, directory!)
+                : null,
           ),
         ),
       ];
@@ -742,7 +777,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       return [
         Theme(
           data: ThemeData(
-            highlightColor: menuTheme.getHighlightBackgroundColor(context), // Selected item background
+            highlightColor: menuTheme.getHighlightBackgroundColor(
+                context), // Selected item background
             popupMenuTheme: PopupMenuThemeData(
               color: menuTheme.getBackgroundColor(context), // Menu background
               textStyle: menuTheme.getTextStyle(context),
@@ -778,7 +814,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     }
   }
 
-  Future<void> _callAction(FilesystemPickerContextAction action, BuildContext context, Directory path) async {
+  Future<void> _callAction(FilesystemPickerContextAction action,
+      BuildContext context, Directory path) async {
     final result = await action.call(context, path);
     if (result) {
       _reloadList();
@@ -812,7 +849,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       systemOverlayStyle: systemOverlayStyle,
 
       // Props
-      title: Text(widget.title ?? directoryName ?? '', style: titleTextStyle?.copyWith(color: foregroundColor)),
+      title: Text(widget.title ?? directoryName ?? '',
+          style: titleTextStyle?.copyWith(color: foregroundColor)),
       automaticallyImplyLeading: widget.automaticallyImplyLeading,
       leading: (widget.closeButton != null)
           ? IconTheme.merge(
@@ -860,13 +898,16 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       body: SizedBox.expand(child: body),
 
       // Picker Action
-      floatingActionButton: (pickerActionTheme.isFABMode && (fsType == FilesystemType.folder))
-          ? _buildFAB(context, pickerActionTheme)
-          : null,
-      floatingActionButtonLocation: pickerActionTheme.getFloatingButtonLocation(context),
-      bottomNavigationBar: (pickerActionTheme.isBarMode && (fsType == FilesystemType.folder))
-          ? _buildBar(context, pickerActionTheme)
-          : null,
+      floatingActionButton:
+          (pickerActionTheme.isFABMode && (fsType == FilesystemType.folder))
+              ? _buildFAB(context, pickerActionTheme)
+              : null,
+      floatingActionButtonLocation:
+          pickerActionTheme.getFloatingButtonLocation(context),
+      bottomNavigationBar:
+          (pickerActionTheme.isBarMode && (fsType == FilesystemType.folder))
+              ? _buildBar(context, pickerActionTheme)
+              : null,
     );
   }
 }
@@ -899,7 +940,8 @@ class _BreadcrumbPath {
       : type = _BreadcrumbPathType.shortcuts,
         path = null;
 
-  _BreadcrumbPath.filesystem(String this.path) : type = _BreadcrumbPathType.filesystem;
+  _BreadcrumbPath.filesystem(String this.path)
+      : type = _BreadcrumbPathType.filesystem;
 
   @override
   String toString() {

@@ -4,7 +4,8 @@ import 'package:flutter/widgets.dart';
 
 import 'mouse_wheel_scroller.dart';
 
-typedef DesktopScrollerBuilder = Widget Function(BuildContext context, ScrollController controller);
+typedef DesktopScrollerBuilder = Widget Function(
+    BuildContext context, ScrollController controller);
 
 class DesktopScroller extends StatefulWidget {
   final DesktopScrollerBuilder builder;
@@ -22,11 +23,13 @@ class DesktopScroller extends StatefulWidget {
 
 class _DesktopScrollerState extends State<DesktopScroller> {
   ScrollController? _scrollController;
-  ScrollController get scrollController => widget.scrollController ?? (_scrollController ??= ScrollController());
+  ScrollController get scrollController =>
+      widget.scrollController ?? (_scrollController ??= ScrollController());
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android);
+    final isMobile = (defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.android);
     if (isMobile) return widget.builder(context, scrollController);
 
     return ScrollConfiguration(

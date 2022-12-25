@@ -4,6 +4,20 @@ FileSystem file or folder picker dialog.
 
 Allows the user to browse the file system and pick a folder or file.
 
+## Table of Contents
+
+- [Getting Started](#getting-Started)
+- [Usage](#usage)
+  - [Fullscreen Dialog](#fullscreen-dialog)
+  - [Popup Dialog](#popup-dialog)
+  - [Bottom Sheet](#bottom-sheet)
+- [Customization](#customization)
+- [Context Actions](#context-actions)
+- [Shortcuts](#shortcuts)
+- [Android permissions](#android-permissions)
+- [Folder pick example](#folder-pick-example)
+- [File pick example](#file-pick-example)
+
 ## Getting Started
 
 In your flutter project add the dependency:
@@ -11,7 +25,7 @@ In your flutter project add the dependency:
 ```dart
 dependencies:
   ...
-  filesystem_picker: ^3.0.0
+  filesystem_picker: ^4.0.0
 ```
 
 Import package:
@@ -30,7 +44,7 @@ You can open picker in three different ways: a fullscreen dialog, a popup dialog
 To open the dialog, use the asynchronous `FilesystemPicker.open` method. The method returns the path to the selected folder or file as a string.
 The method takes the following parameters:
 * **context** - widget tree context, required parameter;
-* **rootDirectory** - the root path to view the filesystem, required parameter;
+* **rootDirectory** - the root path to view the filesystem;
 * **rootName** - specifies the name of the filesystem view root in breadcrumbs, by default "Storage";
 * **directory** - specifies the current path, which should be opened in the filesystem view by default (if not specified, the `rootDirectory` is used); **attention:** this path must be inside `rootDirectory`;
 * **fsType** - specifies the type of filesystem view (folder and files, folder only or files only), by default `FilesystemType.all`;
@@ -44,8 +58,11 @@ The method takes the following parameters:
 * **requestPermission** - specifies the callback to request storage permission, callers can use e.g. [permission_handler](https://pub.dev/packages/permission_handler);
 * **folderIconColor** - specifies the folder icon color;
 * **itemFilter** - specifies a callback to filter the displayed files in the filesystem view (not set by default); the filesystem entity, path to the file/directory and its name are passed to the callback, the callback should return a boolean value - to display the file/directory or not;
-* **theme** - specifies a picker theme in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree;
-* **contextActions** - specifies a list of actions, such as "Create Folder", which are placed in the upper right corner of the picker.
+* **theme** - specifies a [picker theme](#customization) in which colors, fonts, icons, etc. can be customized; if not specified, takes values from `FilesystemPickerDefaultOptions`, if it is defined higher in the widget tree;
+* **contextActions** - specifies a list of [actions](#context-actions), such as "Create Folder", which are placed in the upper right corner of the picker.
+* **shortcuts** - specifies a list of [shortcuts](#shortcuts) that allow you to specify multiple root drives (for example, in Windows) or favorite paths (as in Linux/MacOS).
+
+Be sure to specify either the `rootDirectory` or a non-empty list of `shortcuts`.
 
 ### Popup Dialog
 
@@ -67,7 +84,7 @@ Additional parameters:
 * **minChildSize** - specifies the minimum fractional value of the parent container's height to use when displaying the widget; the default value is 0.6;
 * **maxChildSize** - specifies the maximum fractional value of the parent container's height to use when displaying the widget; the default value is 0.96.
 
-### Customization
+## Customization
 
 The appearance and behavior of the picker can be highly customized. This can be done by configuring using the parameters of the `open`, `openDialog`, `openBottomSheet` methods, as well as passing the `FilesystemPickerTheme` object to the `theme` parameter.
 
@@ -126,7 +143,7 @@ class PickerApp extends StatelessWidget {
 }
 ```
 
-### Context Actions
+## Context Actions
 
 Using the `contextActions` parameter, you can set actions for the currently displayed folder, for example, "Create Folder".
 
@@ -143,7 +160,27 @@ String? path = await FilesystemPicker.open(
 
 ![](https://github.com/andyduke/filesystem_picker/raw/master/screenshots/context_actions.png)
 
-### Android permissions
+## Shortcuts
+
+Shortcuts are a way to specify multiple root directories (instead of `rootDirectory`), or multiple drives (for example on Windows).
+
+If you are specifying a list of shortcuts, then you do not need to specify the `rootDirectory`.
+
+Shortcuts will be displayed at the beginning of the breadcrumbs, when selecting shortcuts in breadcrumbs you will see a list of shortcuts instead of a list of the file system, in which you can select the shortcut as the root of the file system display.
+
+```dart
+String? path = await FilesystemPicker.open(
+  ...
+  shortcuts: [
+    FilesystemPickerShortcut(name: 'Documents', path: docsPath, icon: Icons.snippet_folder),
+    FilesystemPickerShortcut(name: 'Temporary', path: tempPath),
+  ],
+);
+```
+
+![](https://github.com/andyduke/filesystem_picker/raw/master/screenshots/shortcuts.png)
+
+## Android permissions
 
 To access the filesystem in Android, you must specify access permissions in the `AndroidManifest.xml` file, for example:
 ```xml

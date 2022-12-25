@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:filesystem_picker_example/screens/breadcrumbs_demo_screen.dart';
 import 'package:filesystem_picker_example/screens/custom_theme_demo_screen.dart';
 import 'package:filesystem_picker_example/screens/simple_demo_screen.dart';
+import 'package:filesystem_picker_example/screens/shortcuts_demo_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -84,6 +85,19 @@ class StartScreen extends StatelessWidget {
                   onPressed: () => Navigator.maybeOf(context)?.push(
                     MaterialPageRoute(
                       builder: (context) => CustomThemeDemoScreen(),
+                    ),
+                  ),
+                ),
+
+                //
+                const SizedBox(height: 24),
+
+                //
+                ElevatedButton(
+                  child: const Text('Shortcuts Demo'),
+                  onPressed: () => Navigator.maybeOf(context)?.push(
+                    MaterialPageRoute(
+                      builder: (context) => ShortcutsDemoScreen(),
                     ),
                   ),
                 ),

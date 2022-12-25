@@ -1,12 +1,16 @@
-import 'package:filesystem_picker/src/shortcuts/shortcuts.dart';
 import 'package:flutter/material.dart';
 import '../common.dart';
 import '../options/theme/_filelist_theme.dart';
+import 'shortcut.dart';
 
+/// A single row displaying a file system shortcut, the corresponding icon and the trailing
+/// selection button.
+///
+/// Used in conjunction with the `FilesystemShortcutsListView` widget.
 class FilesystemShortcutListTile extends StatelessWidget {
-  final FilesystemShortcut shortcut;
-  final ValueChanged<FilesystemShortcut> onChange;
-  final ValueChanged<FilesystemShortcut> onSelect;
+  final FilesystemPickerShortcut shortcut;
+  final ValueChanged<FilesystemPickerShortcut> onChange;
+  final ValueChanged<FilesystemPickerShortcut> onSelect;
   final FilesystemPickerFileListThemeData? theme;
   final FilesystemType fsType;
 
@@ -19,7 +23,8 @@ class FilesystemShortcutListTile extends StatelessWidget {
     this.theme,
   });
 
-  Widget _leading(BuildContext context, FilesystemPickerFileListThemeData theme) {
+  Widget _leading(
+      BuildContext context, FilesystemPickerFileListThemeData theme) {
     return Icon(
       shortcut.icon ?? theme.getShortcutIcon(context),
       color: theme.getShortcutIconColor(context),
@@ -27,7 +32,8 @@ class FilesystemShortcutListTile extends StatelessWidget {
     );
   }
 
-  Widget? _trailing(BuildContext context, FilesystemPickerFileListThemeData theme) {
+  Widget? _trailing(
+      BuildContext context, FilesystemPickerFileListThemeData theme) {
     if (fsType != FilesystemType.file && shortcut.isSelectable) {
       final iconTheme = theme.getCheckIconTheme(context);
       return InkResponse(
@@ -52,7 +58,9 @@ class FilesystemShortcutListTile extends StatelessWidget {
       key: Key(shortcut.path.path),
       leading: _leading(context, effectiveTheme),
       trailing: _trailing(context, effectiveTheme),
-      title: Text(shortcut.name, style: style, textScaleFactor: effectiveTheme.getTextScaleFactor(context, false)),
+      title: Text(shortcut.name,
+          style: style,
+          textScaleFactor: effectiveTheme.getTextScaleFactor(context, false)),
       onTap: () => onChange(shortcut),
     );
   }

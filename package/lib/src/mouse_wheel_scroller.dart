@@ -3,7 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 
-typedef MouseWheelScrollerBuilder = Widget Function(BuildContext context, ScrollController controller);
+typedef MouseWheelScrollerBuilder = Widget Function(
+    BuildContext context, ScrollController controller);
 
 class MouseWheelScroller extends StatefulWidget {
   final MouseWheelScrollerBuilder builder;
@@ -21,7 +22,8 @@ class MouseWheelScroller extends StatefulWidget {
 
 class _MouseWheelScrollerState extends State<MouseWheelScroller> {
   ScrollController? _scrollController;
-  ScrollController get scrollController => widget.scrollController ?? (_scrollController ??= ScrollController());
+  ScrollController get scrollController =>
+      widget.scrollController ?? (_scrollController ??= ScrollController());
 
   final double scrollAmountMultiplier = 3.0;
   final scrollDuration = const Duration(milliseconds: 400);
@@ -47,15 +49,18 @@ class _MouseWheelScrollerState extends State<MouseWheelScroller> {
   Widget build(BuildContext context) {
     final child = widget.builder(context, scrollController);
 
-    final isMobile = (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android);
+    final isMobile = (defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.android);
     if (isMobile) return child;
 
     return Listener(
       onPointerSignal: (event) {
-        if (event is PointerScrollEvent && event.kind == PointerDeviceKind.mouse) {
+        if (event is PointerScrollEvent &&
+            event.kind == PointerDeviceKind.mouse) {
           final scrollDelta = event.scrollDelta.dy;
 
-          final newOffset = scrollController.offset + scrollDelta * scrollAmountMultiplier;
+          final newOffset =
+              scrollController.offset + scrollDelta * scrollAmountMultiplier;
 
           final duration = scrollDuration;
           final curve = scrollCurve;
@@ -99,7 +104,8 @@ class Throttler {
       action();
       _lastRunTimeMs = DateTime.now().millisecondsSinceEpoch;
     } else {
-      if (DateTime.now().millisecondsSinceEpoch - _lastRunTimeMs! > _throttleTimeMs) {
+      if (DateTime.now().millisecondsSinceEpoch - _lastRunTimeMs! >
+          _throttleTimeMs) {
         action();
         _lastRunTimeMs = DateTime.now().millisecondsSinceEpoch;
       }

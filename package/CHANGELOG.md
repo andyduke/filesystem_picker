@@ -1,7 +1,13 @@
+## 4.0.0-beta.1
+
+* Added `shortcuts` to allow multiple root drives (as in Windows) or favorites (as in the Linux/MacOS sidebar) on desktop systems.
+* Improved breadcrumb behavior on desktop systems (added mouse wheel scrolling).
+* The `closeButton` and `automaticallyImplyLeading` parameters have been added to the `FilesystemPicker` widget to allow you to specify a close button.
+
 ## 3.1.0
 
 * `rootDirectory` may be equal to directory, otherwise it is impossible to select `/` or `C:\`.
-* Bredcrumbs refactor for better compatibility with desktop OS.
+* Breadcrumbs refactor for better compatibility with desktop OS.
 
 ## 3.0.0
 
