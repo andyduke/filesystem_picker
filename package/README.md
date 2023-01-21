@@ -6,7 +6,7 @@ Allows the user to browse the file system and pick a folder or file.
 
 ## Table of Contents
 
-- [Getting Started](#getting-Started)
+- [Getting Started](#getting-started)
 - [Usage](#usage)
   - [Fullscreen Dialog](#fullscreen-dialog)
   - [Popup Dialog](#popup-dialog)

@@ -13,20 +13,22 @@ import 'progress_indicator.dart';
 import 'shortcuts/shortcut.dart';
 import 'shortcuts/shortcuts_listview.dart';
 
-/// FileSystem file or folder picker dialog/bottom sheet
+/// FileSystem file or folder picker dialog/bottom sheet.
 ///
 /// Allows the user to browse the file system and pick a folder or file.
 ///
-/// Be sure to specify either the `rootDirectory` or a non-empty list of `shortcuts`.
+/// Be sure to specify either the `rootDirectory` or a non-empty list of `shortcuts`, but not both.
 ///
 /// See also:
 ///  * [FilesystemPicker.open], which allows you to open a fullscreen FileSystemPicker dialog.
 ///  * [FilesystemPicker.openDialog], which allows you to open a modal FileSystemPicker dialog above the current contents of the app.
 ///  * [FilesystemPicker.openBottomSheet], which allows you to open a modal FileSystemPicker bottom sheet above the current contents of the app.
 class FilesystemPicker extends StatefulWidget {
-  /// Open fullscreen FileSystemPicker dialog
+  /// Open fullscreen FileSystemPicker dialog.
   ///
   /// Returns null if nothing was selected.
+  ///
+  /// Be sure to specify either the `rootDirectory` or a non-empty list of `shortcuts`, but not both.
   ///
   /// * [context] specifies the context in which the picker should be opened.
   /// * [rootDirectory] specifies the root of the filesystem view.
@@ -103,9 +105,11 @@ class FilesystemPicker extends StatefulWidget {
     );
   }
 
-  /// Open a modal FileSystemPicker dialog above the current contents of the app
+  /// Open a modal FileSystemPicker dialog above the current contents of the app.
   ///
   /// Returns null if nothing was selected.
+  ///
+  /// Be sure to specify either the `rootDirectory` or a non-empty list of `shortcuts`, but not both.
   ///
   /// * [context] specifies the context in which the picker should be opened.
   /// * [rootDirectory] specifies the root of the filesystem view.
@@ -186,9 +190,11 @@ class FilesystemPicker extends StatefulWidget {
     );
   }
 
-  /// Open a modal FileSystemPicker bottom sheet above the current contents of the app
+  /// Open a modal FileSystemPicker bottom sheet above the current contents of the app.
   ///
   /// Returns null if nothing was selected.
+  ///
+  /// Be sure to specify either the `rootDirectory` or a non-empty list of `shortcuts`, but not both.
   ///
   /// * [context] specifies the context in which the picker should be opened.
   /// * [rootDirectory] specifies the root of the filesystem view.
@@ -388,8 +394,10 @@ class FilesystemPicker extends StatefulWidget {
     this.shortcuts = const [],
     this.closeButton,
     this.automaticallyImplyLeading = true,
-  })  : assert(rootDirectory != null || shortcuts.isNotEmpty,
-            'You must specify "rootDirectory" or "shortcuts".'),
+  })  : assert(
+            (rootDirectory != null || shortcuts.isNotEmpty) &&
+                !(rootDirectory != null && shortcuts.isNotEmpty),
+            'You must specify "rootDirectory" or "shortcuts", but not both.'),
         super(key: key);
 
   @override
@@ -475,33 +483,63 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       options = FilesystemPickerDefaultOptions.of(context);
       _requestPermission();
 
+      // Find rootDirectory or shortcut based on widget.directory
+      if (widget.directory != null) {
+        if (widget.rootDirectory != null) {
+          rootDirectory = _findRootDirectory(widget.directory!);
+        } else {
+          shortcut = _findRootShortcut(widget.directory!);
+          rootDirectory = shortcut?.path;
+        }
+      } else {
+        rootDirectory = widget.rootDirectory;
+      }
+
+      // Set viewMode
       if (rootDirectory != null) {
         viewMode = _FilesystemPickerViewMode.filesystem;
-        _setDirectory(_validInitialDirectory);
+
+        if ((widget.directory != null) &&
+            _isDirectoryValid(widget.directory!)) {
+          _setDirectory(widget.directory!);
+        } else {
+          _setDirectory(rootDirectory!);
+        }
       } else {
         viewMode = _FilesystemPickerViewMode.shortcuts;
       }
     }
   }
 
-  Directory get _validInitialDirectory {
-    assert(rootDirectory != null);
+  bool _isDirectorySameOrWithin(Directory rootDirectory, Directory directory) {
+    return (rootDirectory.path == directory.path) ||
+        Path.isWithin(rootDirectory.path, directory.path);
+  }
 
-    if (widget.directory != null) {
-      directory = widget.directory;
-      if (rootDirectory!.path != directory!.path &&
-          !Path.isWithin(rootDirectory!.path, widget.directory!.path)) {
-        setState(() {
-          errorMessage =
-              'Invalid directory "${widget.directory!.path}": not contained within the root directory "${rootDirectory!.path}".';
-          isValidDirectory = false;
-        });
-
-        return rootDirectory!;
+  Directory? _findRootDirectory(Directory directory) {
+    final rootDirectories = (rootDirectory != null)
+        ? <Directory>[rootDirectory!]
+        : [] /*widget.shortcuts.map<Directory>((s) => s.path)*/;
+    for (var rootDirectory in rootDirectories) {
+      if (_isDirectorySameOrWithin(rootDirectory, directory)) {
+        return rootDirectory;
       }
     }
+    return null;
+  }
 
-    return directory ?? rootDirectory!;
+  FilesystemPickerShortcut? _findRootShortcut(Directory directory) {
+    for (var shortcut in widget.shortcuts) {
+      if (_isDirectorySameOrWithin(shortcut.path, directory)) {
+        return shortcut;
+      }
+    }
+    return null;
+  }
+
+  bool _isDirectoryValid(Directory directory) {
+    if (rootDirectory == null) return false;
+    return _isDirectorySameOrWithin(rootDirectory!, directory);
   }
 
   Future<void> _requestPermission() async {
@@ -945,6 +983,6 @@ class _BreadcrumbPath {
 
   @override
   String toString() {
-    return '_BreadcrumbPath(${type}${(type == _BreadcrumbPathType.filesystem) ? ': $path' : ''})';
+    return '_BreadcrumbPath($type${(type == _BreadcrumbPathType.filesystem) ? ': $path' : ''})';
   }
 }
