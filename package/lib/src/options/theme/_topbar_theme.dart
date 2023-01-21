@@ -64,8 +64,10 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
     if (theme.useMaterial3) {
       effectiveColor = color ?? foregroundColor ?? theme.appBarTheme.foregroundColor ?? theme.colorScheme.onSurface;
     } else {
-      effectiveColor =
-          color ?? foregroundColor ?? theme.appBarTheme.foregroundColor ?? theme.primaryTextTheme.headline6?.color;
+      effectiveColor = color ??
+          foregroundColor ??
+          theme.appBarTheme.foregroundColor ??
+          theme.colorScheme.onPrimary /*?? theme.primaryTextTheme.headline6?.color*/;
     }
 
     return effectiveColor;
@@ -76,7 +78,12 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
   /// If no value is set in the theme, then the [backgroundColor] from the
   /// current [AppBarTheme] is returned (the app theme is taken from the `context`).
   Color? getBackgroundColor(BuildContext context, [Color? color]) {
-    final effectiveColor = color ?? backgroundColor ?? AppBarTheme.of(context).backgroundColor;
+    final theme = Theme.of(context);
+
+    final effectiveColor = color ??
+        backgroundColor ??
+        AppBarTheme.of(context).backgroundColor ??
+        (theme.useMaterial3 ? theme.colorScheme.surface : theme.colorScheme.primary);
     return effectiveColor;
   }
 
