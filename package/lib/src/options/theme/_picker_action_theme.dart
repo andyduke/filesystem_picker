@@ -104,8 +104,13 @@ class FilesystemPickerActionThemeData with Diagnosticable {
   /// If no value is set in the theme, then the [primaryColor] from the
   /// current [Theme] is returned (the app theme is taken from the `context`).
   Color getBackgroundColor(BuildContext context, [Color? color]) {
-    final effectiveValue =
-        color ?? backgroundColor ?? Theme.of(context).primaryColor;
+    Color? effectiveValue;
+    final theme = Theme.of(context);
+    if (theme.useMaterial3) {
+      effectiveValue = color ?? backgroundColor ?? theme.colorScheme.background;
+    } else {
+      effectiveValue = color ?? backgroundColor ?? theme.primaryColor;
+    }
     return effectiveValue;
   }
 

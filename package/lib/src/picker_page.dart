@@ -797,10 +797,8 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
     if (widget.contextActions.length == 1) {
       return [
-        Theme(
-          data: ThemeData(
-            iconTheme: buttonTheme.getIconTheme(context),
-          ),
+        IconTheme.merge(
+          data: buttonTheme.getIconTheme(context),
           child: IconButton(
             icon: widget.contextActions.first.icon,
             tooltip: widget.contextActions.first.text,
@@ -814,7 +812,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     } else {
       return [
         Theme(
-          data: ThemeData(
+          data: Theme.of(context).copyWith(
             highlightColor: menuTheme.getHighlightBackgroundColor(
                 context), // Selected item background
             popupMenuTheme: PopupMenuThemeData(
@@ -885,6 +883,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       iconTheme: iconTheme,
       titleTextStyle: titleTextStyle,
       systemOverlayStyle: systemOverlayStyle,
+      // TODO: scrolledUnderElevation: theme.userMaterial3 ? 4 : 0,
 
       // Props
       title: Text(widget.title ?? directoryName ?? '',

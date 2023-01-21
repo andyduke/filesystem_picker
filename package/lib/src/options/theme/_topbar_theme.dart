@@ -62,12 +62,16 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
 
     final theme = Theme.of(context);
     if (theme.useMaterial3) {
-      effectiveColor = color ?? foregroundColor ?? theme.appBarTheme.foregroundColor ?? theme.colorScheme.onSurface;
+      effectiveColor = color ??
+          foregroundColor ??
+          theme.appBarTheme.foregroundColor ??
+          theme.colorScheme.onSurface;
     } else {
       effectiveColor = color ??
           foregroundColor ??
           theme.appBarTheme.foregroundColor ??
-          theme.colorScheme.onPrimary /*?? theme.primaryTextTheme.headline6?.color*/;
+          theme.colorScheme
+              .onPrimary /*?? theme.primaryTextTheme.headline6?.color*/;
     }
 
     return effectiveColor;
@@ -83,7 +87,9 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
     final effectiveColor = color ??
         backgroundColor ??
         AppBarTheme.of(context).backgroundColor ??
-        (theme.useMaterial3 ? theme.colorScheme.surface : theme.colorScheme.primary);
+        (theme.useMaterial3
+            ? theme.colorScheme.surface
+            : theme.colorScheme.primary);
     return effectiveColor;
   }
 
@@ -101,7 +107,8 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
   /// If no value is set in the theme, then the [shadowColor] from the
   /// current [AppBarTheme] is returned (the app theme is taken from the `context`).
   Color? getShadowColor(BuildContext context, [Color? color]) {
-    final effectiveColor = color ?? shadowColor ?? AppBarTheme.of(context).shadowColor;
+    final effectiveColor =
+        color ?? shadowColor ?? AppBarTheme.of(context).shadowColor;
     return effectiveColor;
   }
 
@@ -130,9 +137,10 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
   /// (the app theme is taken from the `context`).
   TextStyle? getTitleTextStyle(BuildContext context) {
     final theme = Theme.of(context);
-    final effectiveTextStyle =
-        (theme.appBarTheme.titleTextStyle ?? theme.textTheme.headline6?.copyWith(color: foregroundColor) ?? TextStyle())
-            .merge(titleTextStyle);
+    final effectiveTextStyle = (theme.appBarTheme.titleTextStyle ??
+            theme.textTheme.headline6?.copyWith(color: foregroundColor) ??
+            TextStyle())
+        .merge(titleTextStyle);
     return effectiveTextStyle;
   }
 
@@ -141,7 +149,8 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
   /// If no value is set in the theme, then the [systemOverlayStyle] from the
   /// current [AppBarTheme] is returned (the app theme is taken from the `context`).
   SystemUiOverlayStyle? getSystemOverlayStyle(BuildContext context) {
-    final effectiveOverlayStyle = systemOverlayStyle ?? AppBarTheme.of(context).systemOverlayStyle;
+    final effectiveOverlayStyle =
+        systemOverlayStyle ?? AppBarTheme.of(context).systemOverlayStyle;
     return effectiveOverlayStyle;
   }
 
@@ -166,9 +175,11 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
       shadowColor: shadowColor ?? base.shadowColor,
       shape: shape ?? base.shape,
       iconTheme: iconTheme?.merge(base.iconTheme) ?? base.iconTheme,
-      titleTextStyle: base.titleTextStyle?.merge(titleTextStyle) ?? titleTextStyle,
+      titleTextStyle:
+          base.titleTextStyle?.merge(titleTextStyle) ?? titleTextStyle,
       systemOverlayStyle: systemOverlayStyle ?? base.systemOverlayStyle,
-      breadcrumbsTheme: breadcrumbsTheme?.merge(base.breadcrumbsTheme) ?? base.breadcrumbsTheme,
+      breadcrumbsTheme: breadcrumbsTheme?.merge(base.breadcrumbsTheme) ??
+          base.breadcrumbsTheme,
     );
   }
 }

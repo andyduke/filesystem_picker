@@ -174,18 +174,20 @@ class _FilesystemPickerNewFolderDialogState
         actions: [
           TextButton(
             child: Text((widget.cancelText ?? 'Cancel').toUpperCase()),
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).textTheme.button?.color,
-            ),
+            // style: TextButton.styleFrom(
+            //   // foregroundColor: Theme.of(context).textTheme.button?.color,
+            //   foregroundColor: Theme.of(context).dialogTheme.contentTextStyle?.color ??
+            //       Theme.of(context).textTheme.bodyMedium?.color,
+            // ),
             onPressed: () {
               Navigator.maybeOf(context)?.pop();
             },
           ),
           TextButton(
             child: Text((widget.okText ?? 'OK').toUpperCase()),
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).primaryColor,
-            ),
+            // style: TextButton.styleFrom(
+            //   foregroundColor: Theme.of(context).primaryColor,
+            // ),
             onPressed: () {
               if (_folderName?.isNotEmpty ?? false) {
                 widget.onDone.call(_folderName);
