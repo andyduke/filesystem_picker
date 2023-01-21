@@ -1,3 +1,7 @@
+## 4.0.0-beta.2
+
+* Implemented selection of the correct root path when setting `directory` and using `shortcuts` instead of `rootDirectory`.
+
 ## 4.0.0-beta.1
 
 * Added `shortcuts` to allow multiple root drives (as in Windows) or favorites (as in the Linux/MacOS sidebar) on desktop systems.
