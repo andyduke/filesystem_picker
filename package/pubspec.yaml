@@ -6,6 +6,19 @@ homepage: https://github.com/andyduke/filesystem_picker/tree/master/package
 repository: https://github.com/andyduke/filesystem_picker
 issue_tracker: https://github.com/andyduke/filesystem_picker/issues
 
+screenshots:
+  - description: "Types of pickers: full screen, dialog, bottom sheet"
+    path: screenshots/types_of_picker.png
+  - description: Picker customization
+    path: screenshots/picker_customization.png
+
+topics:
+  - picker
+  - files
+  - file-selection
+  - file-selector
+  - ui
+
 environment:
   flutter: ">=3.0.0"
   sdk: '>=2.17.0 <3.0.0'
