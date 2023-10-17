@@ -20,17 +20,19 @@ class SimpleDemoScreen extends StatelessWidget {
 
     debugPrint('Root path: ${rootPath.absolute.path}');
 
-    String? path = await FilesystemPicker.open(
-      title: 'Select folder',
-      context: context,
-      rootDirectory: rootPath,
-      fsType: FilesystemType.folder,
-      pickText: 'Select folder',
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
-    );
+    if (context.mounted) {
+      String? path = await FilesystemPicker.open(
+        title: 'Select folder',
+        context: context,
+        rootDirectory: rootPath,
+        fsType: FilesystemType.folder,
+        pickText: 'Select folder',
+        requestPermission: () async =>
+            await Permission.storage.request().isGranted,
+      );
 
-    selectedPath.value = path;
+      selectedPath.value = path;
+    }
   }
 
   void _pickFile(BuildContext context) async {
@@ -40,16 +42,18 @@ class SimpleDemoScreen extends StatelessWidget {
 
     debugPrint('Root path: ${rootPath.absolute.path}');
 
-    String? path = await FilesystemPicker.open(
-      title: 'Open file',
-      context: context,
-      rootDirectory: rootPath,
-      fsType: FilesystemType.file,
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
-    );
+    if (context.mounted) {
+      String? path = await FilesystemPicker.open(
+        title: 'Open file',
+        context: context,
+        rootDirectory: rootPath,
+        fsType: FilesystemType.file,
+        requestPermission: () async =>
+            await Permission.storage.request().isGranted,
+      );
 
-    selectedPath.value = path;
+      selectedPath.value = path;
+    }
   }
 
   // --- Dialog
@@ -61,21 +65,23 @@ class SimpleDemoScreen extends StatelessWidget {
 
     debugPrint('Root path: ${rootPath.absolute.path}');
 
-    String? path = await FilesystemPicker.openDialog(
-      title: 'Select folder',
-      context: context,
-      rootDirectory: rootPath,
-      fsType: FilesystemType.folder,
-      pickText: 'Select folder',
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
-      constraints: const BoxConstraints(
-        maxWidth: 280,
-        maxHeight: 460,
-      ),
-    );
+    if (context.mounted) {
+      String? path = await FilesystemPicker.openDialog(
+        title: 'Select folder',
+        context: context,
+        rootDirectory: rootPath,
+        fsType: FilesystemType.folder,
+        pickText: 'Select folder',
+        requestPermission: () async =>
+            await Permission.storage.request().isGranted,
+        constraints: const BoxConstraints(
+          maxWidth: 280,
+          maxHeight: 460,
+        ),
+      );
 
-    selectedPath.value = path;
+      selectedPath.value = path;
+    }
   }
 
   void _pickFileDialog(BuildContext context) async {
@@ -85,16 +91,18 @@ class SimpleDemoScreen extends StatelessWidget {
 
     debugPrint('Root path: ${rootPath.absolute.path}');
 
-    String? path = await FilesystemPicker.openDialog(
-      title: 'Open file',
-      context: context,
-      rootDirectory: rootPath,
-      fsType: FilesystemType.file,
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
-    );
+    if (context.mounted) {
+      String? path = await FilesystemPicker.openDialog(
+        title: 'Open file',
+        context: context,
+        rootDirectory: rootPath,
+        fsType: FilesystemType.file,
+        requestPermission: () async =>
+            await Permission.storage.request().isGranted,
+      );
 
-    selectedPath.value = path;
+      selectedPath.value = path;
+    }
   }
 
   // --- Bottom Sheet
@@ -106,21 +114,23 @@ class SimpleDemoScreen extends StatelessWidget {
 
     debugPrint('Root path: ${rootPath.absolute.path}');
 
-    String? path = await FilesystemPicker.openBottomSheet(
-      title: 'Select folder',
-      context: context,
-      rootDirectory: rootPath,
-      fsType: FilesystemType.folder,
-      pickText: 'Select folder',
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
-      constraints: const BoxConstraints(
-        maxWidth: 280,
-        maxHeight: 460,
-      ),
-    );
+    if (context.mounted) {
+      String? path = await FilesystemPicker.openBottomSheet(
+        title: 'Select folder',
+        context: context,
+        rootDirectory: rootPath,
+        fsType: FilesystemType.folder,
+        pickText: 'Select folder',
+        requestPermission: () async =>
+            await Permission.storage.request().isGranted,
+        constraints: const BoxConstraints(
+          maxWidth: 280,
+          maxHeight: 460,
+        ),
+      );
 
-    selectedPath.value = path;
+      selectedPath.value = path;
+    }
   }
 
   void _pickFileBottomSheet(BuildContext context) async {
@@ -130,16 +140,18 @@ class SimpleDemoScreen extends StatelessWidget {
 
     debugPrint('Root path: ${rootPath.absolute.path}');
 
-    String? path = await FilesystemPicker.openBottomSheet(
-      title: 'Open file',
-      context: context,
-      rootDirectory: rootPath,
-      fsType: FilesystemType.file,
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
-    );
+    if (context.mounted) {
+      String? path = await FilesystemPicker.openBottomSheet(
+        title: 'Open file',
+        context: context,
+        rootDirectory: rootPath,
+        fsType: FilesystemType.file,
+        requestPermission: () async =>
+            await Permission.storage.request().isGranted,
+      );
 
-    selectedPath.value = path;
+      selectedPath.value = path;
+    }
   }
 
   @override

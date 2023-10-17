@@ -89,7 +89,7 @@ class BreadcrumbsThemeData with Diagnosticable {
   Color getItemColor(BuildContext context, [Color? color]) {
     final effectiveItemColor = color ??
         itemColor ??
-        Theme.of(context).textTheme.button?.color ??
+        Theme.of(context).textTheme.labelLarge?.color ??
         Color(0xFF000000);
     return effectiveItemColor;
   }

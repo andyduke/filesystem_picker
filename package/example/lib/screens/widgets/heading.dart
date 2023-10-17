@@ -10,7 +10,7 @@ class Heading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).textTheme.caption?.color;
+    final color = Theme.of(context).textTheme.bodySmall?.color;
 
     return Padding(
       padding: const EdgeInsets.only(top: 48, bottom: 24),

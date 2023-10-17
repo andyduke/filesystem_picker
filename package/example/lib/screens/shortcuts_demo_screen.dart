@@ -19,21 +19,23 @@ class ShortcutsDemoScreen extends StatelessWidget {
     final Directory docsPath = await getApplicationDocumentsDirectory();
     final Directory tempPath = await getTemporaryDirectory();
 
-    String? path = await FilesystemPicker.open(
-      title: 'Select folder',
-      context: context,
-      fsType: FilesystemType.folder,
-      pickText: 'Select folder',
-      shortcuts: [
-        FilesystemPickerShortcut(
-            name: 'Documents', path: docsPath, icon: Icons.snippet_folder),
-        FilesystemPickerShortcut(name: 'Temporary', path: tempPath),
-      ],
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
-    );
+    if (context.mounted) {
+      String? path = await FilesystemPicker.open(
+        title: 'Select folder',
+        context: context,
+        fsType: FilesystemType.folder,
+        pickText: 'Select folder',
+        shortcuts: [
+          FilesystemPickerShortcut(
+              name: 'Documents', path: docsPath, icon: Icons.snippet_folder),
+          FilesystemPickerShortcut(name: 'Temporary', path: tempPath),
+        ],
+        requestPermission: () async =>
+            await Permission.storage.request().isGranted,
+      );
 
-    selectedPath.value = path;
+      selectedPath.value = path;
+    }
   }
 
   void _pickFile(BuildContext context) async {
@@ -42,20 +44,22 @@ class ShortcutsDemoScreen extends StatelessWidget {
     final Directory docsPath = await getApplicationDocumentsDirectory();
     final Directory tempPath = await getTemporaryDirectory();
 
-    String? path = await FilesystemPicker.open(
-      title: 'Open file',
-      context: context,
-      fsType: FilesystemType.file,
-      shortcuts: [
-        FilesystemPickerShortcut(
-            name: 'Documents', path: docsPath, icon: Icons.snippet_folder),
-        FilesystemPickerShortcut(name: 'Temporary', path: tempPath),
-      ],
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
-    );
+    if (context.mounted) {
+      String? path = await FilesystemPicker.open(
+        title: 'Open file',
+        context: context,
+        fsType: FilesystemType.file,
+        shortcuts: [
+          FilesystemPickerShortcut(
+              name: 'Documents', path: docsPath, icon: Icons.snippet_folder),
+          FilesystemPickerShortcut(name: 'Temporary', path: tempPath),
+        ],
+        requestPermission: () async =>
+            await Permission.storage.request().isGranted,
+      );
 
-    selectedPath.value = path;
+      selectedPath.value = path;
+    }
   }
 
   // --- Dialog
@@ -66,25 +70,27 @@ class ShortcutsDemoScreen extends StatelessWidget {
     final Directory docsPath = await getApplicationDocumentsDirectory();
     final Directory tempPath = await getTemporaryDirectory();
 
-    String? path = await FilesystemPicker.openDialog(
-      title: 'Select folder',
-      context: context,
-      fsType: FilesystemType.folder,
-      pickText: 'Select folder',
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
-      shortcuts: [
-        FilesystemPickerShortcut(
-            name: 'Documents', path: docsPath, icon: Icons.snippet_folder),
-        FilesystemPickerShortcut(name: 'Temporary', path: tempPath),
-      ],
-      constraints: const BoxConstraints(
-        maxWidth: 280,
-        maxHeight: 460,
-      ),
-    );
+    if (context.mounted) {
+      String? path = await FilesystemPicker.openDialog(
+        title: 'Select folder',
+        context: context,
+        fsType: FilesystemType.folder,
+        pickText: 'Select folder',
+        requestPermission: () async =>
+            await Permission.storage.request().isGranted,
+        shortcuts: [
+          FilesystemPickerShortcut(
+              name: 'Documents', path: docsPath, icon: Icons.snippet_folder),
+          FilesystemPickerShortcut(name: 'Temporary', path: tempPath),
+        ],
+        constraints: const BoxConstraints(
+          maxWidth: 280,
+          maxHeight: 460,
+        ),
+      );
 
-    selectedPath.value = path;
+      selectedPath.value = path;
+    }
   }
 
   void _pickFileDialog(BuildContext context) async {
@@ -93,20 +99,22 @@ class ShortcutsDemoScreen extends StatelessWidget {
     final Directory docsPath = await getApplicationDocumentsDirectory();
     final Directory tempPath = await getTemporaryDirectory();
 
-    String? path = await FilesystemPicker.openDialog(
-      title: 'Open file',
-      context: context,
-      fsType: FilesystemType.file,
-      shortcuts: [
-        FilesystemPickerShortcut(
-            name: 'Documents', path: docsPath, icon: Icons.snippet_folder),
-        FilesystemPickerShortcut(name: 'Temporary', path: tempPath),
-      ],
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
-    );
+    if (context.mounted) {
+      String? path = await FilesystemPicker.openDialog(
+        title: 'Open file',
+        context: context,
+        fsType: FilesystemType.file,
+        shortcuts: [
+          FilesystemPickerShortcut(
+              name: 'Documents', path: docsPath, icon: Icons.snippet_folder),
+          FilesystemPickerShortcut(name: 'Temporary', path: tempPath),
+        ],
+        requestPermission: () async =>
+            await Permission.storage.request().isGranted,
+      );
 
-    selectedPath.value = path;
+      selectedPath.value = path;
+    }
   }
 
   // --- Bottom Sheet
@@ -117,25 +125,27 @@ class ShortcutsDemoScreen extends StatelessWidget {
     final Directory docsPath = await getApplicationDocumentsDirectory();
     final Directory tempPath = await getTemporaryDirectory();
 
-    String? path = await FilesystemPicker.openBottomSheet(
-      title: 'Select folder',
-      context: context,
-      fsType: FilesystemType.folder,
-      pickText: 'Select folder',
-      shortcuts: [
-        FilesystemPickerShortcut(
-            name: 'Documents', path: docsPath, icon: Icons.snippet_folder),
-        FilesystemPickerShortcut(name: 'Temporary', path: tempPath),
-      ],
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
-      constraints: const BoxConstraints(
-        maxWidth: 280,
-        maxHeight: 460,
-      ),
-    );
+    if (context.mounted) {
+      String? path = await FilesystemPicker.openBottomSheet(
+        title: 'Select folder',
+        context: context,
+        fsType: FilesystemType.folder,
+        pickText: 'Select folder',
+        shortcuts: [
+          FilesystemPickerShortcut(
+              name: 'Documents', path: docsPath, icon: Icons.snippet_folder),
+          FilesystemPickerShortcut(name: 'Temporary', path: tempPath),
+        ],
+        requestPermission: () async =>
+            await Permission.storage.request().isGranted,
+        constraints: const BoxConstraints(
+          maxWidth: 280,
+          maxHeight: 460,
+        ),
+      );
 
-    selectedPath.value = path;
+      selectedPath.value = path;
+    }
   }
 
   void _pickFileBottomSheet(BuildContext context) async {
@@ -144,20 +154,22 @@ class ShortcutsDemoScreen extends StatelessWidget {
     final Directory docsPath = await getApplicationDocumentsDirectory();
     final Directory tempPath = await getTemporaryDirectory();
 
-    String? path = await FilesystemPicker.openBottomSheet(
-      title: 'Open file',
-      context: context,
-      fsType: FilesystemType.file,
-      shortcuts: [
-        FilesystemPickerShortcut(
-            name: 'Documents', path: docsPath, icon: Icons.snippet_folder),
-        FilesystemPickerShortcut(name: 'Temporary', path: tempPath),
-      ],
-      requestPermission: () async =>
-          await Permission.storage.request().isGranted,
-    );
+    if (context.mounted) {
+      String? path = await FilesystemPicker.openBottomSheet(
+        title: 'Open file',
+        context: context,
+        fsType: FilesystemType.file,
+        shortcuts: [
+          FilesystemPickerShortcut(
+              name: 'Documents', path: docsPath, icon: Icons.snippet_folder),
+          FilesystemPickerShortcut(name: 'Temporary', path: tempPath),
+        ],
+        requestPermission: () async =>
+            await Permission.storage.request().isGranted,
+      );
 
-    selectedPath.value = path;
+      selectedPath.value = path;
+    }
   }
 
   @override

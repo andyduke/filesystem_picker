@@ -36,7 +36,7 @@ class _DemoScaffoldState extends State<DemoScaffold> {
                 const BackButton(),
                 Expanded(
                   child: Text(widget.title,
-                      style: Theme.of(context).textTheme.headline6),
+                      style: Theme.of(context).textTheme.titleLarge),
                 ),
               ],
             ),

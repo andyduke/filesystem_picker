@@ -18,7 +18,7 @@ class FilesystemPickerContextActionsButtonThemeData with Diagnosticable {
   IconThemeData getIconTheme(BuildContext context) {
     final effectiveValue = IconThemeData(
       color: Theme.of(context).appBarTheme.foregroundColor ??
-          Theme.of(context).primaryTextTheme.headline6?.color,
+          Theme.of(context).primaryTextTheme.titleLarge?.color,
     ).merge(iconTheme);
     return effectiveValue;
   }
