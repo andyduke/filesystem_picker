@@ -1,3 +1,7 @@
+## 4.0.0-beta.3
+
+* Improved handling of `rootDirectory` and `Shortcut.path`.
+
 ## 4.0.0-beta.2
 
 * Implemented selection of the correct root path when setting `directory` and using `shortcuts` instead of `rootDirectory`.

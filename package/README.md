@@ -64,6 +64,8 @@ The method takes the following parameters:
 
 Be sure to specify either the `rootDirectory` or a non-empty list of `shortcuts`.
 
+> **Attention!** You must ensure that you provide a valid path as the `rootDirectory` value.
+
 ### Popup Dialog
 
 To open the popup dialog, use the asynchronous `FilesystemPicker.openDialog` method. The basic parameters are the same as in `open` (see [Fullscreen Dialog](#fullscreen-dialog)).
@@ -165,6 +167,8 @@ String? path = await FilesystemPicker.open(
 Shortcuts are a way to specify multiple root directories (instead of `rootDirectory`), or multiple drives (for example on Windows).
 
 If you are specifying a list of shortcuts, then you do not need to specify the `rootDirectory`.
+
+> **Attention!** You must ensure that you provide a valid path as the `Shortcut.path` value.
 
 Shortcuts will be displayed at the beginning of the breadcrumbs, when selecting shortcuts in breadcrumbs you will see a list of shortcuts instead of a list of the file system, in which you can select the shortcut as the root of the file system display.
 

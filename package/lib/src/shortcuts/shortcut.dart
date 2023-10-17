@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:filesystem_picker/src/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -24,9 +25,9 @@ class FilesystemPickerShortcut with Diagnosticable {
   FilesystemPickerShortcut({
     required this.name,
     this.icon,
-    required this.path,
+    required Directory path,
     this.isSelectable = true,
-  });
+  }) : path = normalizeRootPath(path);
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {

@@ -1,4 +1,5 @@
 _playground/
 _temp/
 _doc/
+.vscode/
 build-doc.cmd

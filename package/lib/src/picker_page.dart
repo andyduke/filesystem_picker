@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:filesystem_picker/src/actions/action.dart';
+import 'package:filesystem_picker/src/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as Path;
 import 'common.dart';
@@ -374,7 +375,7 @@ class FilesystemPicker extends StatefulWidget {
   FilesystemPicker({
     Key? key,
     this.rootName,
-    this.rootDirectory,
+    Directory? rootDirectory,
     this.directory,
     this.fsType = FilesystemType.all,
     this.pickText,
@@ -398,6 +399,9 @@ class FilesystemPicker extends StatefulWidget {
             (rootDirectory != null || shortcuts.isNotEmpty) &&
                 !(rootDirectory != null && shortcuts.isNotEmpty),
             'You must specify "rootDirectory" or "shortcuts", but not both.'),
+        rootDirectory = (rootDirectory != null)
+            ? normalizeRootPath(rootDirectory)
+            : rootDirectory,
         super(key: key);
 
   @override
@@ -569,7 +573,9 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       String rootItem = items.first;
       String rootPath = rootDirectory!.path;
       pathItems.add(_PathItem(
-          path: rootPath, text: shortcut?.name ?? rootName ?? rootItem));
+        path: rootPath,
+        text: shortcut?.name ?? rootName ?? rootItem,
+      ));
 
       String path = rootPath;
       for (var item in items) {
@@ -578,8 +584,9 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       }
     } else {
       pathItems.add(_PathItem(
-          path: rootDirectory!.path,
-          text: shortcut?.name ?? rootName ?? rootDirectory!.path));
+        path: rootDirectory!.path,
+        text: shortcut?.name ?? rootName ?? rootDirectory!.path,
+      ));
     }
 
     directoryName =
