@@ -890,7 +890,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       iconTheme: iconTheme,
       titleTextStyle: titleTextStyle,
       systemOverlayStyle: systemOverlayStyle,
-      // TODO: scrolledUnderElevation: theme.userMaterial3 ? 4 : 0,
+      scrolledUnderElevation: topBarTheme.getScrolledUnderElevation(context),
 
       // Props
       title: Text(widget.title ?? directoryName ?? '',

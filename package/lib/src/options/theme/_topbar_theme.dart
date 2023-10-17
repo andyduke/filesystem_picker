@@ -39,6 +39,9 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
   /// Specifies the theme for the breadcrumbs used in the picker.
   final BreadcrumbsThemeData? breadcrumbsTheme;
 
+  /// {@macro flutter.material.appbar.scrolledUnderElevation}
+  final double? scrolledUnderElevation;
+
   /// Creates a theme that can be used in [FilesystemPickerTheme] and [Breadcrumbs].
   FilesystemPickerTopBarThemeData({
     this.foregroundColor,
@@ -50,6 +53,7 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
     this.titleTextStyle,
     this.systemOverlayStyle,
     this.breadcrumbsTheme,
+    this.scrolledUnderElevation,
   });
 
   /// Returns the default color for Text and Icons within the app bar.
@@ -138,7 +142,7 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
   TextStyle? getTitleTextStyle(BuildContext context) {
     final theme = Theme.of(context);
     final effectiveTextStyle = (theme.appBarTheme.titleTextStyle ??
-            theme.textTheme.headline6?.copyWith(color: foregroundColor) ??
+            theme.textTheme.titleLarge?.copyWith(color: foregroundColor) ??
             TextStyle())
         .merge(titleTextStyle);
     return effectiveTextStyle;
@@ -163,6 +167,16 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
     return effectiveThemeData;
   }
 
+  /// Returns the `scrolledUnderElevation` value.
+  ///
+  /// If no value is set in the theme, then the [scrolledUnderElevation] from the
+  /// current [AppBarTheme] is returned (the app theme is taken from the `context`).
+  double? getScrolledUnderElevation(BuildContext context) {
+    final effectiveScrolledUnderElevation = scrolledUnderElevation ??
+        AppBarTheme.of(context).scrolledUnderElevation;
+    return effectiveScrolledUnderElevation;
+  }
+
   /// Returns a new picker topbar theme that matches this theme but with some values
   /// replaced by the non-null parameters of the given theme.
   ///
@@ -180,6 +194,8 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
       systemOverlayStyle: systemOverlayStyle ?? base.systemOverlayStyle,
       breadcrumbsTheme: breadcrumbsTheme?.merge(base.breadcrumbsTheme) ??
           base.breadcrumbsTheme,
+      scrolledUnderElevation:
+          scrolledUnderElevation ?? base.scrolledUnderElevation,
     );
   }
 }
