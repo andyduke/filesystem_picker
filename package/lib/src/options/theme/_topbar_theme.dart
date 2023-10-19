@@ -59,7 +59,7 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
   /// Returns the default color for Text and Icons within the app bar.
   ///
   /// If no value is set in the theme, then the [foregroundColor] from the
-  /// current [AppBarTheme] or color of [headline6] from [primaryTextTheme] is returned
+  /// current [AppBarTheme] or color of [onPrimary] from [colorScheme] is returned
   /// (the app theme is taken from the `context`).
   Color? getForegroundColor(BuildContext context, [Color? color]) {
     Color? effectiveColor;
@@ -74,8 +74,7 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
       effectiveColor = color ??
           foregroundColor ??
           theme.appBarTheme.foregroundColor ??
-          theme.colorScheme
-              .onPrimary /*?? theme.primaryTextTheme.headline6?.color*/;
+          theme.colorScheme.onPrimary;
     }
 
     return effectiveColor;
@@ -137,7 +136,7 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
   /// Returns the default text style for the AppBar's title widget.
   ///
   /// If no value is set in the theme, then the [titleTextStyle] from the
-  /// current [AppBarTheme] or [headline6] from [textTheme] is returned
+  /// current [AppBarTheme] or [titleLarge] from [textTheme] is returned
   /// (the app theme is taken from the `context`).
   TextStyle? getTitleTextStyle(BuildContext context) {
     final theme = Theme.of(context);

@@ -134,7 +134,7 @@ class FilesystemPickerActionThemeData with Diagnosticable {
 
   /// Returns the default text style for the button.
   ///
-  /// If no value is set in the theme, then the [bodyText1] from [textTheme] is returned
+  /// If no value is set in the theme, then the [bodyLarge] from [textTheme] is returned
   /// (the app theme is taken from the `context`).
   TextStyle? getTextStyle(BuildContext context, [Color? color]) {
     final theme = Theme.of(context);
