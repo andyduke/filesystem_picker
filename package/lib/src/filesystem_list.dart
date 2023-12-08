@@ -184,15 +184,7 @@ class _FilesystemListState extends State<FilesystemList> {
         ),
       ),
       onTap: () {
-        final li = this.widget.rootDirectory.path.split(Platform.pathSeparator)
-          ..removeLast();
-
-        String path = Path.joinAll(li);
-        if (Path.rootPrefix(path) == '' && !path.endsWith(Path.separator)) {
-          path += Path.separator;
-        }
-
-        widget.onChange(Directory(path));
+        widget.onChange(this.widget.rootDirectory.parent);
       },
     );
   }
