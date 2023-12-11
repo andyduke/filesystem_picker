@@ -138,7 +138,7 @@ class FilesystemPickerActionThemeData with Diagnosticable {
   /// (the app theme is taken from the `context`).
   TextStyle? getTextStyle(BuildContext context, [Color? color]) {
     final theme = Theme.of(context);
-    final effectiveTextStyle = (theme.textTheme.bodyLarge ?? TextStyle())
+    final effectiveTextStyle = (theme.textTheme.bodyLarge ?? const TextStyle())
         .copyWith(color: color)
         .merge(textStyle);
     return effectiveTextStyle;

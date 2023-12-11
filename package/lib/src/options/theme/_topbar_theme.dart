@@ -142,7 +142,7 @@ class FilesystemPickerTopBarThemeData with Diagnosticable {
     final theme = Theme.of(context);
     final effectiveTextStyle = (theme.appBarTheme.titleTextStyle ??
             theme.textTheme.titleLarge?.copyWith(color: foregroundColor) ??
-            TextStyle())
+            const TextStyle())
         .merge(titleTextStyle);
     return effectiveTextStyle;
   }

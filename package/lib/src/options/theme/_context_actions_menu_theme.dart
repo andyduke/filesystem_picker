@@ -45,7 +45,7 @@ class FilesystemPickerContextActionsMenuThemeData with Diagnosticable {
 
   /// Returns the theme for the menu item icon.
   IconThemeData getIconTheme(BuildContext context) {
-    final effectiveValue = IconThemeData()
+    final effectiveValue = const IconThemeData()
         .copyWith(color: getForegroundColor(context))
         .merge(iconTheme);
     return effectiveValue;
@@ -53,7 +53,7 @@ class FilesystemPickerContextActionsMenuThemeData with Diagnosticable {
 
   /// Returns the text style for the menu item.
   TextStyle getTextStyle(BuildContext context) {
-    final effectiveValue = TextStyle()
+    final effectiveValue = const TextStyle()
         .copyWith(color: getForegroundColor(context))
         .merge(textStyle);
     return effectiveValue;

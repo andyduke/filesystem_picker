@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as Path;
+import 'package:path/path.dart' as path;
 import 'common.dart';
 import 'options/theme/_filelist_theme.dart';
 
@@ -35,7 +35,7 @@ class FilesystemListTile extends StatelessWidget {
   final bool caseSensitiveFileExtensionComparison;
 
   /// Creates a file system entity list tile.
-  FilesystemListTile({
+  const FilesystemListTile({
     Key? key,
     this.fsType = FilesystemType.all,
     required this.item,
@@ -64,9 +64,9 @@ class FilesystemListTile extends StatelessWidget {
   Icon _fileIcon(BuildContext context, FilesystemPickerFileListThemeData theme,
       String filename, bool isFile,
       [Color? color]) {
-    final _extension = filename.split(".").last;
+    final entryExtension = filename.split(".").last;
     IconData icon = theme.getFileIcon(
-        context, _extension, caseSensitiveFileExtensionComparison);
+        context, entryExtension, caseSensitiveFileExtensionComparison);
 
     return Icon(
       icon,
@@ -109,7 +109,7 @@ class FilesystemListTile extends StatelessWidget {
       key: Key(item.absolute.path),
       leading: _leading(context, effectiveTheme, isFile),
       trailing: _trailing(context, effectiveTheme, isFile),
-      title: Text(Path.basename(item.path),
+      title: Text(path.basename(item.path),
           style: style,
           textScaleFactor: effectiveTheme.getTextScaleFactor(context, isFile)),
       onTap: (item is Directory)

@@ -57,17 +57,24 @@ class FilesystemPickerNewFolderContextAction
                   ? alreadyExistsMessage!.call(value)
                   : 'The folder with the name "$value" already exists. Please use another name.';
 
-              await _showError(context, message);
+              if (context.mounted) {
+                await _showError(context, message);
+              }
               return;
             }
           } catch (e) {
             // debugPrint('Error: ${e.runtimeType}');
 
-            await _showError(context, '$e');
+            if (context.mounted) {
+              await _showError(context, '$e');
+            }
             return;
           }
         }
-        Navigator.maybeOf(context)?.pop(true);
+
+        if (context.mounted) {
+          Navigator.maybeOf(context)?.pop(true);
+        }
       },
     );
 
@@ -92,7 +99,7 @@ class FilesystemPickerNewFolderContextAction
         content: Text(message),
         actions: [
           TextButton(
-            child: Text('OK'),
+            child: const Text('OK'),
             onPressed: () => Navigator.maybeOf(context)?.pop(),
           ),
         ],

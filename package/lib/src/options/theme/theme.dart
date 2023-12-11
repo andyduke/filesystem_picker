@@ -92,6 +92,7 @@ class FilesystemPickerTheme
   ///
   /// If no value is set in the theme, then the `scaffoldBackgroundColor` from the
   /// current app theme is returned (the app theme is taken from the `context`).
+  @override
   Color getBackgroundColor(BuildContext context, [Color? color]) {
     final effectiveValue =
         color ?? _backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
@@ -99,37 +100,43 @@ class FilesystemPickerTheme
   }
 
   /// Returns the theme for the Picker's `AppBar` using the `context` to get the defaults.
+  @override
   FilesystemPickerTopBarThemeData getTopBar(BuildContext context) {
     return _topBar ?? FilesystemPickerTopBarThemeData();
   }
 
   /// Returns the text style for messages in the center of the picker,
   /// using the `context` to get the default values.
+  @override
   TextStyle getMessageTextStyle(BuildContext context) {
-    return _messageTextStyle ?? TextStyle();
+    return _messageTextStyle ?? const TextStyle();
   }
 
   /// Returns the theme for the FilesystemList widget used in the picker,
   /// using `context` to get the defaults.
+  @override
   FilesystemPickerFileListThemeData getFileList(BuildContext context) {
     return _fileList ?? FilesystemPickerFileListThemeData();
   }
 
   /// Returns the theme for the picker action, using `context` to get the defaults.
+  @override
   FilesystemPickerActionThemeData getPickerAction(BuildContext context) {
     return _pickerAction ?? FilesystemPickerActionThemeData();
   }
 
   /// Returns the theme for the context actions, using `context` to get the defaults.
+  @override
   FilesystemPickerContextActionsThemeData getContextActions(
       BuildContext context) {
-    return _contextActions ?? FilesystemPickerContextActionsThemeData();
+    return _contextActions ?? const FilesystemPickerContextActionsThemeData();
   }
 
   /// Returns a new picker theme that matches this picker theme but with some values
   /// replaced by the non-null parameters of the given picker theme.
   ///
   /// If the given picker theme is null, simply returns this picker theme.
+  @override
   FilesystemPickerThemeBase merge(
       BuildContext context, FilesystemPickerThemeBase? base) {
     if (!inherit || base == null) return this;

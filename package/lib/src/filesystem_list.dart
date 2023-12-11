@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as Path;
+import 'package:path/path.dart' as path;
 import 'common.dart';
 import 'filesystem_list_tile.dart';
 import 'options/theme/_filelist_theme.dart';
@@ -61,7 +61,7 @@ class FilesystemList extends StatefulWidget {
   final FilesystemListFilter? itemFilter;
 
   /// Creates a list widget that displays a list of folders and files of the file system.
-  FilesystemList({
+  const FilesystemList({
     Key? key,
     this.isRoot = false,
     required this.rootDirectory,
@@ -98,7 +98,7 @@ class _FilesystemListState extends State<FilesystemList> {
   void didUpdateWidget(covariant FilesystemList oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (!Path.equals(oldWidget.rootDirectory.absolute.path,
+    if (!path.equals(oldWidget.rootDirectory.absolute.path,
         widget.rootDirectory.absolute.path)) {
       _rootDirectory = widget.rootDirectory;
       _loadDirContents();
@@ -122,21 +122,22 @@ class _FilesystemListState extends State<FilesystemList> {
                 .toList(growable: false);
 
     var files = <FileSystemEntity>[];
-    var completer = new Completer<List<FileSystemEntity>>();
+    var completer = Completer<List<FileSystemEntity>>();
     var lister = _rootDirectory.list(recursive: false);
     lister.listen(
       (file) {
         if (widget.itemFilter != null) {
-          final localPath = Path.relative(file.path, from: _rootDirectory.path);
-          if (!widget.itemFilter!.call(file, _rootDirectory.path, localPath))
+          final localPath = path.relative(file.path, from: _rootDirectory.path);
+          if (!widget.itemFilter!.call(file, _rootDirectory.path, localPath)) {
             return;
+          }
         }
 
         if ((widget.fsType != FilesystemType.folder) || (file is Directory)) {
           if ((file is File) &&
               (allowedExtensions != null) &&
-              (allowedExtensions.length > 0)) {
-            String ext = Path.extension(file.path);
+              (allowedExtensions.isNotEmpty)) {
+            String ext = path.extension(file.path);
             if (!widget.caseSensitiveFileExtensionComparison) {
               ext = ext.toLowerCase();
             }
@@ -184,7 +185,7 @@ class _FilesystemListState extends State<FilesystemList> {
         ),
       ),
       onTap: () {
-        widget.onChange(this.widget.rootDirectory.parent);
+        widget.onChange(widget.rootDirectory.parent);
       },
     );
   }

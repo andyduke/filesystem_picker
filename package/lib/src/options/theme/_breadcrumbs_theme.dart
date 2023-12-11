@@ -90,7 +90,7 @@ class BreadcrumbsThemeData with Diagnosticable {
     final effectiveItemColor = color ??
         itemColor ??
         Theme.of(context).textTheme.labelLarge?.color ??
-        Color(0xFF000000);
+        const Color(0xFF000000);
     return effectiveItemColor;
   }
 
@@ -144,7 +144,9 @@ class BreadcrumbsThemeData with Diagnosticable {
   /// If no value is set in the theme, the [toolbarTextStyle] of the [AppBarTheme] is returned
   /// (the app theme is taken from the `context`).
   TextStyle getTextStyle(BuildContext context) {
-    return textStyle ?? AppBarTheme.of(context).toolbarTextStyle ?? TextStyle();
+    return textStyle ??
+        AppBarTheme.of(context).toolbarTextStyle ??
+        const TextStyle();
   }
 
   /// Returns the leading spacing before breadcrumbs.

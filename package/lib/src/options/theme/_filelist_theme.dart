@@ -51,7 +51,7 @@ class FilesystemPickerFileListFileTypesTheme
     extends FilesystemPickerFileListFileTypesThemeBase {
   /// Default icons for image files (jpeg, jpg, png) and databases (db, sqlite, sqlite3).
   static const FilesystemPickerFileListFileTypesTheme defaultFileTypes =
-      const FilesystemPickerFileListFileTypesTheme([
+      FilesystemPickerFileListFileTypesTheme([
     // Databases
     FilesystemPickerFileListFileTypesThemeItem(
       extensions: ['db', 'sqlite', 'sqlite3'],
@@ -73,6 +73,7 @@ class FilesystemPickerFileListFileTypesTheme
 
   /// Returns a description object [FilesystemPickerFileListFileTypesThemeItem] for the passed `extension`
   /// if a description is found for it in the current set.
+  @override
   FilesystemPickerFileListFileTypesThemeItem? match(String extension,
       {bool caseSensitive = false}) {
     final String ext = !caseSensitive ? extension.toLowerCase() : extension;
@@ -86,6 +87,7 @@ class FilesystemPickerFileListFileTypesTheme
   }
 
   /// Returns a new set that combines descriptions for extensions with those passed as a parameter.
+  @override
   FilesystemPickerFileListFileTypesThemeBase merge(
       FilesystemPickerFileListFileTypesThemeBase? base) {
     if (base is FilesystemPickerFileListFileTypesTheme) {
@@ -239,7 +241,7 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
 
   /// Returns the text style of the list row, for going up to the parent folder.
   TextStyle getUpTextStyle(BuildContext context) {
-    final effectiveValue = upTextStyle ?? TextStyle();
+    final effectiveValue = upTextStyle ?? const TextStyle();
     return effectiveValue;
   }
 
@@ -263,7 +265,7 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
 
   /// Returns the text style of the shortcut name in the picker list row.
   TextStyle getShortcutTextStyle(BuildContext context) {
-    final effectiveValue = shortcutTextStyle ?? TextStyle();
+    final effectiveValue = shortcutTextStyle ?? const TextStyle();
     return effectiveValue;
   }
 
@@ -282,7 +284,7 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
 
   /// Returns the text style of the folder name in the picker list row.
   TextStyle getFolderTextStyle(BuildContext context) {
-    final effectiveValue = folderTextStyle ?? TextStyle();
+    final effectiveValue = folderTextStyle ?? const TextStyle();
     return effectiveValue;
   }
 
@@ -306,7 +308,7 @@ class FilesystemPickerFileListThemeData with Diagnosticable {
 
   /// Returns the text style of the file name in the picker list row.
   TextStyle getFileTextStyle(BuildContext context) {
-    final effectiveValue = fileTextStyle ?? TextStyle();
+    final effectiveValue = fileTextStyle ?? const TextStyle();
     return effectiveValue;
   }
 

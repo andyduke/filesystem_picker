@@ -35,11 +35,11 @@ class FilesystemPickerOptions with Diagnosticable {
 
   /// The default dialog options values.
   static const FilesystemPickerDialogOptions defaultDialogOptions =
-      const FilesystemPickerDialogOptions();
+      FilesystemPickerDialogOptions();
 
   /// The default bottom sheet options values.
   static const FilesystemPickerBottomSheetOptions defaultBottomSheetOptions =
-      const FilesystemPickerBottomSheetOptions();
+      FilesystemPickerBottomSheetOptions();
 
   final FilesystemPickerThemeBase? _theme;
 
@@ -82,11 +82,12 @@ class FilesystemPickerOptions with Diagnosticable {
   }) : _theme = theme;
 
   static FilesystemPickerOptions _defaultOptions(BuildContext context) {
-    return FilesystemPickerOptions();
+    return const FilesystemPickerOptions();
   }
 
   /// Returns the current theme.
-  FilesystemPickerThemeBase get theme => _theme ?? FilesystemPickerTheme();
+  FilesystemPickerThemeBase get theme =>
+      _theme ?? const FilesystemPickerTheme();
 
   /// The hash code for this object.
   @override
@@ -252,7 +253,7 @@ class FilesystemPickerDefaultOptionsState
 class _FilesystemPickerOptionsScope extends InheritedWidget {
   final FilesystemPickerDefaultOptionsState options;
 
-  _FilesystemPickerOptionsScope({
+  const _FilesystemPickerOptionsScope({
     Key? key,
     required this.options,
     required Widget child,

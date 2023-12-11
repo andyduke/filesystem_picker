@@ -7,8 +7,8 @@ class FilesystemPickerBottomSheetOptions with Diagnosticable {
     minWidth: 280,
     maxWidth: 300,
   );
-  static const Color defaultBarrierColor = const Color(0x00000000);
-  static const ShapeBorder defaultShape = const RoundedRectangleBorder(
+  static const Color defaultBarrierColor = Color(0x00000000);
+  static const ShapeBorder defaultShape = RoundedRectangleBorder(
     borderRadius: BorderRadius.vertical(
       top: Radius.circular(8),
     ),

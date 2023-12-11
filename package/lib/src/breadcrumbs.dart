@@ -87,7 +87,7 @@ class Breadcrumbs<T> extends StatelessWidget {
       ),
       child: ShaderMask(
         shaderCallback: (Rect bounds) {
-          return LinearGradient(
+          return const LinearGradient(
             begin: Alignment(0.7, 0.5),
             end: Alignment.centerRight,
             colors: <Color>[Colors.white, Colors.transparent],

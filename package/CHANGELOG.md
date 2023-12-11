@@ -1,3 +1,7 @@
+## 4.1.0
+
+* Fixed 'Go Up' working on Linux (thanks [@madadam](https://github.com/madadam)).
+
 ## 4.0.0
 
 * Added `shortcuts` to allow multiple root drives (as in Windows) or favorites (as in the Linux/MacOS sidebar) on desktop systems.

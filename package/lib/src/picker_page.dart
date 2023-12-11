@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:filesystem_picker/src/actions/action.dart';
 import 'package:filesystem_picker/src/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as Path;
+import 'package:path/path.dart' as path_lib;
 import 'common.dart';
 import 'filesystem_list.dart';
 import 'breadcrumbs.dart';
@@ -100,7 +100,7 @@ class FilesystemPicker extends StatefulWidget {
           theme: theme,
           contextActions: contextActions,
           shortcuts: shortcuts,
-          closeButton: CloseButton(),
+          closeButton: const CloseButton(),
         );
       }),
     );
@@ -185,7 +185,7 @@ class FilesystemPicker extends StatefulWidget {
           theme: theme,
           contextActions: contextActions,
           shortcuts: shortcuts,
-          closeButton: CloseButton(),
+          closeButton: const CloseButton(),
         ),
       ),
     );
@@ -296,7 +296,7 @@ class FilesystemPicker extends StatefulWidget {
           theme: theme,
           contextActions: contextActions,
           shortcuts: shortcuts,
-          closeButton: CloseButton(),
+          closeButton: const CloseButton(),
         ),
       ),
     );
@@ -405,15 +405,15 @@ class FilesystemPicker extends StatefulWidget {
         super(key: key);
 
   @override
-  _FilesystemPickerState createState() => _FilesystemPickerState();
+  FilesystemPickerState createState() => FilesystemPickerState();
 }
 
-enum _FilesystemPickerViewMode {
+enum FilesystemPickerViewMode {
   shortcuts,
   filesystem,
 }
 
-class _FilesystemPickerState extends State<FilesystemPicker> {
+class FilesystemPickerState extends State<FilesystemPicker> {
   static const double _defaultTopBarIconSize = 24;
   static const double _defaultTopBarHeight = 50;
   static const double _defaultBottomBarHeight = 50;
@@ -443,7 +443,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   String? directoryName;
 
   @protected
-  List<_PathItem> pathItems = [];
+  List<PathItem> pathItems = [];
 
   @protected
   late FilesystemPickerOptions options;
@@ -455,7 +455,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   late Directory? rootDirectory = widget.rootDirectory;
 
   @protected
-  _FilesystemPickerViewMode viewMode = _FilesystemPickerViewMode.filesystem;
+  FilesystemPickerViewMode viewMode = FilesystemPickerViewMode.filesystem;
 
   String? get rootName => widget.rootName ?? options.rootName;
 
@@ -501,7 +501,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
       // Set viewMode
       if (rootDirectory != null) {
-        viewMode = _FilesystemPickerViewMode.filesystem;
+        viewMode = FilesystemPickerViewMode.filesystem;
 
         if ((widget.directory != null) &&
             _isDirectoryValid(widget.directory!)) {
@@ -510,14 +510,14 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
           _setDirectory(rootDirectory!);
         }
       } else {
-        viewMode = _FilesystemPickerViewMode.shortcuts;
+        viewMode = FilesystemPickerViewMode.shortcuts;
       }
     }
   }
 
   bool _isDirectorySameOrWithin(Directory rootDirectory, Directory directory) {
     return (rootDirectory.path == directory.path) ||
-        Path.isWithin(rootDirectory.path, directory.path);
+        path_lib.isWithin(rootDirectory.path, directory.path);
   }
 
   Directory? _findRootDirectory(Directory directory) {
@@ -564,7 +564,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     directory = value;
 
     String currentPath = directory!.path;
-    String dirPath = Path.relative(currentPath, from: rootDirectory!.path);
+    String dirPath = path_lib.relative(currentPath, from: rootDirectory!.path);
     final List<String> items =
         (dirPath != '.') ? dirPath.split(Platform.pathSeparator) : [];
     pathItems = [];
@@ -572,18 +572,18 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     if (items.isNotEmpty) {
       String rootItem = items.first;
       String rootPath = rootDirectory!.path;
-      pathItems.add(_PathItem(
+      pathItems.add(PathItem(
         path: rootPath,
         text: shortcut?.name ?? rootName ?? rootItem,
       ));
 
       String path = rootPath;
       for (var item in items) {
-        path = Path.join(path, item);
-        pathItems.add(_PathItem(path: path, text: item));
+        path = path_lib.join(path, item);
+        pathItems.add(PathItem(path: path, text: item));
       }
     } else {
-      pathItems.add(_PathItem(
+      pathItems.add(PathItem(
         path: rootDirectory!.path,
         text: shortcut?.name ?? rootName ?? rootDirectory!.path,
       ));
@@ -592,12 +592,12 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     directoryName =
         ((directory!.path == rootDirectory!.path) && (rootName != null))
             ? (shortcut?.name ?? rootName)
-            : Path.basename(directory!.path);
+            : path_lib.basename(directory!.path);
   }
 
   void _setShortcut(FilesystemPickerShortcut newShortcut) {
     if (shortcut != newShortcut) {
-      viewMode = _FilesystemPickerViewMode.filesystem;
+      viewMode = FilesystemPickerViewMode.filesystem;
       shortcut = newShortcut;
       rootDirectory = newShortcut.path;
 
@@ -633,8 +633,9 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   Widget _buildBar(
       BuildContext context, FilesystemPickerActionThemeData theme) {
-    if (viewMode != _FilesystemPickerViewMode.filesystem)
+    if (viewMode != FilesystemPickerViewMode.filesystem) {
       return const SizedBox();
+    }
     if (directory == null) return const SizedBox();
 
     final pickerIconTheme = theme.getCheckIconTheme(context);
@@ -677,8 +678,9 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
 
   Widget _buildFAB(
       BuildContext context, FilesystemPickerActionThemeData theme) {
-    if (viewMode != _FilesystemPickerViewMode.filesystem)
+    if (viewMode != FilesystemPickerViewMode.filesystem) {
       return const SizedBox();
+    }
     if (directory == null) return const SizedBox();
 
     final onPressed = (!permissionRequesting && permissionAllowed)
@@ -696,11 +698,11 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
       );
     } else {
       return FloatingActionButton(
-        child: Icon(theme.getCheckIcon(context)),
         foregroundColor: theme.getForegroundColor(context),
         backgroundColor: theme.getBackgroundColor(context),
         elevation: theme.getElevation(context),
         onPressed: isValidDirectory ? onPressed : null,
+        child: Icon(theme.getCheckIcon(context)),
       );
     }
   }
@@ -708,7 +710,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   List<BreadcrumbItem<_BreadcrumbPath>> _buildBreadcrumbs() {
     List<BreadcrumbItem<_BreadcrumbPath>> result = [];
 
-    if (viewMode == _FilesystemPickerViewMode.filesystem) {
+    if (viewMode == FilesystemPickerViewMode.filesystem) {
       result = (!permissionRequesting && permissionAllowed)
           ? pathItems
               .map((path) => BreadcrumbItem<_BreadcrumbPath>(
@@ -738,7 +740,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
     switch (bcrumbPath.type) {
       case _BreadcrumbPathType.shortcuts:
         setState(() {
-          viewMode = _FilesystemPickerViewMode.shortcuts;
+          viewMode = FilesystemPickerViewMode.shortcuts;
           shortcut = null;
         });
         break;
@@ -762,7 +764,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         : (!hasMessage
             ? FilesystemList(
                 key: _fileListKey,
-                isRoot: (Path.equals(
+                isRoot: (path_lib.equals(
                     directory!.absolute.path, rootDirectory!.absolute.path)),
                 rootDirectory: directory!,
                 fsType: fsType,
@@ -792,7 +794,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   }
 
   List<Widget>? _buildActions(BuildContext context) {
-    if (viewMode != _FilesystemPickerViewMode.filesystem) return null;
+    if (viewMode != FilesystemPickerViewMode.filesystem) return null;
     if (directory == null) return null;
     if (widget.contextActions.isEmpty) return null;
 
@@ -831,7 +833,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
             iconTheme: buttonTheme.getIconTheme(context),
           ),
           child: PopupMenuButton<FilesystemPickerContextAction>(
-            offset: Offset(0, 48),
+            offset: const Offset(0, 48),
             onSelected: (action) => _callAction(action, context, directory!),
             enabled: !hasMessage,
             itemBuilder: (context) => widget.contextActions
@@ -906,20 +908,20 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
           : null,
       actions: _buildActions(context),
       bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(_defaultTopBarHeight),
         child: Breadcrumbs<_BreadcrumbPath>(
           theme: breadcrumbsTheme,
           textColor: foregroundColor,
           items: _buildBreadcrumbs(),
           onSelect: _breadcrumbSelect,
         ),
-        preferredSize: const Size.fromHeight(_defaultTopBarHeight),
       ),
     );
 
     Widget body;
 
     switch (viewMode) {
-      case _FilesystemPickerViewMode.shortcuts:
+      case FilesystemPickerViewMode.shortcuts:
         body = FilesystemShortcutsListView(
           shortcuts: widget.shortcuts,
           theme: theme.getFileList(context),
@@ -929,7 +931,7 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
         );
         break;
 
-      case _FilesystemPickerViewMode.filesystem:
+      case FilesystemPickerViewMode.filesystem:
         body = _buildFilesystemListView(effectiveTheme);
         break;
     }
@@ -956,11 +958,11 @@ class _FilesystemPickerState extends State<FilesystemPicker> {
   }
 }
 
-class _PathItem {
+class PathItem {
   final String text;
   final String path;
 
-  _PathItem({
+  PathItem({
     required this.path,
     required this.text,
   });

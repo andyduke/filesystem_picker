@@ -17,11 +17,11 @@ class FilesystemPickerDialog extends StatelessWidget {
     final options = FilesystemPickerDefaultOptions.of(context);
 
     return Dialog(
+      clipBehavior: Clip.antiAliasWithSaveLayer,
       child: ConstrainedBox(
         constraints: constraints ?? options.dialog.constraints,
         child: child,
       ),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
     );
   }
 }

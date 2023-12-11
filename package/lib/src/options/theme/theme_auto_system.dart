@@ -38,43 +38,50 @@ class FilesystemPickerAutoSystemTheme
 
     final FilesystemPickerThemeBase effectiveTheme =
         (brightness == Brightness.light)
-            ? (lightTheme ?? FilesystemPickerTheme())
-            : (darkTheme ?? FilesystemPickerTheme());
+            ? (lightTheme ?? const FilesystemPickerTheme())
+            : (darkTheme ?? const FilesystemPickerTheme());
 
     return effectiveTheme;
   }
 
   /// See [FilesystemPickerTheme.getBackgroundColor].
+  @override
   Color getBackgroundColor(BuildContext context, [Color? color]) {
     return getEffectiveTheme(context).getBackgroundColor(context, color);
   }
 
   /// See [FilesystemPickerTheme.getTopBar].
+  @override
   FilesystemPickerTopBarThemeData getTopBar(BuildContext context) {
     return getEffectiveTheme(context).getTopBar(context);
   }
 
   /// See [FilesystemPickerTheme.getMessageTextStyle].
+  @override
   TextStyle getMessageTextStyle(BuildContext context) {
     return getEffectiveTheme(context).getMessageTextStyle(context);
   }
 
   /// See [FilesystemPickerTheme.getFileList].
+  @override
   FilesystemPickerFileListThemeData getFileList(BuildContext context) {
     return getEffectiveTheme(context).getFileList(context);
   }
 
   /// See [FilesystemPickerTheme.getPickerAction].
+  @override
   FilesystemPickerActionThemeData getPickerAction(BuildContext context) {
     return getEffectiveTheme(context).getPickerAction(context);
   }
 
+  @override
   FilesystemPickerContextActionsThemeData getContextActions(
       BuildContext context) {
     return getEffectiveTheme(context).getContextActions(context);
   }
 
   /// See [FilesystemPickerTheme.merge].
+  @override
   FilesystemPickerThemeBase merge(
       BuildContext context, FilesystemPickerThemeBase? base) {
     if (inherit && base is FilesystemPickerAutoSystemTheme) {

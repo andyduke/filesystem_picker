@@ -24,14 +24,14 @@ class FilesystemPickerContextActionsThemeData with Diagnosticable {
   /// Returns the theme for the popup menu with a list of actions if more than one action is specified.
   FilesystemPickerContextActionsMenuThemeData getMenuTheme(
       BuildContext context) {
-    return menuTheme ?? FilesystemPickerContextActionsMenuThemeData();
+    return menuTheme ?? const FilesystemPickerContextActionsMenuThemeData();
   }
 
   /// Returns the theme for the action button or the button that opens the popup menu
   /// if more than one action is specified.
   FilesystemPickerContextActionsButtonThemeData getButtonTheme(
       BuildContext context) {
-    return buttonTheme ?? FilesystemPickerContextActionsButtonThemeData();
+    return buttonTheme ?? const FilesystemPickerContextActionsButtonThemeData();
   }
 
   /// Returns a new context actions theme that matches this theme but with some values

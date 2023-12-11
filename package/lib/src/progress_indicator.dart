@@ -19,7 +19,7 @@ class _FilesystemProgressIndicatorState
     extends State<FilesystemProgressIndicator> {
   static const double _defaultSize = 32;
   static const double _defaultPadding = 8;
-  static const Duration _delay = const Duration(milliseconds: 100);
+  static const Duration _delay = Duration(milliseconds: 100);
 
   Timer? _timer;
   bool _visible = false;
